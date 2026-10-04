@@ -75,32 +75,185 @@ summary{cursor:pointer;font-weight:600;min-height:32px}
 .log{list-style:none;margin:8px 0 0;padding:0;font-size:14px;color:var(--muted)}
 .log li{padding:5px 0;border-top:1px solid var(--line)}
 .small{font-size:14px;color:var(--muted)}
+.code-box{font:600 18px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.04em;word-break:break-all;background:var(--bg);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;user-select:all}
+.msg{min-height:1.2em;font-weight:600}
+.msg.bad{color:var(--warn)}.msg.good{color:var(--ok)}
+[hidden]{display:none !important}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+.tabs button{flex:1;min-height:56px;border:0;background:transparent;font-weight:600;color:var(--muted);font-size:15px}
+.tabs button.on{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.fab{bottom:calc(76px + env(safe-area-inset-bottom)) !important}
+body{padding-bottom:170px}
+label.inl{flex-direction:row;align-items:center;gap:10px;font-size:15px;color:var(--text);font-weight:500}
+label.inl input{width:22px;height:22px;min-height:0}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px}
+.cal-title{font-size:20px;font-weight:700}
+.cal-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dow{text-align:center;color:var(--muted);font-size:12px;font-weight:700;padding:4px 0}
+.cal-cell{min-height:54px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:5px 2px 3px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px}
+.cal-cell.other{opacity:.45}
+.cal-cell.today .dn{background:var(--accent);color:var(--accent-ink);border-radius:999px;min-width:26px;text-align:center;font-weight:800}
+.cal-cell.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.dots{display:flex;gap:3px;min-height:8px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.ag-item{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.ag-time{min-width:78px;font-weight:700;font-variant-numeric:tabular-nums}
+.ag-bar{width:5px;align-self:stretch;border-radius:4px;flex:none}
+.swatch{width:44px;height:44px;border-radius:50%;border:3px solid transparent;padding:0}
+.swatch.sel{border-color:var(--text)}
+.quick{display:flex;gap:8px;margin-top:8px}
+.quick input{flex:1}
+input[type=search]{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-height:48px;width:100%}
+#noteBody{min-height:42vh}
+.pin{color:var(--accent)}
+.tabs button{font-size:12.5px;padding:4px 0 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0}
+.tabs .ti{font-size:19px;line-height:1.1}
+.seg{display:flex;gap:8px;margin:8px 0 4px}
+.prog{height:8px;border-radius:8px;background:var(--surface2);overflow:hidden;margin-top:10px}
+.prog > i{display:block;height:100%;background:var(--ok);border-radius:8px;transition:width .3s}
+.card.one{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.one .step{font-size:22px;font-weight:800;margin:6px 0 2px;word-break:break-word}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+label.chk{flex-direction:row;align-items:center;gap:12px;min-height:44px;cursor:pointer;font-size:16px;color:var(--text);font-weight:500}
+label.chk input,.list-item input.cb,.cb{width:24px;height:24px;flex:0 0 24px;min-height:0;accent-color:var(--ok);margin:0}
+label.chk.done span{text-decoration:line-through;color:var(--muted)}
+details.plain{background:none;border:0;padding:0;margin-top:4px}
+.scale{display:flex;align-items:center;gap:6px;margin:8px 0}
+.scale .nm{min-width:82px;font-weight:600;font-size:15px}
+.scale .chip{min-width:42px;padding:6px 0;flex:1;max-width:56px}
+.clock{font:800 64px/1 ui-monospace,Consolas,monospace;text-align:center;margin:16px 0 6px;font-variant-numeric:tabular-nums}
+.phase{text-align:center;color:var(--muted);font-weight:600}
+#fxTaskSel{margin-top:2px}
+.timer-mini{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:16px;text-align:left;color:var(--text);border-color:var(--accent);margin-top:14px;cursor:pointer}
+.timer-mini b{font:800 22px ui-monospace,Consolas,monospace}
+.task-card{cursor:pointer}
+.stat{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat > div{background:var(--surface2);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:24px;line-height:1.2}
+.heat{display:grid;grid-template-columns:minmax(92px,auto) repeat(7,1fr);gap:3px;align-items:center}
+.heat .c{text-align:center;border-radius:6px;padding:6px 0;font-weight:700;font-size:14px}
+.bar-row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px}
+.bar-row .b{flex:1;height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.bar-row .b i{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0}
+.hint{background:var(--surface2);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--muted);margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:20;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.warnbox{border:1px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin:10px 0}
+.quietbar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 14px;margin:8px 0;font-size:14px;font-weight:600;min-height:48px}
+.onb-list{display:flex;flex-direction:column;gap:8px}
+.onb-list div{display:flex;flex-direction:column;background:var(--surface2);border-radius:12px;padding:8px 12px}
+.onb-list span{color:var(--muted);font-size:14px}
+#onbBody h3{margin:0;font-size:22px}
+#onbBody p{margin:0}
+#homeList .list-item{gap:6px}
 </style>
 </head>
 <body>
 <header>
   <h1>Fokus</h1>
-  <button class="icon-btn" id="btnSettings" aria-label="Einstellungen">⚙</button>
+  <div style="display:flex;gap:8px">
+    <button class="icon-btn" id="btnNight" aria-label="Gute Nacht: ruhig bis zum Aufstehen" title="Gute Nacht">🌙</button>
+    <button class="icon-btn" id="btnSettings" aria-label="Einstellungen">⚙</button>
+  </div>
 </header>
 
 <main>
+  <div id="quietBar"></div>
+  <div id="sleepHint"></div>
   <div id="notifBanner"></div>
 
-  <section id="pendingSec" hidden>
-    <h2>Jetzt dran</h2>
-    <div id="pendingList"></div>
-  </section>
+  <div id="tabToday">
+    <section id="pendingSec" hidden>
+      <h2>Jetzt dran</h2>
+      <div id="pendingList"></div>
+    </section>
+    <div id="timerMini"></div>
+    <div id="homeSecs">
+      <div data-sec="checkin"><div id="checkin"></div></div>
+      <div data-sec="one"><section id="oneSec"><h2>Eine Sache jetzt</h2><div id="oneThing"></div></section></div>
+      <div data-sec="routines"><section id="rtSec" hidden><h2>Routinen heute</h2><div id="rtToday"></div></section></div>
+      <div data-sec="calendar"><section id="todaySec" hidden><h2>Heute im Kalender</h2><div id="todayList"></div></section></div>
+      <div data-sec="reminders"><section><h2>Meine Erinnerungen</h2><div id="list"></div></section></div>
+      <div data-sec="review"><section><h2>Rückblick</h2><button class="btn" id="btnReview">Wochenrückblick ansehen</button></section></div>
+      <div data-sec="log"><section><h2>Verlauf</h2><details><summary>Letzte Aktionen anzeigen</summary><ul class="log" id="log"></ul></details></section></div>
+    </div>
+    <div style="text-align:center;margin-top:22px"><button class="btn ghost" id="btnHome2">Ansicht anpassen</button></div>
+  </div>
 
-  <section>
-    <h2>Meine Erinnerungen</h2>
-    <div id="list"></div>
-  </section>
+  <div id="tabTasks" hidden>
+    <div class="seg" role="group" aria-label="Ansicht">
+      <button class="chip sel" data-seg="tasks">Aufgaben</button>
+      <button class="chip" data-seg="routines">Routinen</button>
+    </div>
+    <div id="segTasks">
+      <form class="quick" id="taskQuick">
+        <input id="taskQuickIn" type="text" maxlength="160" autocomplete="off" placeholder="Neue Aufgabe, einfach reinschreiben …" aria-label="Neue Aufgabe">
+        <button class="btn primary" type="submit">Anlegen</button>
+      </form>
+      <div id="taskList" style="margin-top:12px"></div>
+      <details id="doneBox" style="margin-top:16px" hidden><summary>Erledigt (<span id="doneCount">0</span>)</summary><div id="taskDone" style="margin-top:10px"></div></details>
+    </div>
+    <div id="segRoutines" hidden>
+      <p class="small">Routinen sind Checklisten, die an den gewählten Tagen neu starten. Ohne Zähler und ohne Serien: Was geschafft ist, zählt.</p>
+      <div id="rtList"></div>
+      <div id="rtTemplates"></div>
+    </div>
+  </div>
 
-  <section>
-    <h2>Verlauf</h2>
-    <details><summary>Letzte Aktionen anzeigen</summary><ul class="log" id="log"></ul></details>
-  </section>
+  <div id="tabFocus" hidden>
+    <div class="card" style="margin-top:8px">
+      <div class="phase" id="fxPhase"></div>
+      <div class="clock" id="fxClock" aria-live="off">25:00</div>
+      <div class="prog"><i id="fxBar" style="width:0"></i></div>
+      <div class="phase" id="fxTask" style="margin-top:10px"></div>
+      <div class="btnrow" id="fxBtns" style="justify-content:center"></div>
+    </div>
+    <div id="fxSetup">
+      <h2>Dauer</h2><div class="chips" id="fxDur"></div>
+      <h2>Pause danach</h2><div class="chips" id="fxBreak"></div>
+      <h2>Woran arbeitest du?</h2><select id="fxTaskSel" aria-label="Aufgabe für diese Runde"></select>
+    </div>
+    <h2>Heute</h2>
+    <div id="fxToday" class="small"></div>
+    <p class="hint" style="margin-top:14px">Tipp: Wenn 25 Minuten zu viel wirken, fang mit 5 oder 10 an. Anfangen ist der schwerste Teil. Ist die App geschlossen, meldet sich das Ende per Push (bis zu einer Minute später).</p>
+  </div>
+
+  <div id="tabCal" hidden>
+    <div class="cal-head">
+      <button class="icon-btn" id="calPrev" aria-label="Voriger Monat">‹</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="icon-btn" id="calNext" aria-label="Nächster Monat">›</button>
+    </div>
+    <div class="cal-tools">
+      <button class="chip" id="calToday">Heute</button>
+      <label class="inl"><input type="checkbox" id="calShowRem" checked> Erinnerungen anzeigen</label>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <section>
+      <h2 id="agendaTitle"></h2>
+      <div id="agenda"></div>
+      <button class="btn primary" id="agendaAdd" style="margin-top:6px">+ Termin an diesem Tag</button>
+    </section>
+  </div>
+
+  <div id="tabNotes" hidden>
+    <form class="quick" id="quickForm">
+      <input id="quickNote" type="text" placeholder="Schnelle Notiz, einfach reinschreiben …" maxlength="2000" autocomplete="off" aria-label="Schnelle Notiz">
+      <button class="btn primary" type="submit">Merken</button>
+    </form>
+    <input id="noteSearch" type="search" placeholder="Notizen durchsuchen" aria-label="Notizen durchsuchen" style="margin:12px 0 4px">
+    <div id="noteList"></div>
+  </div>
 </main>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="today" class="on"><span class="ti" aria-hidden="true">☀</span>Heute</button>
+  <button data-tab="tasks"><span class="ti" aria-hidden="true">✓</span>Aufgaben</button>
+  <button data-tab="focus"><span class="ti" aria-hidden="true">◷</span>Fokus</button>
+  <button data-tab="cal"><span class="ti" aria-hidden="true">▦</span>Kalender</button>
+  <button data-tab="notes"><span class="ti" aria-hidden="true">✎</span>Notizen</button>
+</nav>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <button class="fab" id="btnAdd" aria-label="Neue Erinnerung">+</button>
 
@@ -133,14 +286,171 @@ summary{cursor:pointer;font-weight:600;min-height:32px}
       <button class="btn" id="btnPerm">Benachrichtigungen erlauben</button>
       <button class="btn" id="btnTest">Test-Benachrichtigung</button>
     </div>
-    <p class="small" style="margin:0"><b>Wichtig:</b> Erinnerungen kommen zuverlässig, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Ist sie ganz geschlossen, erscheinen verpasste Erinnerungen beim nächsten Öffnen unter „Jetzt dran“. Echte Push-Erinnerungen bei geschlossener App sind der nächste Ausbauschritt.</p>
+    <p class="small" style="margin:0"><b>Wichtig:</b> Ohne Push kommen Erinnerungen nur, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Mit „Geräte &amp; Push“ meldet sich das Backend auch bei geschlossener App.</p>
+    <div class="dlg-actions" style="justify-content:flex-start"><button class="btn primary" id="btnSyncOpen">Geräte &amp; Push …</button></div>
+    <div><div class="small" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Ruhezeiten</div><div id="quietBox"></div></div>
+    <div class="dlg-actions" style="justify-content:flex-start">
+      <button class="btn" id="btnHome">Heute-Bildschirm anpassen …</button>
+      <button class="btn" id="btnOnb">Einführung ansehen</button>
+    </div>
     <div class="dlg-actions" style="justify-content:flex-start">
       <button class="btn" id="btnExport">Daten exportieren</button>
       <button class="btn" id="btnImport">Daten importieren</button>
       <input type="file" id="fileImport" accept="application/json,.json" hidden>
     </div>
-    <p class="small" style="margin:0">Export/Import überträgt deine Erinnerungen zwischen Geräten (Handy, PC, Arbeits-PC), bis die automatische Synchronisierung steht.</p>
+    <p class="small" style="margin:0">Export/Import ist eine Sicherung als Datei (unverschlüsselt) und funktioniert auch ohne Sync.</p>
     <div class="dlg-actions"><button class="btn primary" id="btnSetClose">Schließen</button></div>
+  </div>
+</dialog>
+
+<!-- Termin -->
+<dialog id="evDlg">
+  <form class="dlg" id="evFrm" novalidate>
+    <h3 id="evHead">Neuer Termin</h3>
+    <div id="evFields" style="display:flex;flex-direction:column;gap:14px">
+      <label>Titel<input id="evTitle" type="text" maxlength="120" placeholder="z. B. Zahnarzt"></label>
+      <label class="inl"><input type="checkbox" id="evAllDay"> Ganztägig</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <label style="flex:2;min-width:140px">Datum<input id="evDate" type="date"></label>
+        <label style="flex:1;min-width:100px" id="evStartWrap">Beginn<input id="evStart" type="time"></label>
+        <label style="flex:1;min-width:100px" id="evEndWrap">Ende<input id="evEnd" type="time"></label>
+      </div>
+      <label>Ort<input id="evPlace" type="text" maxlength="120" placeholder="optional"></label>
+      <div id="evTravelWrap"><label>Wegzeit oder Vorbereitung in Minuten (optional)<input id="evTravel" type="number" min="0" max="720" inputmode="numeric" placeholder="z. B. 25"></label>
+        <div class="small" style="margin-top:6px">Dann erinnere ich dich ans Losgehen. Die Vorab-Erinnerungen zählen ab der Aufbruchszeit.</div></div>
+      <label>Notiz<textarea id="evNote" rows="3" placeholder="Was musst du mitnehmen oder beachten?"></textarea></label>
+      <label>Wiederholung
+        <select id="evRepeat"><option value="none">Keine</option><option value="daily">Täglich</option><option value="weekly">Wöchentlich</option><option value="monthly">Monatlich</option><option value="yearly">Jährlich</option></select></label>
+      <label id="evUntilWrap">Wiederholen bis (optional)<input id="evUntil" type="date"></label>
+      <div><div class="small" style="margin-bottom:6px;font-weight:600">Erinnerung vorab (mehrere möglich)</div><div class="chips" id="evLeads"></div></div>
+      <label class="inl"><input type="checkbox" id="evQuiet"> Während des Termins ruhig (z. B. Vorlesung, Arzt)</label>
+      <label>Nachhaken, wenn du nicht reagierst<select id="evNag"></select></label>
+      <div><div class="small" style="margin-bottom:6px;font-weight:600">Farbe</div><div class="chips" id="evColors"></div></div>
+    </div>
+    <div class="err" id="evErr" role="alert"></div>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="evDelete" hidden>Löschen</button>
+      <button type="button" class="btn" id="evDup" hidden>Duplizieren</button>
+      <button type="button" class="btn ghost" id="evCancel">Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Notiz -->
+<dialog id="noteDlg">
+  <div class="dlg">
+    <input id="noteTitle" type="text" maxlength="120" placeholder="Titel (optional)" aria-label="Titel der Notiz">
+    <textarea id="noteBody" rows="12" maxlength="20000" placeholder="Schreib los …" aria-label="Text der Notiz"></textarea>
+    <div class="dlg-actions" style="justify-content:space-between">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="notePin" type="button">Anheften</button>
+        <button class="btn" id="noteRem" type="button">Erinnerung daraus</button>
+        <button class="btn danger" id="noteDel" type="button">Löschen</button>
+      </div>
+      <button class="btn primary" id="noteDone" type="button">Fertig</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Aufgabe -->
+<dialog id="taskDlg">
+  <div class="dlg">
+    <h3 id="taskHead">Aufgabe</h3>
+    <label>Aufgabe<input id="tkTitle" type="text" maxlength="160" placeholder="z. B. Steuererklärung"></label>
+    <label>Notiz<textarea id="tkNote" rows="2" placeholder="optional"></textarea></label>
+    <label>Fällig am (optional)<input id="tkDue" type="date"></label>
+    <div>
+      <div class="small" style="margin-bottom:6px;font-weight:600">Mini-Schritte</div>
+      <div id="tkSteps"></div>
+      <form class="quick" id="tkAddForm"><input id="tkAdd" type="text" maxlength="200" autocomplete="off" placeholder="Nächster kleiner Schritt …" aria-label="Neuer Schritt"><button class="btn" type="submit" aria-label="Schritt hinzufügen">+</button></form>
+    </div>
+    <details>
+      <summary>Hilfe beim Zerlegen</summary>
+      <p class="small">Frag dich: Was ist der allererste Handgriff, den man sehen könnte? Also „Laptop aufklappen“ statt „Hausarbeit schreiben“. Jeder Schritt sollte in 5 bis 15 Minuten machbar sein. Wenn du bei einem Schritt zögerst, ist er noch zu groß.</p>
+      <div class="chips" id="tkIdeas"></div>
+    </details>
+    <div class="dlg-actions" style="justify-content:space-between">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="tkNow" type="button">Als Nächstes</button>
+        <button class="btn" id="tkRem" type="button">Erinnerung daraus</button>
+        <button class="btn danger" id="tkDel" type="button">Löschen</button>
+      </div>
+      <button class="btn primary" id="tkDone" type="button">Fertig</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Schritt aufteilen -->
+<dialog id="splitDlg">
+  <div class="dlg">
+    <h3>Kleiner machen</h3>
+    <div class="small" id="splitWhat"></div>
+    <label>Kleinere Schritte, einer pro Zeile<textarea id="splitText" rows="6" placeholder="Laptop aufklappen&#10;Ordner „Steuer“ öffnen&#10;Belege von 2025 raussuchen"></textarea></label>
+    <div class="hint">Der erste Schritt darf lächerlich klein sein. Hauptsache, du fängst an.</div>
+    <div class="dlg-actions"><button class="btn ghost" id="splitCancel" type="button">Abbrechen</button><button class="btn primary" id="splitOk" type="button">Übernehmen</button></div>
+  </div>
+</dialog>
+
+<!-- Routine -->
+<dialog id="rtDlg">
+  <form class="dlg" id="rtFrm" novalidate>
+    <h3 id="rtHead">Neue Routine</h3>
+    <label>Name<input id="rtTitle" type="text" maxlength="80" placeholder="z. B. Morgenroutine"></label>
+    <div><div class="small" style="margin-bottom:6px;font-weight:600">An welchen Tagen? (keine Auswahl = jeden Tag)</div><div class="chips" id="rtDays"></div></div>
+    <label>Erinnerung um (optional)<input id="rtTime" type="time"></label>
+    <div>
+      <div class="small" style="margin-bottom:6px;font-weight:600">Schritte</div>
+      <div id="rtSteps"></div>
+      <div class="quick"><input id="rtAdd" type="text" maxlength="120" autocomplete="off" placeholder="Schritt hinzufügen …" aria-label="Neuer Schritt"><button class="btn" type="button" id="rtAddBtn" aria-label="Schritt hinzufügen">+</button></div>
+    </div>
+    <div class="err" id="rtErr" role="alert"></div>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="rtDel" hidden>Löschen</button>
+      <button type="button" class="btn ghost" id="rtCancel">Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Wochenrückblick -->
+<dialog id="reviewDlg">
+  <div class="dlg">
+    <div class="row"><button class="icon-btn" id="rvPrev" type="button" aria-label="Woche davor">‹</button><h3 id="rvTitle" style="flex:1;text-align:center"></h3><button class="icon-btn" id="rvNext" type="button" aria-label="Woche danach">›</button></div>
+    <div id="rvBody"></div>
+    <div class="dlg-actions"><button class="btn primary" id="rvClose" type="button">Schließen</button></div>
+  </div>
+</dialog>
+
+<!-- Heute anpassen -->
+<dialog id="homeDlg">
+  <div class="dlg">
+    <h3>Heute-Bildschirm anpassen</h3>
+    <p class="small" style="margin:0">Blende aus, was du gerade nicht brauchst, und hol Wichtiges nach oben. „Jetzt dran“ und ein laufender Timer stehen immer ganz oben.</p>
+    <div id="homeList"></div>
+    <div class="dlg-actions"><button class="btn ghost" id="homeReset" type="button">Zurücksetzen</button><button class="btn primary" id="homeClose" type="button">Fertig</button></div>
+  </div>
+</dialog>
+
+<!-- Einführung -->
+<dialog id="onbDlg">
+  <div class="dlg">
+    <div class="small" id="onbStep"></div>
+    <div id="onbBody" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div class="msg" id="onbMsg" role="status"></div>
+    <div class="dlg-actions" style="justify-content:space-between">
+      <button class="btn ghost" id="onbSkip" type="button">Überspringen</button>
+      <div style="display:flex;gap:8px"><button class="btn" id="onbBack" type="button">Zurück</button><button class="btn primary" id="onbNext" type="button">Weiter</button></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Geräte & Push -->
+<dialog id="syncDlg">
+  <div class="dlg">
+    <h3>Geräte &amp; Push</h3>
+    <div id="syncBody" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div class="dlg-actions"><button class="btn primary" id="btnSyncClose">Schließen</button></div>
   </div>
 </dialog>
 
@@ -159,6 +469,14 @@ const TYPES = [
 const SNOOZE_CHOICES = [5,10,15,30,60];
 const DAY = 864e5;
 const ICON = 'icon-192.png';
+const API = 'https://fokus-api.n-kudenholdt2000.workers.dev';   // Adresse des Backends, wird nach dem Einrichten eingetragen
+const SYNC_KEY = 'fokus.sync';
+const RUNTIME = ['pendingAt','pendingStart','snoozeUntil','mutedDate','checkedUntil','nagAt','nagN','rtAt'];
+const GCOLS = ['tasks','routines','checks','checkins','sessions','sleep','prefs']; // weitere Sammlungen, je Eintrag "neueste Änderung gewinnt"
+const ENC_COLS = ['notes','tasks','routines','checks','checkins','sessions','sleep']; // werden vor dem Abgleich verschlüsselt
+const NAG_MAX = 10;
+const NAG_CHOICES = [[0,'Aus'],[2,'alle 2 Min'],[5,'alle 5 Min'],[10,'alle 10 Min'],[15,'alle 15 Min'],[30,'alle 30 Min']];
+const TIMER_ID = 'fokus-timer';
 
 /* ---------- Hilfsfunktionen ---------- */
 const pad = (n) => String(n).padStart(2,'0');
@@ -181,18 +499,33 @@ function fmtWhen(ts){
 /* ---------- Daten ---------- */
 let state = load();
 function load(){
-  try {
-    const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && Array.isArray(s.reminders)) return { reminders: s.reminders, log: Array.isArray(s.log) ? s.log : [] };
-  } catch (e) {}
-  return { reminders: [], log: [] };
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!s || typeof s !== 'object') s = {};
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  const st = { reminders: arr(s.reminders), log: arr(s.log), tombs: arr(s.tombs), notes: arr(s.notes), noteTombs: arr(s.noteTombs), dead: {} };
+  for (const c of GCOLS) { st[c] = arr(s[c]); st.dead[c] = arr(s.dead && s.dead[c]); }
+  return st;
 }
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function colPut(col, item){
+  item.updatedAt = Math.max(Date.now(), (item.updatedAt || 0) + 1);
+  const a = state[col], i = a.findIndex((x) => x.id === item.id);
+  if (i >= 0) a[i] = item; else a.push(item);
+  state.dead[col] = state.dead[col].filter((t) => t.id !== item.id);
+}
+function colDel(col, id){
+  state[col] = state[col].filter((x) => x.id !== id);
+  state.dead[col] = state.dead[col].filter((t) => t.id !== id);
+  state.dead[col].push({ id, updatedAt: Date.now() });
+}
+function upsertRem(r){ const i = state.reminders.findIndex((x) => x.id === r.id); if (i >= 0) state.reminders[i] = r; else state.reminders.push(r); state.tombs = state.tombs.filter((t) => t.id !== r.id); }
+function saveLocal(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function save(){ saveLocal(); scheduleSync(); }
 const find = (id) => state.reminders.find((r) => r.id === id);
 
 function blank(){
   return { id: uid(), title:'', note:'', type:'daily', times:['09:00'], weekdays:[1,2,3,4,5],
-    date: ymd(new Date()), every: 60, from:'08:00', to:'20:00', dates:[], enabled:true, snoozeDefault:10,
+    date: ymd(new Date()), every: 60, from:'08:00', to:'20:00', dates:[], enabled:true, snoozeDefault:10, nag:0,
     createdAt: Date.now(), checkedUntil: Date.now(), pendingAt:null, snoozeUntil:null, mutedDate:null };
 }
 
@@ -201,7 +534,12 @@ function blank(){
 function occurrences(r, from, to){
   const out = [];
   const add = (t) => { if (t > from && t <= to) out.push(t); };
-  if (r.type === 'custom') {
+  if (r.type === 'event') {
+    const anchor = eventAnchor(r);
+    for (const L of eventOffsets(r)) for (const t of eventInstances(r, from + L * 60000, to + L * 60000, anchor)) add(t - L * 60000);
+  } else if (r.type === 'timer') {
+    if (typeof r.at === 'number') add(r.at);
+  } else if (r.type === 'custom') {
     (r.dates || []).forEach((s) => add(new Date(s).getTime()));
   } else if (r.type === 'once') {
     if (r.date && r.times && r.times[0]) add(atTime(new Date(r.date + 'T00:00'), r.times[0]));
@@ -219,28 +557,31 @@ function occurrences(r, from, to){
       }
     }
   }
-  return out.sort((a,b) => a - b);
+  return [...new Set(out)].sort((a,b) => a - b);
 }
 
 function nextOcc(r, now = Date.now()){
   const c = [];
   if (r.snoozeUntil && r.snoozeUntil > now) c.push(r.snoozeUntil);
-  const far = r.type === 'once' || r.type === 'custom';
+  const far = r.type === 'once' || r.type === 'custom' || r.type === 'event';
   const occ = occurrences(r, now, now + (far ? 1830 : 9) * DAY).filter((t) => ymd(new Date(t)) !== r.mutedDate);
   if (occ.length) c.push(occ[0]);
   return c.length ? Math.min(...c) : null;
 }
 
-function summary(r){
+function summary(r){ return baseSummary(r) + (r.nag ? ' · hakt alle ' + r.nag + ' Min nach' : ''); }
+function baseSummary(r){
   const wd = (r.weekdays || []);
   const days = WD.filter((w) => wd.includes(w.v)).map((w) => w.l).join(', ');
   switch (r.type) {
+    case 'timer': return 'Fokus-Timer';
     case 'daily': return 'Täglich · ' + (r.times || []).join(', ');
     case 'weekly': return (days || 'Keine Tage') + ' · ' + (r.times || []).join(', ');
     case 'interval': {
       const e = r.every % 60 === 0 ? (r.every / 60) + ' Std' : r.every + ' Min';
       return `Alle ${e} · ${r.from}–${r.to}` + (wd.length && wd.length < 7 ? ' · ' + days : '');
     }
+    case 'event': return 'Termin · ' + (r.allDay ? 'ganztägig' : (r.startTime || '') + (r.endTime ? '–' + r.endTime : ''));
     case 'custom': return (r.dates || []).length + ' eigene Zeitpunkte';
     case 'once': return 'Einmalig · ' + (r.date ? new Date(r.date + 'T00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}) : '') + ' ' + ((r.times || [])[0] || '');
   }
@@ -254,13 +595,20 @@ function tick(){
   const fired = [];
   for (const r of state.reminders) {
     if (!r.enabled) { r.checkedUntil = now; continue; }
-    let fire = false, when = null;
+    let fire = false, when = null, fromOcc = false;
     if (r.snoozeUntil && now >= r.snoozeUntil) { fire = true; when = r.snoozeUntil; r.snoozeUntil = null; }
     const from = Math.max(r.checkedUntil || r.createdAt || now, now - DAY);
     const occ = occurrences(r, from, now).filter((t) => ymd(new Date(t)) !== r.mutedDate);
-    if (occ.length) { fire = true; when = occ[occ.length - 1]; r.snoozeUntil = null; }
+    if (occ.length) { fire = true; when = occ[occ.length - 1]; r.snoozeUntil = null; fromOcc = true; }
     r.checkedUntil = now;
-    if (fire) { r.pendingAt = r.pendingAt || when; fired.push(r); }
+    if (fire) {
+      if (!r.pendingAt || (fromOcc && r.type === 'event')) { r.pendingAt = when; r.pendingStart = r.type === 'event' ? eventStartForFire(r, when) : null; }
+      r.nagAt = now; r.nagN = 0;
+      r.rtAt = now; fired.push(r);
+    } else if (r.pendingAt && !r.snoozeUntil && r.nag > 0 && (r.nagN || 0) < NAG_MAX && now >= (r.nagAt || r.pendingAt) + r.nag * 60000 && !silentFor(r)) {
+      // Hartnäckig: noch keine Reaktion, also noch einmal melden
+      r.nagAt = now; r.nagN = (r.nagN || 0) + 1; r.rtAt = now; fired.push(r);
+    }
   }
   if (fired.length) {
     save();
@@ -286,19 +634,21 @@ function beep(){
 }
 
 async function notify(r){
+  if (silentFor(r)) return; // Ruhezeit: still
   beep();
-  try { navigator.vibrate && navigator.vibrate([200,100,200,100,200]); } catch (e) {}
+  try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate([200,100,200,100,200]); } catch (e) {}
   const visible = document.visibilityState === 'visible' && document.hasFocus();
-  if (visible || !('Notification' in window) || Notification.permission !== 'granted') return;
+  if (visible || sync.push || !('Notification' in window) || Notification.permission !== 'granted') return;
   const opts = {
-    body: r.note || '', tag: r.id, renotify: true, requireInteraction: true,
+    body: notifBody(r), tag: r.id, renotify: true, requireInteraction: true,
     icon: ICON, badge: ICON, vibrate: [200,100,200,100,200], data: { id: r.id },
-    actions: [{ action:'done', title:'Erledigt' }, { action:'snooze', title:`Snooze ${r.snoozeDefault || 10} Min` }]
+    actions: r.type === 'timer' ? [{ action:'done', title:'OK' }, { action:'snooze', title:'+5 Min' }]
+      : [{ action:'done', title: r.type === 'event' ? 'Gesehen' : 'Erledigt' }, { action:'snooze', title:`Snooze ${r.snoozeDefault || 10} Min` }]
   };
   try {
     const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
-    if (reg) await reg.showNotification(r.title, opts);
-    else new Notification(r.title, { body: opts.body, tag: r.id });
+    if (reg) await reg.showNotification(dispTitle(r), opts);
+    else new Notification(dispTitle(r), { body: opts.body, tag: r.id });
   } catch (e) {}
 }
 
@@ -312,15 +662,17 @@ function act(id, action, arg){
   const r = find(id); if (!r) return;
   const now = Date.now();
   if (action === 'done') {
-    addLog(r, 'done'); r.pendingAt = null; r.snoozeUntil = null;
-    if (r.type === 'once') r.enabled = false;
+    addLog(r, 'done'); r.pendingAt = null; r.pendingStart = null; r.snoozeUntil = null;
+    if (r.type === 'once' || r.type === 'timer') { r.enabled = false; r.updatedAt = now; }
   } else if (action === 'snooze') {
     const m = Math.max(1, Math.min(720, Math.round(Number(arg) || r.snoozeDefault || 10)));
     addLog(r, 'snooze', m); r.snoozeUntil = now + m * 60000; r.pendingAt = r.pendingAt || now;
   } else if (action === 'skip') {
-    addLog(r, 'skip'); r.pendingAt = null; r.snoozeUntil = null; r.mutedDate = ymd(new Date());
-    if (r.type === 'once') r.enabled = false;
+    addLog(r, 'skip'); r.pendingAt = null; r.pendingStart = null; r.snoozeUntil = null; r.mutedDate = ymd(new Date());
+    if (r.type === 'once' || r.type === 'timer') { r.enabled = false; r.updatedAt = now; }
   }
+  r.nagAt = null; r.nagN = 0;
+  r.rtAt = now;
   save(); render();
   closeAlertIfDone();
 }
@@ -335,28 +687,33 @@ function closeAlertIfDone(){
 }
 
 function actionsHtml(r){
+  if (r.type === 'timer') return `<div class="actions"><div class="btnrow" style="margin-top:0">
+    ${r.phase === 'focus' ? `<button class="btn primary" data-act="fxa" data-fx="tobreak">Pause starten (${fx.breakMin} Min)</button>` : `<button class="btn primary" data-act="fxa" data-fx="again">Nächste Runde (${fx.durMin} Min)</button>`}
+    <button class="btn" data-act="snooze" data-id="${r.id}" data-min="5">+5 Min</button>
+    <button class="btn ghost" data-act="done" data-id="${r.id}">Fertig</button></div></div>`;
   const choices = SNOOZE_CHOICES.includes(r.snoozeDefault) ? SNOOZE_CHOICES : [...SNOOZE_CHOICES, r.snoozeDefault].sort((a,b) => a - b);
   return `<div class="actions">
-    <button class="btn primary" data-act="done" data-id="${r.id}">✓ Erledigt</button>
+    <button class="btn primary" data-act="done" data-id="${r.id}">${r.type === 'event' ? '✓ Gesehen' : '✓ Erledigt'}</button>
     <div class="chips"><span class="lbl">Snooze:</span>
       ${choices.map((m) => `<button class="chip${m === r.snoozeDefault ? ' sel' : ''}" data-act="snooze" data-id="${r.id}" data-min="${m}">${m} Min</button>`).join('')}
       <input class="inline-min" type="number" min="1" max="720" inputmode="numeric" placeholder="Min" aria-label="Eigene Snooze-Dauer in Minuten">
       <button class="chip" data-act="snooze-custom" data-id="${r.id}">OK</button>
     </div>
-    <button class="btn ghost" data-act="skip" data-id="${r.id}">Heute kein Fortschritt</button>
+    ${r.type === 'event' ? '' : `<button class="btn ghost" data-act="skip" data-id="${r.id}">Heute kein Fortschritt</button>`}
   </div>`;
 }
 
 function showAlertIfNeeded(force){
   const dlg = $('#alertDlg');
-  if (dlg.open || $('#formDlg').open || $('#setDlg').open) return;
+  if (document.querySelector('dialog[open]')) return;
   const list = pendingActive();
   if (!list.length) return;
   const r = list.sort((a,b) => a.pendingAt - b.pendingAt)[0];
   alertShownFor = r.id;
   $('#alertBody').innerHTML = `
-    <div class="small">Erinnerung · seit ${hhmm(r.pendingAt)} Uhr</div>
-    <div class="big-title">${esc(r.title)}</div>
+    <div class="small">${r.type === 'timer' ? 'Fokus-Timer' : r.type === 'event' ? 'Termin' : 'Erinnerung'} · seit ${hhmm(r.pendingAt)} Uhr</div>
+    <div class="big-title">${esc(dispTitle(r))}</div>
+    ${evInfo(r)}
     ${r.note ? `<div class="alert-note">${esc(r.note)}</div>` : ''}
     ${actionsHtml(r)}
     <div class="dlg-actions"><button class="btn ghost" data-act="close-alert">Später ansehen</button></div>`;
@@ -372,7 +729,8 @@ function render(){
   $('#pendingList').innerHTML = pend.map((r) => {
     const sn = r.snoozeUntil && r.snoozeUntil > now;
     return `<div class="card pending${sn ? ' snoozed' : ''}">
-      <div class="title">${esc(r.title)}</div>
+      <div class="title">${esc(dispTitle(r))}</div>
+      ${evInfo(r)}
       ${r.note ? `<div class="note">${esc(r.note)}</div>` : ''}
       <div class="meta">${sn ? `Schlummert bis <span class="next">${hhmm(r.snoozeUntil)}</span> Uhr` : `Offen seit <span class="next">${hhmm(r.pendingAt)}</span> Uhr`}</div>
       ${actionsHtml(r)}
@@ -380,7 +738,7 @@ function render(){
   }).join('');
 
   // Liste
-  const items = state.reminders.map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
+  const items = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId).map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
     .sort((a,b) => (a.n ?? Infinity) - (b.n ?? Infinity));
   $('#list').innerHTML = items.length ? items.map(({ r, n }) => `
     <div class="card${r.enabled ? '' : ' off'}">
@@ -401,6 +759,16 @@ function render(){
     `<li>${new Date(e.t).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${esc(e.title)} – ${lbl[e.kind] || e.kind}${e.min ? ' ' + e.min + ' Min' : ''}</li>`).join('')
     : '<li>Noch nichts passiert.</li>';
 
+  renderToday();
+  renderQuietBar();
+  applyHome();
+  renderCheckin();
+  renderOne();
+  renderRoutinesToday();
+  if (tab === 'tasks') renderTasks();
+  if (tab === 'focus') renderFocus(); else renderClock();
+  if (tab === 'cal') renderCal();
+  if (tab === 'notes') renderNotes();
   renderBanner();
 }
 
@@ -417,9 +785,10 @@ function renderBanner(){
 /* ---------- Formular ---------- */
 let draft = null, editing = false;
 
-function openForm(r){
+function openForm(r, prefill){
   editing = !!r;
   draft = JSON.parse(JSON.stringify(r || blank()));
+  if (prefill) Object.assign(draft, prefill);
   $('#formTitle').textContent = editing ? 'Erinnerung bearbeiten' : 'Neue Erinnerung';
   $('#btnDelete').hidden = !editing;
   $('#btnDup').hidden = !editing;
@@ -439,7 +808,10 @@ function renderFields(){
       <select id="fType">${TYPES.map(([v,l]) => `<option value="${v}"${d.type === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
     <div id="typeFields" style="display:flex;flex-direction:column;gap:14px"></div>
     <label>Standard-Snooze (Minuten)
-      <input id="fSnooze" type="number" min="1" max="720" inputmode="numeric" value="${d.snoozeDefault}"></label>`;
+      <input id="fSnooze" type="number" min="1" max="720" inputmode="numeric" value="${d.snoozeDefault}"></label>
+    <label>Hartnäckig nachhaken, wenn du nicht reagierst
+      <select id="fNag">${NAG_CHOICES.map(([v, l]) => `<option value="${v}"${(d.nag || 0) === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>`;
+  $('#fNag').onchange = (e) => { draft.nag = Number(e.target.value) || 0; };
   $('#fTitle').oninput = (e) => { draft.title = e.target.value; };
   $('#fNote').oninput = (e) => { draft.note = e.target.value; };
   $('#fSnooze').oninput = (e) => { draft.snoozeDefault = Math.max(1, Number(e.target.value) || 10); };
@@ -530,7 +902,7 @@ function submitForm(e){
   draft.title = draft.title.trim();
   draft.snoozeDefault = Math.max(1, Math.min(720, Number(draft.snoozeDefault) || 10));
   const now = Date.now();
-  draft.checkedUntil = now; draft.snoozeUntil = null; draft.mutedDate = null;
+  draft.checkedUntil = now; draft.snoozeUntil = null; draft.mutedDate = null; draft.updatedAt = now; draft.rtAt = now;
   const i = state.reminders.findIndex((r) => r.id === draft.id);
   if (i >= 0) state.reminders[i] = draft; else { draft.createdAt = now; state.reminders.push(draft); }
   save(); $('#formDlg').close(); render();
@@ -548,11 +920,13 @@ document.addEventListener('click', (e) => {
     if (!v || v < 1) { inp.focus(); return; }
     act(id, 'snooze', v);
   }
-  else if (a === 'edit') openForm(find(id));
+  else if (a === 'edit') { const r = find(id); if (r && r.type === 'event') openEvent(r); else openForm(r); }
   else if (a === 'new') openForm(null);
   else if (a === 'perm') askPermission();
   else if (a === 'close-alert') $('#alertDlg').close();
+  else if (a === 'fxa') fxAction(t.dataset.fx);
 });
+document.addEventListener('click', (e) => { const g = e.target.closest('[data-goto]'); if (g) setTab(g.dataset.goto); });
 
 document.addEventListener('change', (e) => {
   const t = e.target.closest('[data-act="toggle"]'); if (!t) return;
@@ -560,6 +934,7 @@ document.addEventListener('change', (e) => {
   r.enabled = t.checked;
   if (r.enabled) { r.checkedUntil = Date.now(); r.mutedDate = null; }
   else { r.pendingAt = null; r.snoozeUntil = null; }
+  r.updatedAt = r.rtAt = Date.now();
   save(); render();
 });
 
@@ -567,12 +942,13 @@ document.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.tap')) { e.preventDefault(); e.target.click(); }
 });
 
-$('#btnAdd').onclick = () => openForm(null);
+$('#btnAdd').onclick = () => { if (tab === 'cal') openEvent(null, calSel); else if (tab === 'notes') openNote(null); else if (tab === 'tasks') { if (seg === 'routines') openRoutine(null); else openTask(null); } else openForm(null); };
 $('#frm').addEventListener('submit', submitForm);
 $('#btnCancel').onclick = () => $('#formDlg').close();
 $('#btnDelete').onclick = () => {
   if (!confirm('Diese Erinnerung wirklich löschen?')) return;
   state.reminders = state.reminders.filter((r) => r.id !== draft.id);
+  state.tombs.push({ id: draft.id, updatedAt: Date.now() });
   save(); $('#formDlg').close(); render();
 };
 $('#btnDup').onclick = () => {
@@ -596,7 +972,7 @@ async function askPermission(){
   try { await Notification.requestPermission(); } catch (e) {}
   $('#permInfo').textContent = permText(); renderBanner();
 }
-$('#btnSettings').onclick = () => { $('#permInfo').textContent = permText(); $('#setDlg').showModal(); };
+$('#btnSettings').onclick = () => { $('#permInfo').textContent = permText(); renderQuiet($('#quietBox')); $('#setDlg').showModal(); };
 $('#btnSetClose').onclick = () => $('#setDlg').close();
 $('#btnPerm').onclick = askPermission;
 $('#btnTest').onclick = async () => {
@@ -623,16 +999,1479 @@ $('#fileImport').onchange = async (e) => {
     if (!data || !Array.isArray(data.reminders)) throw new Error('format');
     if (!confirm(`${data.reminders.length} Erinnerungen importieren? Die aktuellen Erinnerungen auf diesem Gerät werden ersetzt.`)) return;
     const now = Date.now();
-    state = { reminders: data.reminders.map((r) => Object.assign(blank(), r, { checkedUntil: now, pendingAt: null, snoozeUntil: null })), log: Array.isArray(data.log) ? data.log : [] };
+    const incoming = data.reminders.map((r) => Object.assign(blank(), r, { checkedUntil: now, pendingAt: null, snoozeUntil: null, updatedAt: now, rtAt: now }));
+    const keep = new Set(incoming.map((r) => r.id));
+    const gone = state.reminders.filter((r) => !keep.has(r.id)).map((r) => ({ id: r.id, updatedAt: now }));
+    let notes = state.notes, noteTombs = state.noteTombs;
+    if (Array.isArray(data.notes)) {
+      notes = data.notes.filter((n) => n && n.id && !n.deleted).map((n) => ({ ...n, updatedAt: now }));
+      const nk = new Set(notes.map((n) => n.id));
+      noteTombs = [...noteTombs.filter((t) => !nk.has(t.id)), ...state.notes.filter((n) => !nk.has(n.id)).map((n) => ({ id: n.id, updatedAt: now }))];
+    }
+    const next = { reminders: incoming, log: Array.isArray(data.log) ? data.log : [], tombs: [...state.tombs.filter((t) => !keep.has(t.id)), ...gone], notes, noteTombs, dead: {} };
+    for (const c of GCOLS) {
+      if (Array.isArray(data[c])) {
+        next[c] = data[c].filter((x) => x && typeof x.id === 'string' && !x.deleted).map((x) => ({ ...x, updatedAt: now }));
+        const ks = new Set(next[c].map((x) => x.id));
+        next.dead[c] = [...state.dead[c].filter((t) => !ks.has(t.id)), ...state[c].filter((x) => !ks.has(x.id)).map((x) => ({ id: x.id, updatedAt: now }))];
+      } else { next[c] = state[c]; next.dead[c] = state.dead[c]; }
+    }
+    state = next;
     save(); render(); $('#setDlg').close();
   } catch (err) { alert('Die Datei konnte nicht gelesen werden.'); }
 };
+
+/* ---------- Tabs ---------- */
+const TABS = ['today', 'tasks', 'focus', 'cal', 'notes'];
+const TAB_EL = { today: '#tabToday', tasks: '#tabTasks', focus: '#tabFocus', cal: '#tabCal', notes: '#tabNotes' };
+let tab = 'today';
+try { let t = localStorage.getItem('fokus.tab'); if (t === 'rem') t = 'today'; if (TABS.includes(t)) tab = t; } catch (e) {}
+function setTab(t){
+  tab = t;
+  try { localStorage.setItem('fokus.tab', t); } catch (e) {}
+  for (const k of TABS) $(TAB_EL[k]).hidden = k !== t;
+  document.querySelectorAll('#tabs button').forEach((b) => { b.classList.toggle('on', b.dataset.tab === t); if (b.dataset.tab === t) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  $('#btnAdd').hidden = t === 'focus';
+  $('#btnAdd').setAttribute('aria-label', { today: 'Neue Erinnerung', tasks: seg === 'routines' ? 'Neue Routine' : 'Neue Aufgabe', cal: 'Neuer Termin', notes: 'Neue Notiz' }[t] || 'Neu');
+  if (t === 'tasks') setSeg(seg, true);
+  render();
+}
+$('#tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) { setTab(b.dataset.tab); window.scrollTo(0, 0); } });
+function flash(msg){
+  const el = $('#toast'); el.textContent = msg; el.hidden = false;
+  clearTimeout(flash.t); flash.t = setTimeout(() => { el.hidden = true; }, 4000);
+}
+
+/* ---------- Termine ---------- */
+const LEAD_CHOICES = [[0, 'Zur Startzeit'], [5, '5 Min'], [15, '15 Min'], [30, '30 Min'], [60, '1 Std'], [120, '2 Std'], [1440, '1 Tag']];
+const COLORS = ['#ffc43d', '#4cd08a', '#5aa9ff', '#ff7a59', '#c08bff'];
+const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+const daysIn = (y, m1) => new Date(y, m1, 0).getDate(); // m1 = 1..12
+
+// Termin-Starts im Intervall (from, to]; anchorMin = Minuten seit Mitternacht
+function eventInstances(r, from, to, anchorMin){
+  const out = [];
+  const m0 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(r.startDate || ''); if (!m0) return out;
+  const sy = +m0[1], sm = +m0[2], sd = +m0[3], rep = r.repeat || 'none';
+  const startDay = new Date(sy, sm - 1, sd), startWd = startDay.getDay();
+  const first = new Date(from); first.setHours(0, 0, 0, 0);
+  for (const d = new Date(first); d.getTime() <= to; d.setDate(d.getDate() + 1)) {
+    if (d < startDay) continue;
+    const y = d.getFullYear(), mo = d.getMonth() + 1, dn = d.getDate();
+    if (r.repeatUntil && ymd(d) > r.repeatUntil) continue;
+    let ok = false;
+    if (rep === 'none') ok = y === sy && mo === sm && dn === sd;
+    else if (rep === 'daily') ok = true;
+    else if (rep === 'weekly') ok = d.getDay() === startWd;
+    else if (rep === 'monthly') ok = dn === Math.min(sd, daysIn(y, mo));
+    else if (rep === 'yearly') ok = mo === sm && dn === Math.min(sd, daysIn(y, mo));
+    if (!ok) continue;
+    const t = new Date(d); t.setHours(0, anchorMin, 0, 0);
+    const ts = t.getTime();
+    if (ts > from && ts <= to) out.push(ts);
+  }
+  return out;
+}
+const eventAnchor = (r) => (r.allDay ? 540 : toMin(r.startTime)); // ganztägig: Erinnerung um 09:00
+const eventLeads = (r) => (Array.isArray(r.leads) ? r.leads : [15]);
+const eventTravel = (r) => (r.allDay ? 0 : Math.max(0, Math.min(720, Math.round(Number(r.travel) || 0))));
+// Mit Wegzeit zählen die Vorab-Erinnerungen ab der Aufbruchszeit, und die Aufbruchszeit selbst kommt dazu
+function eventOffsets(r){
+  const tr = eventTravel(r), leads = eventLeads(r);
+  if (!tr) return leads;
+  return [...new Set([0, ...leads])].map((L) => L + tr);
+}
+function departLine(r){
+  const tr = eventTravel(r); if (!tr || !r.pendingStart) return '';
+  const dep = r.pendingStart - tr * 60000, left = Math.round((dep - Date.now()) / 60000);
+  return left > 0 ? `Losgehen in ${left} Min (um ${hhmm(dep)} Uhr, ${tr} Min Weg)` : `Jetzt losgehen! (${tr} Min Weg)`;
+}
+const isDeparture = (r) => { const tr = eventTravel(r); return !!(r.type === 'event' && tr && r.pendingStart && Date.now() >= r.pendingStart - tr * 60000 - 30000); };
+const dispTitle = (r) => (isDeparture(r) ? 'Jetzt losgehen: ' : '') + r.title;
+function eventStartForFire(r, fireTs){
+  for (const L of eventOffsets(r)) { const s = fireTs + L * 60000; if (eventInstances(r, s - 1, s, eventAnchor(r)).length) return s; }
+  return null;
+}
+function fmtStart(r, ts){
+  if (!r.allDay) return fmtWhen(ts) + ' Uhr';
+  const f = fmtWhen(ts); return f.replace(/ \d{2}:\d{2}$/, '') + ' ganztägig';
+}
+function evInfo(r){
+  if (r.type !== 'event') return '';
+  const dl = departLine(r);
+  return `<div class="meta">${dl ? `<span class="next">${esc(dl)}</span><br>` : ''}${r.pendingStart ? `Termin: <span class="next">${esc(fmtStart(r, r.pendingStart))}</span>` : 'Termin'}${r.place ? ' · ' + esc(r.place) : ''}</div>`;
+}
+function notifBody(r){
+  if (r.type !== 'event') return r.note || '';
+  return [departLine(r), r.pendingStart ? fmtStart(r, r.pendingStart) : '', r.place || '', r.note || ''].filter(Boolean).join('\n');
+}
+
+const nextHour = () => { const d = new Date(Date.now() + 3600e3); return pad(d.getHours()) + ':00'; };
+let evDraft = null, evEditing = false;
+function openEvent(r, day){
+  evEditing = !!r;
+  evDraft = r ? JSON.parse(JSON.stringify(r)) : { id: uid(), type: 'event', title: '', note: '', place: '', startDate: day || ymd(new Date()), startTime: nextHour(), endTime: '', allDay: false, repeat: 'none', repeatUntil: '', leads: [15], travel: 0, nag: 0, color: COLORS[0], enabled: true, snoozeDefault: 10 };
+  $('#evTravel').value = evDraft.travel || '';
+  $('#evQuiet').checked = !!evDraft.quiet;
+  $('#evNag').innerHTML = NAG_CHOICES.map(([v, l]) => `<option value="${v}"${(evDraft.nag || 0) === v ? ' selected' : ''}>${l}</option>`).join('');
+  if (!Array.isArray(evDraft.leads)) evDraft.leads = [15];
+  $('#evHead').textContent = evEditing ? 'Termin bearbeiten' : 'Neuer Termin';
+  $('#evTitle').value = evDraft.title; $('#evAllDay').checked = !!evDraft.allDay;
+  $('#evDate').value = evDraft.startDate; $('#evStart').value = evDraft.startTime || ''; $('#evEnd').value = evDraft.endTime || '';
+  $('#evPlace').value = evDraft.place || ''; $('#evNote').value = evDraft.note || '';
+  $('#evRepeat').value = evDraft.repeat || 'none'; $('#evUntil').value = evDraft.repeatUntil || '';
+  $('#evDelete').hidden = !evEditing; $('#evDup').hidden = !evEditing; $('#evErr').textContent = '';
+  syncEvForm(); renderEvChips();
+  $('#evDlg').showModal();
+}
+function syncEvForm(){
+  const all = $('#evAllDay').checked;
+  $('#evStartWrap').hidden = all; $('#evEndWrap').hidden = all; $('#evTravelWrap').hidden = all;
+  $('#evUntilWrap').hidden = $('#evRepeat').value === 'none';
+}
+function renderEvChips(){
+  $('#evLeads').innerHTML = LEAD_CHOICES.map(([m, l]) => `<button type="button" class="chip${evDraft.leads.includes(m) ? ' sel' : ''}" data-lead="${m}">${l}</button>`).join('')
+    + `<button type="button" class="chip${evDraft.leads.length ? '' : ' sel'}" data-lead="none">Keine</button>`;
+  $('#evColors').innerHTML = COLORS.map((c) => `<button type="button" class="swatch${evDraft.color === c ? ' sel' : ''}" data-col="${c}" style="background:${c}" aria-label="Farbe ${c}"></button>`).join('');
+}
+$('#evLeads').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-lead]'); if (!b) return;
+  if (b.dataset.lead === 'none') evDraft.leads = [];
+  else { const m = Number(b.dataset.lead), i = evDraft.leads.indexOf(m); if (i >= 0) evDraft.leads.splice(i, 1); else evDraft.leads.push(m); }
+  renderEvChips();
+});
+$('#evColors').addEventListener('click', (e) => { const b = e.target.closest('[data-col]'); if (b) { evDraft.color = b.dataset.col; renderEvChips(); } });
+$('#evAllDay').addEventListener('change', syncEvForm);
+$('#evRepeat').addEventListener('change', syncEvForm);
+$('#evCancel').onclick = () => $('#evDlg').close();
+$('#evDlg').addEventListener('close', () => showAlertIfNeeded());
+$('#evFrm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const d = evDraft;
+  d.title = $('#evTitle').value.trim(); d.allDay = $('#evAllDay').checked; d.startDate = $('#evDate').value;
+  d.startTime = d.allDay ? '' : $('#evStart').value; d.endTime = d.allDay ? '' : $('#evEnd').value;
+  d.place = $('#evPlace').value.trim(); d.note = $('#evNote').value; d.repeat = $('#evRepeat').value;
+  d.repeatUntil = d.repeat === 'none' ? '' : $('#evUntil').value;
+  d.leads = [...d.leads].sort((a, b) => a - b);
+  d.travel = d.allDay ? 0 : Math.max(0, Math.min(720, Math.round(Number($('#evTravel').value) || 0)));
+  d.nag = Number($('#evNag').value) || 0;
+  d.quiet = $('#evQuiet').checked;
+  let msg = '';
+  if (!d.title) msg = 'Bitte gib einen Titel ein.';
+  else if (!d.startDate) msg = 'Bitte ein Datum wählen.';
+  else if (!d.allDay && !d.startTime) msg = 'Bitte eine Startzeit angeben.';
+  else if (!d.allDay && d.endTime && toMin(d.endTime) <= toMin(d.startTime)) msg = 'Das Ende liegt nicht nach dem Beginn.';
+  else if (d.repeatUntil && d.repeatUntil < d.startDate) msg = '„Wiederholen bis“ liegt vor dem Start.';
+  if (msg) { $('#evErr').textContent = msg; return; }
+  const now = Date.now();
+  d.type = 'event'; d.enabled = true; d.checkedUntil = now; d.snoozeUntil = null; d.mutedDate = null; d.updatedAt = now; d.rtAt = now;
+  const i = state.reminders.findIndex((r) => r.id === d.id);
+  if (i >= 0) state.reminders[i] = d; else { d.createdAt = now; state.reminders.push(d); }
+  const [y, m] = d.startDate.split('-').map(Number);
+  calSel = d.startDate; calMonth = new Date(y, m - 1, 1);
+  save(); $('#evDlg').close(); render();
+});
+$('#evDelete').onclick = () => {
+  if (!confirm('Diesen Termin wirklich löschen?')) return;
+  state.reminders = state.reminders.filter((r) => r.id !== evDraft.id);
+  state.tombs.push({ id: evDraft.id, updatedAt: Date.now() });
+  save(); $('#evDlg').close(); render();
+};
+$('#evDup').onclick = () => {
+  const copy = JSON.parse(JSON.stringify(evDraft)); copy.id = uid(); copy.title = (evDraft.title || '') + ' (Kopie)'; copy.pendingAt = null; copy.pendingStart = null;
+  $('#evDlg').close(); openEvent(null, copy.startDate); evDraft = Object.assign(evDraft, copy, { id: copy.id });
+  $('#evTitle').value = evDraft.title; renderEvChips();
+};
+
+/* ---------- Kalender ---------- */
+let calMonth = (() => { const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); return d; })();
+let calSel = ymd(new Date());
+function itemsOnDay(day, withRem){
+  const a = day.getTime() - 1, e = new Date(day); e.setDate(e.getDate() + 1); const b = e.getTime() - 1;
+  const items = [];
+  for (const r of state.reminders) {
+    if (r.type === 'event') {
+      for (const t of eventInstances(r, a, b, r.allDay ? 0 : toMin(r.startTime))) items.push({ t, r, kind: 'event' });
+    } else if (withRem && r.enabled && r.type !== 'timer') {
+      const occ = occurrences(r, a, b);
+      if (!occ.length) continue;
+      if (r.type === 'interval' && occ.length > 3) items.push({ t: occ[0], r, kind: 'rem', many: occ.length });
+      else occ.forEach((t) => items.push({ t, r, kind: 'rem' }));
+    }
+  }
+  return items.sort((x, y) => (y.r.allDay ? 1 : 0) - (x.r.allDay ? 1 : 0) || x.t - y.t);
+}
+function timeLabel(it){
+  if (it.kind === 'event') return it.r.allDay ? 'Ganztägig' : hhmm(it.t) + (it.r.endTime ? '–' + it.r.endTime : '');
+  return hhmm(it.t);
+}
+function renderCal(){
+  const y = calMonth.getFullYear(), m = calMonth.getMonth();
+  $('#calTitle').textContent = `${MONTHS[m]} ${y}`;
+  const withRem = $('#calShowRem').checked;
+  const offset = (new Date(y, m, 1).getDay() + 6) % 7; // Montag zuerst
+  const todayKey = ymd(new Date());
+  let h = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((x) => `<div class="cal-dow">${x}</div>`).join('');
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(y, m, 1 - offset + i), key = ymd(d);
+    const items = itemsOnDay(d, withRem);
+    const cols = [...new Set(items.map((it) => (it.kind === 'event' ? it.r.color || COLORS[0] : '#9aa1b2')))].slice(0, 3);
+    h += `<button class="cal-cell${d.getMonth() !== m ? ' other' : ''}${key === todayKey ? ' today' : ''}${key === calSel ? ' sel' : ''}" data-day="${key}" aria-label="${d.getDate()}. ${MONTHS[d.getMonth()]}${items.length ? ', ' + items.length + ' Einträge' : ''}"><span class="dn">${d.getDate()}</span><span class="dots">${cols.map((c) => `<span class="dot" style="background:${c}"></span>`).join('')}</span></button>`;
+  }
+  $('#calGrid').innerHTML = h;
+  const [sy, sm, sd] = calSel.split('-').map(Number), sel = new Date(sy, sm - 1, sd);
+  $('#agendaTitle').textContent = sel.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+  const items = itemsOnDay(sel, withRem);
+  $('#agenda').innerHTML = items.length ? items.map((it) => `
+    <div class="card ag-item" data-item="${it.r.id}" role="button" tabindex="0">
+      <div class="ag-bar" style="background:${it.kind === 'event' ? (it.r.color || COLORS[0]) : '#9aa1b2'}"></div>
+      <div class="ag-time">${esc(timeLabel(it))}</div>
+      <div style="flex:1;min-width:0"><div class="title">${esc(it.r.title)}</div>
+        <div class="meta">${it.kind === 'event' ? 'Termin' : 'Erinnerung'}${it.many ? ' · ' + it.many + ' Mal' : ''}${it.kind === 'event' && eventTravel(it.r) ? ' · Losgehen ' + hhmm(it.t - eventTravel(it.r) * 60000) : ''}${it.r.place ? ' · ' + esc(it.r.place) : ''}${(it.r.repeat && it.r.repeat !== 'none') ? ' · wiederholt' : ''}${it.kind === 'event' && it.r.quiet ? ' · ruhig' : ''}</div>
+        ${it.r.note ? `<div class="note">${esc(it.r.note)}</div>` : ''}</div>
+    </div>`).join('') : '<div class="empty" style="padding:18px 10px"><p style="margin:0">Nichts geplant.</p></div>';
+}
+function renderToday(){
+  const sec = $('#todaySec'); if (!sec) return;
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const items = itemsOnDay(now, false);
+  sec.hidden = !items.length;
+  $('#todayList').innerHTML = items.map((it) => `
+    <div class="card ag-item" data-item="${it.r.id}" role="button" tabindex="0">
+      <div class="ag-bar" style="background:${it.r.color || COLORS[0]}"></div>
+      <div class="ag-time">${esc(timeLabel(it))}</div>
+      <div style="flex:1;min-width:0"><div class="title">${esc(it.r.title)}</div>${it.r.place || eventTravel(it.r) ? `<div class="meta">${eventTravel(it.r) ? 'Losgehen ' + hhmm(it.t - eventTravel(it.r) * 60000) + (it.r.place ? ' · ' : '') : ''}${esc(it.r.place || '')}</div>` : ''}</div>
+    </div>`).join('');
+}
+function moveMonth(delta){ calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + delta, 1); renderCal(); }
+$('#calPrev').onclick = () => moveMonth(-1);
+$('#calNext').onclick = () => moveMonth(1);
+$('#calToday').onclick = () => { const n = new Date(); calMonth = new Date(n.getFullYear(), n.getMonth(), 1); calSel = ymd(n); renderCal(); };
+$('#calShowRem').onchange = renderCal;
+$('#agendaAdd').onclick = () => openEvent(null, calSel);
+$('#calGrid').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-day]'); if (!c) return;
+  calSel = c.dataset.day;
+  const [y, m] = calSel.split('-').map(Number);
+  if (m - 1 !== calMonth.getMonth() || y !== calMonth.getFullYear()) calMonth = new Date(y, m - 1, 1);
+  renderCal();
+});
+function openItem(id){ const r = find(id); if (!r) return; if (r.type === 'event') openEvent(r); else openForm(r); }
+['#agenda', '#todayList'].forEach((s) => {
+  $(s).addEventListener('click', (e) => { const c = e.target.closest('[data-item]'); if (c) openItem(c.dataset.item); });
+  $(s).addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-item]')) { e.preventDefault(); openItem(e.target.dataset.item); } });
+});
+
+/* ---------- Notizen ---------- */
+const noteTitleOf = (n) => (n.title || (n.body || '').split('\n').find((l) => l.trim()) || 'Ohne Titel').slice(0, 80);
+function renderNotes(){
+  const q = ($('#noteSearch').value || '').trim().toLowerCase();
+  const list = state.notes.filter((n) => !q || ((n.title || '') + '\n' + (n.body || '')).toLowerCase().includes(q))
+    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updatedAt || 0) - (a.updatedAt || 0));
+  $('#noteList').innerHTML = list.length ? list.map((n) => {
+    const body = n.title ? (n.body || '') : (n.body || '').split('\n').slice(1).join('\n');
+    return `<div class="card" data-note="${n.id}" role="button" tabindex="0" style="cursor:pointer">
+      <div class="title">${n.pinned ? '<span class="pin" aria-label="angeheftet">📌 </span>' : ''}${esc(noteTitleOf(n))}</div>
+      ${body.trim() ? `<div class="note">${esc(body)}</div>` : ''}
+      <div class="meta">${new Date(n.updatedAt || 0).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}</div></div>`;
+  }).join('') : `<div class="empty"><p>${q ? 'Keine Treffer.' : 'Noch keine Notizen.<br>Schreib oben einfach los, auch Halbfertiges.'}</p></div>`;
+}
+function addNote(n){
+  const now = Date.now();
+  state.notes.push({ id: uid(), title: '', body: '', pinned: false, createdAt: now, ...n, updatedAt: now });
+  save(); render();
+}
+$('#quickForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = $('#quickNote').value.trim(); if (!v) return;
+  addNote({ body: v }); $('#quickNote').value = '';
+});
+$('#noteSearch').addEventListener('input', renderNotes);
+let noteDraft = null, noteIsNew = false, noteDeleted = false;
+function openNote(n){
+  noteIsNew = !n; noteDeleted = false;
+  noteDraft = n ? { ...n } : { id: uid(), title: '', body: '', pinned: false, createdAt: Date.now() };
+  $('#noteTitle').value = noteDraft.title || ''; $('#noteBody').value = noteDraft.body || '';
+  $('#notePin').textContent = noteDraft.pinned ? 'Lösen' : 'Anheften';
+  $('#noteDel').hidden = noteIsNew;
+  $('#noteDlg').showModal();
+  if (noteIsNew) $('#noteBody').focus();
+}
+function commitNote(){
+  if (!noteDraft || noteDeleted) return;
+  const t = $('#noteTitle').value.trim(), b = $('#noteBody').value;
+  const i = state.notes.findIndex((x) => x.id === noteDraft.id);
+  const empty = !t && !b.trim();
+  if (i < 0) { if (empty) return; state.notes.push({ ...noteDraft, title: t, body: b, updatedAt: Date.now() }); }
+  else if (state.notes[i].title !== t || state.notes[i].body !== b || state.notes[i].pinned !== noteDraft.pinned) {
+    state.notes[i] = { ...state.notes[i], title: t, body: b, pinned: noteDraft.pinned, updatedAt: Date.now() };
+  } else return;
+  save(); render();
+}
+$('#noteList').addEventListener('click', (e) => { const c = e.target.closest('[data-note]'); if (c) openNote(state.notes.find((n) => n.id === c.dataset.note)); });
+$('#noteList').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-note]')) { e.preventDefault(); e.target.click(); } });
+$('#noteDone').onclick = () => $('#noteDlg').close();
+$('#noteDlg').addEventListener('close', () => { commitNote(); noteDraft = null; showAlertIfNeeded(); });
+$('#notePin').onclick = () => { noteDraft.pinned = !noteDraft.pinned; $('#notePin').textContent = noteDraft.pinned ? 'Lösen' : 'Anheften'; };
+$('#noteDel').onclick = () => {
+  if (!confirm('Diese Notiz wirklich löschen?')) return;
+  noteDeleted = true;
+  state.notes = state.notes.filter((n) => n.id !== noteDraft.id);
+  state.noteTombs.push({ id: noteDraft.id, updatedAt: Date.now() });
+  save(); $('#noteDlg').close(); render();
+};
+$('#noteRem').onclick = () => {
+  const t = $('#noteTitle').value.trim(), b = $('#noteBody').value;
+  const title = (t || b.split('\n').find((l) => l.trim()) || '').slice(0, 120), note = t ? b : b.split('\n').slice(1).join('\n').trim();
+  $('#noteDlg').close(); setTab('today'); openForm(null, { title, note });
+};
+
+/* ---------- Aufgaben mit Mini-Schritten ---------- */
+let seg = 'tasks';
+try { if (localStorage.getItem('fokus.seg') === 'routines') seg = 'routines'; } catch (e) {}
+function setSeg(s, quiet){
+  seg = s;
+  try { localStorage.setItem('fokus.seg', s); } catch (e) {}
+  $('#segTasks').hidden = s !== 'tasks'; $('#segRoutines').hidden = s !== 'routines';
+  document.querySelectorAll('[data-seg]').forEach((b) => { b.classList.toggle('sel', b.dataset.seg === s); b.setAttribute('aria-pressed', String(b.dataset.seg === s)); });
+  if (tab === 'tasks') $('#btnAdd').setAttribute('aria-label', s === 'routines' ? 'Neue Routine' : 'Neue Aufgabe');
+  if (!quiet) renderTasks();
+}
+document.querySelectorAll('[data-seg]').forEach((b) => { b.onclick = () => setSeg(b.dataset.seg); });
+
+const todayKey = () => ymd(new Date());
+const dueRank = (t) => { const k = todayKey(); return t.due ? (t.due <= k ? 0 : 1) : 2; };
+const byUrgency = (a, b) => dueRank(a) - dueRank(b) || (a.due || '').localeCompare(b.due || '') || (a.createdAt || 0) - (b.createdAt || 0);
+const baseOrder = () => state.tasks.filter((t) => !t.done).sort(byUrgency);
+const openTasks = () => baseOrder().sort((a, b) => (b.now ? 1 : 0) - (a.now ? 1 : 0));
+const nextTask = () => openTasks()[0] || null;
+const nextStep = (t) => (t.steps || []).find((s) => !s.done) || null;
+const findTask = (id) => state.tasks.find((t) => t.id === id);
+const clone = (x) => JSON.parse(JSON.stringify(x));
+function dueLabel(t){
+  if (!t.due) return '';
+  const [y, m, d] = t.due.split('-').map(Number), day = new Date(y, m - 1, d);
+  const diff = Math.round((day - new Date(new Date().setHours(0, 0, 0, 0))) / DAY);
+  if (diff < 0) return ' · überfällig';
+  if (diff === 0) return ' · heute fällig';
+  if (diff === 1) return ' · morgen fällig';
+  return ' · fällig ' + day.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+}
+const progHtml = (k, n) => `<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${k}" aria-label="${k} von ${n} geschafft"><i style="width:${n ? Math.round(k / n * 100) : 0}%"></i></div>`;
+const newTask = (title) => ({ id: uid(), title: title || '', note: '', due: '', steps: [], done: false, doneAt: null, now: false, createdAt: Date.now() });
+function setNow(id){ for (const t of [...state.tasks]) { const v = t.id === id; if (!!t.now !== v) colPut('tasks', { ...t, now: v }); } }
+// Aufgabe mit Schritten gilt als erledigt, sobald alle Schritte abgehakt sind
+function finishIfComplete(t, now, allowReopen){
+  const n = t.steps.length, k = t.steps.filter((s) => s.done).length;
+  if (n && k === n && !t.done) { t.done = true; t.doneAt = now; t.now = false; return true; }
+  if (allowReopen && n && k < n && t.done) { t.done = false; t.doneAt = null; }
+  return false;
+}
+function toggleStep(id, sid, val){
+  const t0 = findTask(id); if (!t0) return;
+  const t = clone(t0), now = Date.now(), s = t.steps.find((x) => x.id === sid); if (!s) return;
+  s.done = val; s.doneAt = val ? now : null;
+  const fin = finishIfComplete(t, now, !val);
+  colPut('tasks', t); save();
+  if (val) flash(fin ? `Aufgabe geschafft: ${t.title} ✓` : nextStep(t) ? 'Geschafft! Weiter mit dem nächsten kleinen Schritt.' : 'Geschafft!');
+  render();
+}
+function completeTask(id, val){
+  const t0 = findTask(id); if (!t0) return;
+  const t = clone(t0);
+  t.done = val; t.doneAt = val ? Date.now() : null; if (val) t.now = false;
+  colPut('tasks', t); save();
+  if (val) flash(`Aufgabe geschafft: ${t.title} ✓`);
+  render();
+}
+
+function renderOne(){
+  const t = nextTask(), open = state.tasks.filter((x) => !x.done).length;
+  let h;
+  if (!t) h = `<div class="card"><div class="small">Keine offene Aufgabe. Leg eine an und zerleg sie in kleine Schritte, dann siehst du hier immer nur den nächsten.</div><div class="btnrow"><button class="btn primary" data-one="new">+ Aufgabe anlegen</button></div></div>`;
+  else {
+    const st = nextStep(t), n = t.steps.length, k = t.steps.filter((s) => s.done).length;
+    h = `<div class="card one">
+      <div class="small">${n ? `${esc(t.title)} · Schritt ${k + 1} von ${n}` : 'Aufgabe'}${esc(dueLabel(t))}</div>
+      <div class="step">${esc(st ? st.text : t.title)}</div>
+      ${n ? progHtml(k, n) : '<div class="small">Noch keine Schritte. Wirkt die Aufgabe groß? Dann teil sie auf.</div>'}
+      <div class="btnrow">
+        <button class="btn primary" data-one="done" data-id="${t.id}" data-step="${st ? st.id : ''}">✓ Geschafft</button>
+        <button class="btn" data-one="focus" data-id="${t.id}">Fokus-Timer</button>
+        <button class="btn" data-one="split" data-id="${t.id}" data-step="${st ? st.id : ''}">${n ? 'Zu groß? Aufteilen' : 'Aufteilen'}</button>
+        ${open > 1 ? `<button class="btn ghost" data-one="other" data-id="${t.id}">Andere Aufgabe</button>` : ''}
+      </div></div>`;
+  }
+  $('#oneThing').innerHTML = h;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-one]'); if (!b) return;
+  const id = b.dataset.id, a = b.dataset.one;
+  if (a === 'new') { setTab('tasks'); setSeg('tasks'); openTask(null); }
+  else if (a === 'done') { if (b.dataset.step) toggleStep(id, b.dataset.step, true); else completeTask(id, true); }
+  else if (a === 'focus') { fx.taskId = id; saveFx(); setTab('focus'); if (timerView().state === 'idle') startTimer('focus'); }
+  else if (a === 'split') openSplit(id, b.dataset.step || '');
+  else if (a === 'other') {
+    const base = baseOrder(), i = base.findIndex((x) => x.id === id), nx = base[(i + 1) % base.length];
+    if (nx) { setNow(nx.id); save(); render(); }
+  }
+});
+
+function renderTasks(){
+  const list = openTasks();
+  $('#taskList').innerHTML = list.length ? list.map((t) => {
+    const st = nextStep(t), n = t.steps.length, k = t.steps.filter((s) => s.done).length;
+    return `<div class="card task-card" data-task="${t.id}" role="button" tabindex="0">
+      <div class="row"><div style="flex:1;min-width:0">
+        <div class="title">${t.now ? '<span class="pin" aria-label="als Nächstes">★ </span>' : ''}${esc(t.title)}</div>
+        ${st ? `<div class="meta">Als Nächstes: <span class="next">${esc(st.text)}</span></div>` : ''}
+        <div class="meta">${n ? `${k} von ${n} Schritten` : 'Noch keine Schritte · antippen zum Zerlegen'}${esc(dueLabel(t))}</div>
+        ${n ? progHtml(k, n) : ''}
+      </div><button class="icon-btn" data-tcheck="${t.id}" aria-label="Aufgabe „${esc(t.title)}“ erledigt">✓</button></div></div>`;
+  }).join('') : '<div class="empty"><p>Keine offenen Aufgaben.<br>Schreib oben rein, was ansteht. Zerlegen kannst du später.</p></div>';
+  const done = state.tasks.filter((t) => t.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+  $('#doneBox').hidden = !done.length;
+  $('#doneCount').textContent = done.length;
+  $('#taskDone').innerHTML = done.slice(0, 30).map((t) => `<div class="card task-card off" data-task="${t.id}" role="button" tabindex="0"><div class="row"><div style="flex:1;min-width:0"><div class="title" style="text-decoration:line-through">${esc(t.title)}</div><div class="meta">Erledigt ${t.doneAt ? new Date(t.doneAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) : ''}</div></div><button class="btn" data-treopen="${t.id}">Wieder öffnen</button></div></div>`).join('');
+  renderRoutineList();
+}
+$('#tabTasks').addEventListener('click', (e) => {
+  const c = e.target.closest('[data-tcheck]'); if (c) { completeTask(c.dataset.tcheck, true); return; }
+  const r = e.target.closest('[data-treopen]'); if (r) { completeTask(r.dataset.treopen, false); return; }
+  const tp = e.target.closest('[data-tpl]'); if (tp) { openRoutine(null, RT_TEMPLATES[Number(tp.dataset.tpl)]); return; }
+  const ro = e.target.closest('[data-rt]'); if (ro) { openRoutine(state.routines.find((x) => x.id === ro.dataset.rt)); return; }
+  const k = e.target.closest('[data-task]'); if (k) openTask(findTask(k.dataset.task));
+});
+$('#tabTasks').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-task],[data-rt]')) { e.preventDefault(); e.target.click(); } });
+$('#taskQuick').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = $('#taskQuickIn').value.trim(); if (!v) return;
+  colPut('tasks', newTask(v.slice(0, 160))); $('#taskQuickIn').value = '';
+  save(); render();
+});
+
+// Aufgaben-Dialog (speichert beim Schließen)
+const STEP_IDEAS = ['Alles Nötige zusammensuchen', 'Unterlagen oder Datei öffnen', '5 Minuten einfach anfangen', 'Aufschreiben, was unklar ist', 'Jemanden um Hilfe fragen', 'Nächsten Schritt festlegen'];
+let tkDraft = null, tkOrig = '', tkDeleted = false;
+function openTask(t){
+  tkDeleted = false;
+  tkDraft = t ? clone(t) : newTask('');
+  tkOrig = t ? JSON.stringify(t) : '';
+  $('#taskHead').textContent = t ? 'Aufgabe' : 'Neue Aufgabe';
+  $('#tkTitle').value = tkDraft.title; $('#tkNote').value = tkDraft.note || ''; $('#tkDue').value = tkDraft.due || '';
+  $('#tkDel').hidden = !t; $('#tkAdd').value = '';
+  $('#tkIdeas').innerHTML = STEP_IDEAS.map((x, i) => `<button type="button" class="chip" data-idea="${i}">${esc(x)}</button>`).join('');
+  renderTkSteps();
+  $('#taskDlg').showModal();
+  if (!t) $('#tkTitle').focus();
+}
+function renderTkSteps(){
+  const d = tkDraft;
+  $('#tkSteps').innerHTML = d.steps.map((s, i) => `<div class="list-item"><input type="checkbox" class="cb" data-sdone="${i}" ${s.done ? 'checked' : ''} aria-label="Schritt ${i + 1} erledigt"><input type="text" data-stext="${i}" value="${esc(s.text)}" maxlength="200" aria-label="Schritt ${i + 1}"><button type="button" class="icon-btn" data-sup="${i}" aria-label="Schritt nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-sdel="${i}" aria-label="Schritt entfernen">✕</button></div>`).join('')
+    || '<div class="small" style="margin-bottom:8px">Noch keine Schritte. Was wäre der erste kleine Handgriff?</div>';
+  $('#tkNow').textContent = d.now ? '★ Als Nächstes' : 'Als Nächstes';
+  $('#tkNow').setAttribute('aria-pressed', String(!!d.now));
+}
+$('#tkSteps').addEventListener('input', (e) => { const i = e.target.dataset.stext; if (i !== undefined) tkDraft.steps[Number(i)].text = e.target.value; });
+$('#tkSteps').addEventListener('change', (e) => { const i = e.target.dataset.sdone; if (i !== undefined) { const s = tkDraft.steps[Number(i)]; s.done = e.target.checked; s.doneAt = s.done ? Date.now() : null; } });
+$('#tkSteps').addEventListener('click', (e) => {
+  const u = e.target.closest('[data-sup]'), x = e.target.closest('[data-sdel]');
+  if (u) { const i = Number(u.dataset.sup), s = tkDraft.steps; if (i > 0) { [s[i - 1], s[i]] = [s[i], s[i - 1]]; renderTkSteps(); } }
+  if (x) { tkDraft.steps.splice(Number(x.dataset.sdel), 1); renderTkSteps(); }
+});
+function addStepText(v){ v = String(v || '').trim(); if (!v) return; tkDraft.steps.push({ id: uid(), text: v.slice(0, 200), done: false, doneAt: null }); renderTkSteps(); }
+$('#tkAddForm').addEventListener('submit', (e) => { e.preventDefault(); addStepText($('#tkAdd').value); $('#tkAdd').value = ''; $('#tkAdd').focus(); });
+$('#tkIdeas').addEventListener('click', (e) => { const b = e.target.closest('[data-idea]'); if (b) addStepText(STEP_IDEAS[Number(b.dataset.idea)]); });
+$('#tkNow').onclick = () => { tkDraft.now = !tkDraft.now; renderTkSteps(); };
+function commitTask(){
+  if (!tkDraft || tkDeleted) return;
+  const d = tkDraft;
+  d.title = $('#tkTitle').value.trim().slice(0, 160); d.note = $('#tkNote').value; d.due = $('#tkDue').value || '';
+  const rest = $('#tkAdd').value.trim(); if (rest) { d.steps.push({ id: uid(), text: rest.slice(0, 200), done: false, doneAt: null }); $('#tkAdd').value = ''; }
+  d.steps = d.steps.map((s) => ({ ...s, text: String(s.text || '').trim() })).filter((s) => s.text);
+  if (!d.title && !d.steps.length) return;
+  if (!d.title) d.title = d.steps[0].text;
+  finishIfComplete(d, Date.now(), true);
+  if (JSON.stringify(d) === tkOrig) return;
+  colPut('tasks', d);
+  if (d.now) setNow(d.id);
+  save(); render();
+}
+$('#tkDone').onclick = () => $('#taskDlg').close();
+$('#taskDlg').addEventListener('close', () => { commitTask(); tkDraft = null; showAlertIfNeeded(); });
+$('#tkDel').onclick = () => {
+  if (!confirm('Diese Aufgabe wirklich löschen?')) return;
+  tkDeleted = true; colDel('tasks', tkDraft.id); save(); $('#taskDlg').close(); render();
+};
+$('#tkRem').onclick = () => {
+  const title = $('#tkTitle').value.trim().slice(0, 120), st = nextStep(tkDraft);
+  $('#taskDlg').close(); setTab('today'); openForm(null, { title, note: st ? 'Nächster Schritt: ' + st.text : '' });
+};
+
+// Aufteilen
+let splitCtx = null;
+function openSplit(id, sid){
+  const t = findTask(id); if (!t) return;
+  splitCtx = { id, sid };
+  const st = sid && t.steps.find((s) => s.id === sid);
+  $('#splitWhat').textContent = st ? `Schritt: „${st.text}“` : `Aufgabe: „${t.title}“`;
+  $('#splitText').value = '';
+  $('#splitDlg').showModal(); $('#splitText').focus();
+}
+$('#splitCancel').onclick = () => $('#splitDlg').close();
+$('#splitDlg').addEventListener('close', () => showAlertIfNeeded());
+$('#splitOk').onclick = () => {
+  const lines = $('#splitText').value.split('\n').map((l) => l.replace(/^\s*[-*•]\s*/, '').trim()).filter(Boolean).slice(0, 50);
+  if (!lines.length) { $('#splitText').focus(); return; }
+  const t0 = findTask(splitCtx.id); if (!t0) { $('#splitDlg').close(); return; }
+  const t = clone(t0), fresh = lines.map((text) => ({ id: uid(), text: text.slice(0, 200), done: false, doneAt: null }));
+  const i = splitCtx.sid ? t.steps.findIndex((s) => s.id === splitCtx.sid) : -1;
+  if (i >= 0) t.steps.splice(i, 1, ...fresh); else t.steps.push(...fresh);
+  t.done = false; t.doneAt = null;
+  colPut('tasks', t); save(); $('#splitDlg').close();
+  flash('Aufgeteilt. Fang mit dem ersten kleinen Schritt an.');
+  render();
+};
+
+/* ---------- Routinen ---------- */
+const RT_TEMPLATES = [
+  { title: 'Morgenroutine', time: '07:30', days: [], steps: ['Ein Glas Wasser trinken', 'Anziehen', 'Frühstücken', 'Tasche packen', 'Kurz auf den Tag schauen'] },
+  { title: 'Abendroutine', time: '21:30', days: [], steps: ['Sachen für morgen bereitlegen', 'Handy ans Ladekabel', 'Wecker stellen', '5 Minuten aufräumen', 'Zähne putzen'] },
+  { title: 'Arbeitsstart', time: '', days: [1, 2, 3, 4, 5], steps: ['Schreibtisch frei machen', 'Wasser holen', 'Wichtigste Aufgabe für heute wählen', 'Handy weglegen', 'Fokus-Timer starten'] },
+];
+const rtActive = (r, d = new Date()) => !(r.days && r.days.length) || r.days.includes(d.getDay());
+const rtDaysText = (r) => (!(r.days && r.days.length) || r.days.length === 7) ? 'Jeden Tag' : WD.filter((w) => r.days.includes(w.v)).map((w) => w.l).join(', ');
+const checkFor = (rid, date) => state.checks.find((c) => c.id === rid + '|' + date);
+const byTime = (a, b) => (a.time || '99').localeCompare(b.time || '99') || (a.createdAt || 0) - (b.createdAt || 0);
+function renderRoutinesToday(){
+  const k = todayKey(), list = state.routines.filter((r) => rtActive(r)).sort(byTime);
+  $('#rtSec').hidden = !list.length;
+  $('#rtToday').innerHTML = list.map((r) => {
+    const c = checkFor(r.id, k), done = new Set(c ? c.done : []);
+    const n = r.steps.length, kk = r.steps.filter((s) => done.has(s.id)).length, all = n > 0 && kk === n;
+    const steps = r.steps.map((s) => `<label class="chk${done.has(s.id) ? ' done' : ''}"><input type="checkbox" data-rtc="${r.id}" data-sid="${s.id}" ${done.has(s.id) ? 'checked' : ''}><span>${esc(s.text)}</span></label>`).join('');
+    return `<div class="card"><div class="row"><div class="title">${esc(r.title)}</div><div class="small">${kk} von ${n}</div></div>${progHtml(kk, n)}
+      ${all ? `<div class="meta" style="color:var(--ok);font-weight:700">Alles geschafft ✓</div><details class="plain"><summary class="small">Schritte anzeigen</summary>${steps}</details>` : `<div style="margin-top:8px">${steps}</div>`}</div>`;
+  }).join('');
+}
+document.addEventListener('change', (e) => {
+  const t = e.target.closest('[data-rtc]'); if (!t) return;
+  const rid = t.dataset.rtc, sid = t.dataset.sid, k = todayKey(), old = checkFor(rid, k);
+  const c = old ? { ...old, done: [...old.done] } : { id: rid + '|' + k, rid, date: k, done: [] };
+  c.done = c.done.filter((x) => x !== sid); if (t.checked) c.done.push(sid);
+  colPut('checks', c);
+  const r = state.routines.find((x) => x.id === rid);
+  if (r && t.checked && r.steps.every((s) => c.done.includes(s.id))) {
+    flash(`${r.title}: alles geschafft ✓`);
+    const rem = find('rt-' + rid);
+    if (rem && rem.pendingAt) { act(rem.id, 'done'); return; }
+  }
+  save(); render();
+});
+function renderRoutineList(){
+  const list = [...state.routines].sort(byTime);
+  $('#rtList').innerHTML = list.map((r) => `<div class="card task-card" data-rt="${r.id}" role="button" tabindex="0"><div class="title">${esc(r.title)}</div><div class="meta">${esc(rtDaysText(r))}${r.time ? ' · Erinnerung ' + esc(r.time) : ''} · ${r.steps.length} Schritte</div></div>`).join('')
+    || '<div class="empty" style="padding:18px 10px"><p style="margin:0">Noch keine Routinen. Leg eine mit + an oder nimm eine Vorlage.</p></div>';
+  $('#rtTemplates').innerHTML = `<h2>Vorlage nutzen</h2><div class="chips">${RT_TEMPLATES.map((t, i) => `<button class="chip" data-tpl="${i}">${esc(t.title)}</button>`).join('')}</div>`;
+}
+// Erinnerung zur Routine: eigener Eintrag in den Erinnerungen, damit Server-Push und Snooze wie gewohnt funktionieren
+function syncRoutineReminder(rt){
+  const id = 'rt-' + rt.id, ex = find(id), now = Date.now();
+  if (!rt.time) {
+    if (ex) { state.reminders = state.reminders.filter((x) => x.id !== id); state.tombs.push({ id, updatedAt: now }); }
+    return;
+  }
+  const days = rt.days && rt.days.length ? [...rt.days] : [0, 1, 2, 3, 4, 5, 6];
+  const r = Object.assign(ex ? { ...ex } : blank(), { id, routineId: rt.id, type: 'weekly', weekdays: days, times: [rt.time], title: rt.title, note: `Routine · ${rt.steps.length} Schritte`, enabled: true, updatedAt: now });
+  if (!ex) { r.createdAt = now; r.checkedUntil = now; r.rtAt = now; }
+  upsertRem(r);
+}
+let rtDraft = null;
+function openRoutine(r, tpl){
+  rtDraft = r ? clone(r) : { id: uid(), title: tpl ? tpl.title : '', days: tpl ? [...tpl.days] : [], time: tpl ? tpl.time : '', steps: (tpl ? tpl.steps : []).map((text) => ({ id: uid(), text })), createdAt: Date.now() };
+  if (!Array.isArray(rtDraft.days)) rtDraft.days = [];
+  $('#rtHead').textContent = r ? 'Routine bearbeiten' : 'Neue Routine';
+  $('#rtTitle').value = rtDraft.title; $('#rtTime').value = rtDraft.time || ''; $('#rtAdd').value = ''; $('#rtErr').textContent = '';
+  $('#rtDel').hidden = !r;
+  renderRtForm(); $('#rtDlg').showModal();
+}
+function renderRtForm(){
+  $('#rtDays').innerHTML = WD.map((w) => `<button type="button" class="chip${rtDraft.days.includes(w.v) ? ' sel' : ''}" data-rday="${w.v}" aria-pressed="${rtDraft.days.includes(w.v)}">${w.l}</button>`).join('');
+  $('#rtSteps').innerHTML = rtDraft.steps.map((s, i) => `<div class="list-item"><input type="text" data-rtext="${i}" value="${esc(s.text)}" maxlength="120" aria-label="Schritt ${i + 1}"><button type="button" class="icon-btn" data-rup="${i}" aria-label="Schritt nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-rdel="${i}" aria-label="Schritt entfernen">✕</button></div>`).join('');
+}
+$('#rtDays').addEventListener('click', (e) => { const b = e.target.closest('[data-rday]'); if (!b) return; const v = Number(b.dataset.rday), i = rtDraft.days.indexOf(v); if (i >= 0) rtDraft.days.splice(i, 1); else rtDraft.days.push(v); renderRtForm(); });
+$('#rtSteps').addEventListener('input', (e) => { const i = e.target.dataset.rtext; if (i !== undefined) rtDraft.steps[Number(i)].text = e.target.value; });
+$('#rtSteps').addEventListener('click', (e) => {
+  const u = e.target.closest('[data-rup]'), x = e.target.closest('[data-rdel]');
+  if (u) { const i = Number(u.dataset.rup), s = rtDraft.steps; if (i > 0) { [s[i - 1], s[i]] = [s[i], s[i - 1]]; renderRtForm(); } }
+  if (x) { rtDraft.steps.splice(Number(x.dataset.rdel), 1); renderRtForm(); }
+});
+function rtAddStep(){ const v = $('#rtAdd').value.trim(); if (!v) return; rtDraft.steps.push({ id: uid(), text: v.slice(0, 120) }); $('#rtAdd').value = ''; renderRtForm(); }
+$('#rtAddBtn').onclick = () => { rtAddStep(); $('#rtAdd').focus(); };
+$('#rtAdd').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rtAddStep(); } });
+$('#rtCancel').onclick = () => $('#rtDlg').close();
+$('#rtDlg').addEventListener('close', () => showAlertIfNeeded());
+$('#rtFrm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  rtAddStep();
+  const d = rtDraft;
+  d.title = $('#rtTitle').value.trim().slice(0, 80); d.time = $('#rtTime').value || '';
+  d.steps = d.steps.map((s) => ({ ...s, text: String(s.text || '').trim() })).filter((s) => s.text);
+  if (!d.title) { $('#rtErr').textContent = 'Bitte gib der Routine einen Namen.'; return; }
+  if (!d.steps.length) { $('#rtErr').textContent = 'Bitte mindestens einen Schritt eintragen.'; return; }
+  d.days.sort((a, b) => a - b);
+  colPut('routines', d); syncRoutineReminder(d);
+  save(); $('#rtDlg').close(); render();
+});
+$('#rtDel').onclick = () => {
+  if (!confirm('Diese Routine wirklich löschen?')) return;
+  colDel('routines', rtDraft.id); syncRoutineReminder({ ...rtDraft, time: '' });
+  save(); $('#rtDlg').close(); render();
+};
+
+/* ---------- Täglicher Check-in ---------- */
+const CI = [['energy', 'Energie'], ['mood', 'Stimmung'], ['focus', 'Fokus'], ['sleep', 'Schlaf']];
+let ciEdit = false;
+function renderCheckin(){
+  const k = todayKey(), c = state.checkins.find((x) => x.id === k), full = !!c && CI.every(([q]) => c[q]);
+  let skip = false; try { skip = localStorage.getItem('fokus.ciSkip') === k; } catch (e) {}
+  let h;
+  if (full && !ciEdit) h = `<div class="card" style="margin-top:8px"><div class="row"><div style="min-width:0"><div class="small" style="font-weight:700">Check-in heute ✓</div><div class="meta" style="margin-top:2px">${CI.map(([q, l]) => `${l} ${c[q]}`).join(' · ')}</div></div><button class="btn ghost" data-ci="edit">Ändern</button></div></div>`;
+  else if (skip && !c && !ciEdit) h = `<div style="margin-top:8px"><button class="btn ghost" data-ci="open">Check-in machen</button></div>`;
+  else h = `<div class="card" style="margin-top:8px"><div class="title" style="font-size:17px">Wie geht's dir heute?</div><div class="small">Kurz antippen: 1 = sehr wenig, 5 = sehr gut.</div>
+    ${CI.map(([q, l]) => `<div class="scale" role="group" aria-label="${l}"><span class="nm">${l}</span>${[1, 2, 3, 4, 5].map((v) => `<button class="chip${c && c[q] === v ? ' sel' : ''}" data-ci="set" data-k="${q}" data-v="${v}" aria-label="${l} ${v}" aria-pressed="${!!(c && c[q] === v)}">${v}</button>`).join('')}</div>`).join('')}
+    <div class="btnrow">${ciEdit || full ? '<button class="btn primary" data-ci="close">Fertig</button>' : '<button class="btn ghost" data-ci="later">Heute nicht</button>'}</div></div>`;
+  $('#checkin').innerHTML = h;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ci]'); if (!b) return;
+  const a = b.dataset.ci, k = todayKey();
+  if (a === 'set') {
+    const old = state.checkins.find((c) => c.id === k), c = old ? { ...old } : { id: k, date: k };
+    c[b.dataset.k] = Number(b.dataset.v); c.at = Date.now();
+    colPut('checkins', c); save();
+    if (!ciEdit && CI.every(([q]) => c[q])) flash('Danke! Check-in gespeichert.');
+    render();
+  } else if (a === 'edit') { ciEdit = true; render(); }
+  else if (a === 'close') { ciEdit = false; render(); }
+  else if (a === 'later') { try { localStorage.setItem('fokus.ciSkip', k); } catch (err) {} render(); }
+  else if (a === 'open') { try { localStorage.removeItem('fokus.ciSkip'); } catch (err) {} ciEdit = true; render(); }
+});
+
+/* ---------- Fokus-Timer ---------- */
+// Der laufende Timer ist ein Eintrag vom Typ "timer" in den Erinnerungen:
+// so meldet sich das Backend per Push, auch wenn die App geschlossen ist, und alle Geräte sehen ihn.
+let fx = (() => { const d = { durMin: 25, breakMin: 5, taskId: '' }; try { return { ...d, ...JSON.parse(localStorage.getItem('fokus.fx') || '{}') }; } catch (e) { return d; } })();
+const saveFx = () => { try { localStorage.setItem('fokus.fx', JSON.stringify(fx)); } catch (e) {} };
+const FX_DUR = [5, 10, 15, 25, 45, 60], FX_BREAK = [3, 5, 10, 15];
+const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; };
+const timerRec = () => find(TIMER_ID);
+function timerView(){
+  const r = timerRec(), now = Date.now();
+  if (!r) return { state: 'idle' };
+  if (r.paused) return { state: 'paused', r, left: r.remainMs || 0 };
+  if (r.pendingAt && r.snoozeUntil && r.snoozeUntil > now) return { state: 'running', r, left: r.snoozeUntil - now, extra: true };
+  if (r.pendingAt) return { state: 'ended', r, left: 0 };
+  if (r.enabled) return { state: 'running', r, left: Math.max(0, r.at - now) };
+  return { state: 'idle', r };
+}
+// Minuten einer Fokus-Runde; eine laufende Runde zählt nur die bisher vergangene Zeit
+function sessMin(s){
+  const v = timerView();
+  if (v.r && v.r.sessionId === s.id && (v.state === 'running' || v.state === 'paused')) return Math.max(0, Math.floor(((v.r.durMin || 0) * 60000 - v.left) / 60000));
+  return s.min || 0;
+}
+function startTimer(phase){
+  const now = Date.now(), m = phase === 'focus' ? fx.durMin : fx.breakMin, old = timerRec();
+  const task = fx.taskId && findTask(fx.taskId);
+  const r = {
+    id: TIMER_ID, type: 'timer', phase, durMin: m, startedAt: now, at: now + m * 60000, paused: false, remainMs: null,
+    title: phase === 'focus' ? 'Fokus-Zeit vorbei' : 'Pause vorbei',
+    note: phase === 'focus' ? (task ? `Gut gemacht: ${task.title}. Zeit für eine kurze Pause.` : 'Gut gemacht. Zeit für eine kurze Pause.') : 'Bereit für die nächste Runde?',
+    taskId: task && phase === 'focus' ? task.id : '', sessionId: null, enabled: true, nag: 2, snoozeDefault: 5,
+    times: [], weekdays: [], dates: [], createdAt: old ? old.createdAt || now : now, checkedUntil: now,
+    pendingAt: null, pendingStart: null, snoozeUntil: null, mutedDate: null, nagAt: null, nagN: 0, updatedAt: now, rtAt: now,
+  };
+  if (phase === 'focus') { const s = { id: uid(), start: now, min: m, planned: m, taskId: r.taskId, title: task ? task.title : '' }; colPut('sessions', s); r.sessionId = s.id; }
+  upsertRem(r); save(); render();
+}
+function pauseTimer(){
+  const v = timerView(); if (v.state !== 'running') return;
+  const r = v.r, now = Date.now();
+  r.paused = true; r.remainMs = v.left; r.enabled = false; r.pendingAt = null; r.snoozeUntil = null; r.updatedAt = r.rtAt = now;
+  save(); render();
+}
+function resumeTimer(){
+  const r = timerRec(); if (!r || !r.paused) return;
+  const now = Date.now();
+  r.paused = false; r.at = now + (r.remainMs || 0); r.remainMs = null; r.enabled = true; r.checkedUntil = now; r.updatedAt = r.rtAt = now;
+  save(); render();
+}
+function stopTimer(){
+  const v = timerView(), r = v.r; if (!r) return;
+  const now = Date.now();
+  if (r.phase === 'focus' && r.sessionId && v.state !== 'idle') {
+    const s = state.sessions.find((x) => x.id === r.sessionId);
+    if (s) { const min = Math.max(0, Math.round(((r.durMin || 0) * 60000 - (v.left || 0)) / 60000)); if (min < 1) colDel('sessions', s.id); else colPut('sessions', { ...s, min, stopped: true }); }
+  }
+  r.enabled = false; r.paused = false; r.remainMs = null; r.pendingAt = null; r.pendingStart = null; r.snoozeUntil = null; r.updatedAt = r.rtAt = now;
+  save(); render();
+}
+function fxAction(a){
+  const r = timerRec(), ended = r && r.pendingAt;
+  if (a === 'start' || a === 'again') { if (ended) act(r.id, 'done'); startTimer('focus'); }
+  else if (a === 'break' || a === 'tobreak') { if (ended) act(r.id, 'done'); startTimer('break'); }
+  else if (a === 'pause') pauseTimer();
+  else if (a === 'resume') resumeTimer();
+  else if (a === 'stop') stopTimer();
+  else if (a === 'end') { if (ended) act(r.id, 'done'); else stopTimer(); }
+}
+function renderFocus(){
+  const v = timerView();
+  $('#fxSetup').hidden = v.state !== 'idle';
+  let b;
+  if (v.state === 'idle') b = `<button class="btn primary" data-fx="start">▶ Fokus starten (${fx.durMin} Min)</button><button class="btn" data-fx="break">Pause (${fx.breakMin} Min)</button>`;
+  else if (v.state === 'running') b = `<button class="btn" data-fx="pause">Pausieren</button><button class="btn danger" data-fx="stop">Stopp</button>`;
+  else if (v.state === 'paused') b = `<button class="btn primary" data-fx="resume">▶ Weiter</button><button class="btn danger" data-fx="stop">Stopp</button>`;
+  else b = (v.r.phase === 'focus' ? `<button class="btn primary" data-fx="tobreak">Pause starten (${fx.breakMin} Min)</button>` : `<button class="btn primary" data-fx="again">Nächste Runde (${fx.durMin} Min)</button>`) + '<button class="btn" data-fx="end">Fertig</button>';
+  $('#fxBtns').innerHTML = b;
+  $('#fxDur').innerHTML = FX_DUR.map((m) => `<button class="chip${fx.durMin === m ? ' sel' : ''}" data-fxdur="${m}">${m} Min</button>`).join('')
+    + `<input class="inline-min" id="fxCustom" type="number" min="1" max="180" inputmode="numeric" placeholder="Min" aria-label="Eigene Dauer in Minuten" value="${FX_DUR.includes(fx.durMin) ? '' : fx.durMin}">`;
+  $('#fxBreak').innerHTML = FX_BREAK.map((m) => `<button class="chip${fx.breakMin === m ? ' sel' : ''}" data-fxbrk="${m}">${m} Min</button>`).join('');
+  const open = openTasks();
+  if (fx.taskId && !open.some((t) => t.id === fx.taskId)) fx.taskId = '';
+  $('#fxTaskSel').innerHTML = '<option value="">Ohne bestimmte Aufgabe</option>' + open.map((t) => `<option value="${t.id}"${t.id === fx.taskId ? ' selected' : ''}>${esc(t.title)}</option>`).join('');
+  const k = todayKey(), ss = state.sessions.filter((s) => ymd(new Date(s.start)) === k), mins = ss.reduce((a, s) => a + sessMin(s), 0);
+  $('#fxToday').textContent = ss.length ? `Heute fokussiert: ${mins} Min in ${ss.length} ${ss.length === 1 ? 'Runde' : 'Runden'}.` : 'Heute noch keine Fokus-Runde. Schon 5 Minuten zählen.';
+  renderClock();
+}
+let lastClockState = '', ticker = null;
+// Sekundentakt nur, solange ein Timer aktiv ist (spart Akku)
+function ensureTicker(){
+  const r = timerRec(), need = !!(r && (r.enabled || r.paused || r.pendingAt));
+  if (need && !ticker) ticker = setInterval(() => {
+    const x = timerRec();
+    if (document.visibilityState === 'visible') renderClock();
+    if (x && x.enabled && !x.pendingAt && Date.now() >= x.at) tick();
+    ensureTicker();
+  }, 1000);
+  else if (!need && ticker) { clearInterval(ticker); ticker = null; }
+}
+function renderClock(){
+  const v = timerView(), r = v.r;
+  let phase, left, total;
+  if (v.state === 'idle') { phase = 'Bereit für eine Fokus-Runde'; left = total = fx.durMin * 60000; }
+  else {
+    total = Math.max(1, (r.durMin || 1) * 60000); left = v.left;
+    phase = v.state === 'paused' ? 'Pausiert' : v.state === 'ended' ? 'Zeit ist um' : (r.phase === 'focus' ? 'Fokus-Zeit' : 'Pause') + (v.extra ? ' (verlängert)' : '');
+  }
+  $('#fxClock').textContent = mmss(left);
+  $('#fxPhase').textContent = phase;
+  $('#fxBar').style.width = (v.state === 'idle' ? 0 : Math.min(100, Math.max(0, (1 - left / total) * 100))) + '%';
+  const tid = v.state === 'idle' ? fx.taskId : r.taskId, t = tid && findTask(tid);
+  $('#fxTask').textContent = t ? 'Woran: ' + t.title : '';
+  $('#timerMini').innerHTML = v.state === 'idle' ? '' : `<button class="card timer-mini" data-goto="focus" aria-label="${esc(phase)}, ${mmss(left)} übrig. Zum Fokus-Timer"><span>${esc(phase)}</span><b>${mmss(left)}</b></button>`;
+  document.title = (v.state === 'running' ? mmss(left) + ' · ' : '') + 'Fokus – ADHS-Begleiter';
+  ensureTicker();
+  // Zustandswechsel (z. B. Timer abgelaufen) -> Knöpfe neu aufbauen
+  const st = v.state + (r ? r.phase : '');
+  if (st !== lastClockState) { lastClockState = st; if (tab === 'focus' && !document.querySelector('#fxCustom:focus')) renderFocus(); }
+}
+$('#tabFocus').addEventListener('click', (e) => {
+  const d = e.target.closest('[data-fxdur]'); if (d) { fx.durMin = Number(d.dataset.fxdur); saveFx(); renderFocus(); return; }
+  const k = e.target.closest('[data-fxbrk]'); if (k) { fx.breakMin = Number(k.dataset.fxbrk); saveFx(); renderFocus(); return; }
+  const b = e.target.closest('[data-fx]'); if (b) fxAction(b.dataset.fx);
+});
+$('#tabFocus').addEventListener('change', (e) => { if (e.target.id === 'fxTaskSel') { fx.taskId = e.target.value; saveFx(); renderClock(); } });
+$('#tabFocus').addEventListener('input', (e) => {
+  if (e.target.id !== 'fxCustom') return;
+  const v = Math.round(Number(e.target.value));
+  if (v >= 1 && v <= 180) {
+    fx.durMin = v; saveFx();
+    document.querySelectorAll('[data-fxdur]').forEach((c) => c.classList.toggle('sel', Number(c.dataset.fxdur) === v));
+    const sb = document.querySelector('[data-fx="start"]'); if (sb) sb.textContent = `▶ Fokus starten (${v} Min)`;
+    renderClock();
+  }
+});
+
+/* ---------- Wochenrückblick ---------- */
+const WDL = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+const WDS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const fmt1 = (x) => x.toFixed(1).replace('.', ',');
+const BUCKETS = [['Morgens', 5, 11], ['Mittags', 11, 14], ['Nachmittags', 14, 18], ['Abends', 18, 24]];
+const bucketOf = (t) => { const hr = new Date(t).getHours(); return BUCKETS.findIndex(([, a, b]) => hr >= a && hr < b); };
+let rvWeek = 0;
+function renderReview(){
+  const end = new Date(); end.setHours(0, 0, 0, 0); end.setDate(end.getDate() + 1 - rvWeek * 7);
+  const start = new Date(end); start.setDate(start.getDate() - 7);
+  const a = start.getTime(), b = end.getTime(), inR = (t) => typeof t === 'number' && t >= a && t < b;
+  const fmtD = (d) => d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  $('#rvTitle').textContent = rvWeek === 0 ? 'Die letzten 7 Tage' : `${fmtD(start)} – ${fmtD(new Date(b - 1))}`;
+  $('#rvNext').disabled = rvWeek === 0;
+  const days = []; for (let i = 0; i < 7; i++) { const d = new Date(start); d.setDate(d.getDate() + i); days.push(d); }
+  const ses = state.sessions.filter((s) => inR(s.start)), fMin = ses.reduce((x, s) => x + sessMin(s), 0);
+  const tDone = state.tasks.filter((t) => t.done && inR(t.doneAt)).sort((x, y) => y.doneAt - x.doneAt);
+  const sDone = state.tasks.reduce((x, t) => x + (t.steps || []).filter((s) => s.done && inR(s.doneAt)).length, 0);
+  let rTot = 0, rDone = 0;
+  for (const d of days) {
+    const k = ymd(d);
+    for (const r of state.routines) {
+      if (!rtActive(r, d) || (r.createdAt && new Date(r.createdAt).setHours(0, 0, 0, 0) > d.getTime())) continue;
+      const c = checkFor(r.id, k), set = new Set(c ? c.done : []);
+      rTot += r.steps.length; rDone += r.steps.filter((s) => set.has(s.id)).length;
+    }
+  }
+  const lg = state.log.filter((e) => inR(e.t) && e.rid !== TIMER_ID), cnt = (k) => lg.filter((e) => e.kind === k).length;
+  const tiles = [[fMin, 'Minuten Fokus'], [ses.length, ses.length === 1 ? 'Fokus-Runde' : 'Fokus-Runden'], [tDone.length, 'Aufgaben erledigt'], [sDone, 'Schritte geschafft'], [rTot ? Math.round(rDone / rTot * 100) + ' %' : '–', 'Routinen-Schritte'], [cnt('done'), 'Erinnerungen erledigt']];
+  let h = `<div class="stat">${tiles.map(([v, l]) => `<div><b>${v}</b><span class="small">${l}</span></div>`).join('')}</div>`;
+  if (cnt('snooze') || cnt('skip')) h += `<p class="small">Außerdem ${cnt('snooze')}× Snooze und ${cnt('skip')}× „Heute kein Fortschritt“. Beides ist okay, es zeigt nur, was gerade schwer war.</p>`;
+  // Check-ins als Tabelle mit Farbabstufung (eine Farbe, heller = weniger)
+  const cis = days.map((d) => state.checkins.find((c) => c.id === ymd(d)));
+  h += '<h2>Check-ins</h2>';
+  if (cis.some(Boolean)) {
+    h += `<div class="heat"><span></span>${days.map((d) => `<span class="small" style="text-align:center">${WDS[d.getDay()]}</span>`).join('')}`;
+    for (const [k, l] of CI) {
+      const vals = cis.map((c) => (c && c[k]) || 0), got = vals.filter(Boolean);
+      h += `<span class="small" style="font-weight:600">${l}${got.length ? `<br><span style="font-weight:400">Ø ${fmt1(got.reduce((x, y) => x + y, 0) / got.length)}</span>` : ''}</span>`
+        + vals.map((v, i) => `<span class="c" title="${l} am ${WDL[days[i].getDay()]}: ${v || 'kein Eintrag'}" style="${v ? `background:color-mix(in srgb, var(--accent) ${15 + v * 17}%, var(--surface2));${v >= 3 ? 'color:var(--accent-ink)' : ''}` : 'color:var(--muted)'}">${v || '–'}</span>`).join('');
+    }
+    h += '</div>';
+  } else h += '<p class="small">Noch keine Check-ins in diesem Zeitraum. Ein kurzer Check-in pro Tag reicht, dann zeigen sich hier Muster.</p>';
+  // Muster aus den letzten 4 Wochen
+  const p0 = b - 28 * DAY, pats = [];
+  const ci28 = state.checkins.filter((c) => { const t = new Date(c.date + 'T12:00').getTime(); return t >= p0 && t < b; });
+  if (ci28.length >= 5) {
+    const by = {};
+    for (const c of ci28) { const xs = [c.energy, c.focus].filter(Boolean); if (!xs.length) continue; const wd = new Date(c.date + 'T12:00').getDay(); (by[wd] = by[wd] || []).push(xs.reduce((x, y) => x + y, 0) / xs.length); }
+    const avg = Object.entries(by).map(([wd, v]) => [Number(wd), v.reduce((x, y) => x + y, 0) / v.length]).sort((x, y) => y[1] - x[1]);
+    if (avg.length >= 3 && avg[0][1] > avg[avg.length - 1][1]) pats.push(`Am meisten Energie und Fokus hattest du am <b>${WDL[avg[0][0]]}</b> (Ø ${fmt1(avg[0][1])}), am wenigsten am <b>${WDL[avg[avg.length - 1][0]]}</b> (Ø ${fmt1(avg[avg.length - 1][1])}).`);
+    const hi = ci28.filter((c) => c.sleep >= 4 && c.energy), lo = ci28.filter((c) => c.sleep && c.sleep <= 2 && c.energy);
+    const m = (x) => x.reduce((s, c) => s + c.energy, 0) / x.length;
+    if (hi.length >= 2 && lo.length >= 2) pats.push(`Nach gutem Schlaf lag deine Energie im Schnitt bei <b>${fmt1(m(hi))}</b>, nach schlechtem bei <b>${fmt1(m(lo))}</b>.`);
+  }
+  const fz = BUCKETS.map(() => 0), dn = BUCKETS.map(() => 0);
+  for (const s of state.sessions) if (s.start >= p0 && s.start < b) { const i = bucketOf(s.start); if (i >= 0) fz[i] += s.min || 0; }
+  const addDn = (t) => { if (t >= p0 && t < b) { const i = bucketOf(t); if (i >= 0) dn[i]++; } };
+  for (const t of state.tasks) { for (const s of t.steps || []) if (s.done && s.doneAt) addDn(s.doneAt); if (t.done && t.doneAt && !(t.steps || []).length) addDn(t.doneAt); }
+  for (const e of state.log) if (e.kind === 'done' && e.rid !== TIMER_ID) addDn(e.t);
+  for (const c of state.checks) { const r = state.routines.find((x) => x.id === c.rid); if (r && r.time && c.done.length) addDn(new Date(c.date + 'T' + r.time).getTime()); }
+  const sum = (xs) => xs.reduce((x, y) => x + y, 0);
+  const bars = (vals, unit) => { const mx = Math.max(...vals); return BUCKETS.map(([l], i) => `<div class="bar-row" title="${l}: ${vals[i]}${unit ? ' ' + unit : ''}"><span style="min-width:100px">${l}</span><span class="b"><i style="width:${mx ? Math.round(vals[i] / mx * 100) : 0}%"></i></span><span style="min-width:56px;text-align:right">${vals[i]}${unit ? ' ' + unit : ''}</span></div>`).join(''); };
+  h += '<h2>Muster der letzten 4 Wochen</h2>';
+  h += pats.map((p) => `<p class="small" style="margin:6px 0">${p}</p>`).join('');
+  if (sum(fz) >= 30) h += `<div class="small" style="font-weight:600;margin-top:10px">Fokus-Minuten nach Tageszeit</div>${bars(fz, 'Min')}`;
+  if (sum(dn) >= 5) h += `<div class="small" style="font-weight:600;margin-top:10px">Erledigtes nach Tageszeit</div>${bars(dn, '')}`;
+  if (!pats.length && sum(fz) < 30 && sum(dn) < 5) h += '<p class="small">Noch zu wenig Daten. Nach ein paar Check-ins, Fokus-Runden und erledigten Schritten siehst du hier, wann es bei dir am besten läuft.</p>';
+  if (tDone.length) h += `<h2>Das hast du geschafft</h2><ul class="log">${tDone.slice(0, 12).map((t) => `<li>✓ ${esc(t.title)}</li>`).join('')}</ul>`;
+  $('#rvBody').innerHTML = h;
+}
+$('#btnReview').onclick = () => { rvWeek = 0; renderReview(); $('#reviewDlg').showModal(); };
+$('#rvPrev').onclick = () => { rvWeek++; renderReview(); };
+$('#rvNext').onclick = () => { if (rvWeek > 0) { rvWeek--; renderReview(); } };
+$('#rvClose').onclick = () => $('#reviewDlg').close();
+$('#reviewDlg').addEventListener('close', () => showAlertIfNeeded());
+
+/* ---------- Aufräumen alter Daten ---------- */
+function prune(){
+  const now = Date.now(), cut = ymd(new Date(now - 180 * DAY));
+  state.checks.filter((c) => c.date < cut).map((c) => c.id).forEach((id) => colDel('checks', id));
+  state.sessions.filter((s) => s.start < now - 400 * DAY).map((s) => s.id).forEach((id) => colDel('sessions', id));
+  state.sleep.filter((s) => (s.bed || 0) < now - 120 * DAY).map((s) => s.id).forEach((id) => colDel('sleep', id));
+  const fresh = (t) => t.updatedAt > now - 30 * DAY;
+  for (const c of GCOLS) state.dead[c] = state.dead[c].filter(fresh);
+  state.tombs = state.tombs.filter(fresh); state.noteTombs = state.noteTombs.filter(fresh);
+  saveLocal();
+}
+
+/* ---------- Einstellungen, die mitsynchronisiert werden ---------- */
+const getPref = (id, def) => ({ ...def, ...(state.prefs.find((p) => p.id === id) || {}), id });
+function setPref(id, patch){
+  const cur = state.prefs.find((p) => p.id === id) || { id };
+  colPut('prefs', { ...cur, ...patch, id });
+  save();
+}
+
+/* ---------- Ruhezeiten & Nicht stören ---------- */
+const Q_DEF = { on: false, from: '22:00', to: '07:00', events: true, dnd: 0, dndKind: '', blocks: [], wake: '07:00', wakeWe: '09:00' };
+const quietCfg = () => getPref('quiet', Q_DEF);
+function inQuietWindow(q, d = new Date()){
+  if (!q.on) return false;
+  const m = d.getHours() * 60 + d.getMinutes(), f = toMin(q.from), t = toMin(q.to);
+  if (f === t) return false;
+  return f < t ? (m >= f && m < t) : (m >= f || m < t);
+}
+// Fester Zeitraum; geht er über Mitternacht, zählt der Wochentag des Beginns
+function blockActive(b, d){
+  const days = Array.isArray(b.days) && b.days.length ? b.days : [0, 1, 2, 3, 4, 5, 6];
+  const m = d.getHours() * 60 + d.getMinutes(), f = toMin(b.from), t = toMin(b.to), wd = d.getDay(), prev = (wd + 6) % 7;
+  if (f === t) return false;
+  if (f < t) return days.includes(wd) && m >= f && m < t;
+  return (days.includes(wd) && m >= f) || (days.includes(prev) && m < t);
+}
+function untilTime(hm, d){ const e = new Date(d); e.setHours(0, toMin(hm), 0, 0); if (e <= d) e.setDate(e.getDate() + 1); return e.getTime(); }
+const eventDur = (r) => (r.allDay ? DAY : (r.endTime && toMin(r.endTime) > toMin(r.startTime)) ? (toMin(r.endTime) - toMin(r.startTime)) * 60000 : 3600000);
+function eventQuietNow(now){
+  for (const r of state.reminders) {
+    if (r.type !== 'event' || !r.quiet) continue;
+    const dur = eventDur(r);
+    for (const s of eventInstances(r, now - dur, now, r.allDay ? 0 : toMin(r.startTime))) if (now < s + dur) return { r, until: s + dur };
+  }
+  return null;
+}
+const dndActive = (q) => !!(q.dnd && Date.now() < q.dnd);
+// Warum ist es gerade ruhig? (null = nicht ruhig)
+function quietState(d = new Date()){
+  const q = quietCfg(), now = d.getTime();
+  if (q.dnd && now < q.dnd) return { kind: q.dndKind === 'night' ? 'night' : 'dnd', until: q.dnd, label: q.dndKind === 'night' ? 'Gute Nacht' : 'Nicht stören' };
+  for (const b of q.blocks || []) if (blockActive(b, d)) return { kind: 'block', until: untilTime(b.to, d), label: b.label || 'Ruhezeit' };
+  if (inQuietWindow(q, d)) return { kind: 'daily', until: untilTime(q.to, d), label: 'Ruhezeit' };
+  const ev = eventQuietNow(now);
+  if (ev) return { kind: 'event', until: ev.until, label: ev.r.title };
+  return null;
+}
+const isQuietNow = () => !!quietState();
+// Timer melden sich immer, Termine nur wenn erlaubt
+function silentFor(r){
+  if (r.type === 'timer' || !isQuietNow()) return false;
+  return !(r.type === 'event' && quietCfg().events !== false);
+}
+
+/* Gute Nacht + Schlaf-Protokoll (nur aus „Gute Nacht“ und dem ersten Öffnen am Morgen) */
+function nextWake(now = new Date()){
+  const q = quietCfg();
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(now); d.setDate(d.getDate() + i);
+    const we = d.getDay() === 0 || d.getDay() === 6;
+    d.setHours(0, toMin(we ? q.wakeWe || '09:00' : q.wake || '07:00'), 0, 0);
+    if (d.getTime() > now.getTime() + 30 * 60000) return d.getTime();
+  }
+  return now.getTime() + 8 * 3600e3;
+}
+function nightKey(d = new Date()){ const x = new Date(d); if (x.getHours() < 12) x.setDate(x.getDate() - 1); return ymd(x); }
+function goodNight(){
+  const until = nextWake(), now = new Date();
+  if (now.getHours() >= 5 && now.getHours() < 18 && !confirm(`Es ist noch Tag. Trotzdem ruhig bis ${new Date(until).toLocaleDateString('de-DE', { weekday: 'long' })} ${hhmm(until)} Uhr? Für kürzere Pausen gibt es „Nicht stören“ in den Einstellungen.`)) return;
+  setPref('quiet', { dnd: until, dndKind: 'night' });
+  if (now.getHours() >= 18 || now.getHours() < 4) {
+    const id = nightKey(now), old = state.sleep.find((s) => s.id === id);
+    colPut('sleep', { ...(old || {}), id, bed: now.getTime(), up: null });
+    save();
+  }
+  flash(`Gute Nacht! Ruhig bis ${hhmm(until)} Uhr.`);
+  render();
+}
+// Erstes Öffnen am Morgen nach „Gute Nacht“ = Aufstehzeit (grob)
+function logWake(){
+  const now = Date.now();
+  const s = [...state.sleep].filter((x) => x.bed && !x.up && !x.stale).sort((a, b) => b.bed - a.bed)[0];
+  if (!s) return;
+  const dt = now - s.bed;
+  if (dt > 16 * 3600e3) { colPut('sleep', { ...s, stale: true }); save(); return; } // Aufstehen verpasst: Nacht nicht werten
+  if (dt < 3 * 3600e3 || new Date(now).getHours() < 4) return;
+  colPut('sleep', { ...s, up: now }); save();
+}
+const SLEEP_MIN_NIGHTS = 5;
+function sleepNights(){
+  const cut = Date.now() - 28 * DAY;
+  return state.sleep.filter((s) => s.bed && s.up && s.bed > cut && s.up - s.bed > 3 * 3600e3 && s.up - s.bed < 15 * 3600e3);
+}
+function sleepSuggestion(){
+  const ns = sleepNights();
+  if (ns.length < SLEEP_MIN_NIGHTS) return null;
+  const med = (xs) => { const a = [...xs].sort((x, y) => x - y), i = Math.floor(a.length / 2); return a.length % 2 ? a[i] : (a[i - 1] + a[i]) / 2; };
+  const mins = (ts) => { const d = new Date(ts); return d.getHours() * 60 + d.getMinutes(); };
+  const bed = med(ns.map((s) => { const m = mins(s.bed); return m < 12 * 60 ? m + 1440 : m; })) % 1440;
+  const up = med(ns.map((s) => mins(s.up)));
+  const r15 = (m) => (Math.round(m / 15) * 15) % 1440, fm = (m) => `${pad(Math.floor(m / 60))}:${pad(m % 60)}`;
+  return { from: fm(r15(bed)), to: fm(r15(up)), n: ns.length };
+}
+function applySleepSuggestion(s){
+  const q = quietCfg(), blocks = [...(q.blocks || [])];
+  const i = blocks.findIndex((b) => (b.label || '').toLowerCase() === 'schlaf');
+  const b = { id: i >= 0 ? blocks[i].id : uid(), label: 'Schlaf', days: [], from: s.from, to: s.to };
+  if (i >= 0) blocks[i] = b; else blocks.push(b);
+  setPref('quiet', { blocks, wake: s.to });
+  try { localStorage.setItem('fokus.sleepHint', s.from + '-' + s.to); } catch (e) {}
+  flash(`Schlafenszeit ${s.from}–${s.to} übernommen.`);
+  render(); renderQuiet($('#quietBox'));
+}
+function renderSleepHint(){
+  const el = $('#sleepHint'), s = sleepSuggestion();
+  let seen = ''; try { seen = localStorage.getItem('fokus.sleepHint') || ''; } catch (e) {}
+  const q = quietCfg(), has = (q.blocks || []).some((b) => (b.label || '').toLowerCase() === 'schlaf' && b.from === (s && s.from) && b.to === (s && s.to));
+  if (!s || has || seen === s.from + '-' + s.to || tab !== 'today') { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="card" style="margin-top:8px"><div class="title" style="font-size:17px">🌙 Schlafenszeit übernehmen?</div>
+    <div class="small" style="margin-top:4px">In den letzten ${s.n} Nächten bist du meist gegen ${s.from} Uhr schlafen gegangen und um ${s.to} Uhr aufgestanden. Soll Fokus in dieser Zeit automatisch ruhig sein?</div>
+    <div class="btnrow"><button class="btn primary" data-sleep="apply">Übernehmen</button><button class="btn ghost" data-sleep="no">Nein danke</button></div></div>`;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-sleep]'); if (!b) return;
+  const s = sleepSuggestion(); if (!s) return;
+  if (b.dataset.sleep === 'apply') applySleepSuggestion(s);
+  else { try { localStorage.setItem('fokus.sleepHint', s.from + '-' + s.to); } catch (err) {} render(); }
+});
+$('#btnNight').onclick = () => { const q = quietState(); if (q && q.kind === 'night') { endNight(); } else goodNight(); };
+function endNight(){ logWake(); setPref('quiet', { dnd: 0, dndKind: '' }); flash('Guten Morgen!'); render(); }
+
+const QB_PRESETS = [['Schlaf', '23:00', '07:00', []], ['Arbeit', '09:00', '17:00', [1, 2, 3, 4, 5]], ['Schule', '08:00', '13:00', [1, 2, 3, 4, 5]], ['Vorlesung', '10:00', '12:00', [1]], ['Sport', '18:00', '19:30', [2, 4]]];
+function renderQuiet(box){
+  if (!box) return;
+  const q = quietCfg(), full = box.id === 'quietBox', blocks = q.blocks || [], sug = sleepSuggestion(), nights = sleepNights().length;
+  box.innerHTML = `
+    <label class="inl"><input type="checkbox" data-q="on" ${q.on ? 'checked' : ''}> Ruhezeit jeden Tag</label>
+    <div style="display:flex;gap:10px;margin-top:8px"><label style="flex:1">Von<input type="time" data-q="from" value="${esc(q.from)}"></label><label style="flex:1">Bis<input type="time" data-q="to" value="${esc(q.to)}"></label></div>
+    <label class="inl" style="margin-top:10px"><input type="checkbox" data-q="events" ${q.events !== false ? 'checked' : ''}> Termine trotzdem melden</label>
+    <div class="small" style="margin-top:6px">In der Ruhezeit gibt es keine Töne, keine Vibration und keinen Push. Was in der Zeit fällig wird, meldet sich danach. Fokus-Timer melden sich immer.</div>
+    ${full ? `
+    <div class="small" style="margin:16px 0 6px;font-weight:600">Feste Zeiten (Schlaf, Arbeit, Schule …)</div>
+    ${blocks.map((b, i) => `<div class="card" style="padding:10px 12px;margin-bottom:8px">
+      <div class="row"><input type="text" data-qb="${i}" data-f="label" value="${esc(b.label || '')}" maxlength="40" aria-label="Name des Zeitraums" placeholder="Name"><button type="button" class="icon-btn" data-qbdel="${i}" aria-label="Zeitraum ${esc(b.label || '')} löschen">✕</button></div>
+      <div class="chips" style="margin:8px 0">${WD.map((w) => `<button type="button" class="chip${(b.days || []).includes(w.v) ? ' sel' : ''}" data-qbday="${i}" data-v="${w.v}" aria-pressed="${(b.days || []).includes(w.v)}">${w.l}</button>`).join('')}</div>
+      <div style="display:flex;gap:10px"><label style="flex:1">Von<input type="time" data-qb="${i}" data-f="from" value="${esc(b.from)}"></label><label style="flex:1">Bis<input type="time" data-qb="${i}" data-f="to" value="${esc(b.to)}"></label></div>
+    </div>`).join('')}
+    <div class="small" style="margin-bottom:6px">${blocks.length ? 'Keine Tage gewählt = jeden Tag. Über Mitternacht zählt der Tag des Beginns.' : 'Zum Beispiel Schlaf jeden Tag 23–7 Uhr oder Arbeit Mo–Fr 9–17 Uhr.'}</div>
+    <div class="chips">${QB_PRESETS.map((p, i) => `<button type="button" class="chip" data-qbadd="${i}">+ ${p[0]}</button>`).join('')}</div>
+    <div class="small" style="margin:16px 0 6px;font-weight:600">Gute Nacht 🌙</div>
+    <div class="small">Tipp abends oben auf 🌙: Fokus ist dann ruhig bis zu deiner Aufstehzeit. Termine kannst du außerdem einzeln auf „Während des Termins ruhig“ stellen.</div>
+    <div style="display:flex;gap:10px;margin-top:8px"><label style="flex:1">Aufstehen Mo–Fr<input type="time" data-q="wake" value="${esc(q.wake || '07:00')}"></label><label style="flex:1">Aufstehen Sa–So<input type="time" data-q="wakeWe" value="${esc(q.wakeWe || '09:00')}"></label></div>
+    ${sug ? `<div class="hint" style="margin-top:10px">In den letzten ${sug.n} Nächten: meist schlafen gegen ${sug.from}, aufstehen gegen ${sug.to} Uhr.<div class="btnrow" style="margin-top:8px"><button type="button" class="btn" data-sleep="apply">Als Schlafenszeit übernehmen</button></div></div>`
+      : `<div class="small" style="margin-top:8px">${nights ? `Bisher ${nights} von ${SLEEP_MIN_NIGHTS} Nächten erfasst. ` : ''}Nach ${SLEEP_MIN_NIGHTS} Nächten mit „Gute Nacht“ schlage ich dir passende Schlafenszeiten vor.</div>`}`
+    : '<div class="small" style="margin-top:6px">Feste Zeiten für Schlaf, Arbeit oder Schule und den Gute-Nacht-Knopf 🌙 findest du später in den Einstellungen.</div>'}
+    <div class="small" style="margin:16px 0 6px;font-weight:600">Nicht stören</div>
+    ${dndActive(q) ? `<div class="row"><span>${q.dndKind === 'night' ? 'Gute Nacht' : 'Aktiv'} bis ${hhmm(q.dnd)} Uhr</span><button class="btn" type="button" data-dnd="0">Beenden</button></div>`
+      : '<div class="chips"><button class="chip" type="button" data-dnd="60">1 Std</button><button class="chip" type="button" data-dnd="120">2 Std</button><button class="chip" type="button" data-dnd="240">4 Std</button></div>'}`;
+}
+function setBlocks(fn){ const q = quietCfg(), blocks = (q.blocks || []).map((b) => ({ ...b, days: [...(b.days || [])] })); fn(blocks); setPref('quiet', { blocks }); renderQuiet($('#quietBox')); render(); }
+document.addEventListener('change', (e) => {
+  const el = e.target.closest('[data-qb]'); if (!el) return;
+  const i = Number(el.dataset.qb), f = el.dataset.f, v = el.value;
+  if ((f === 'from' || f === 'to') && !v) return;
+  setBlocks((bs) => { if (bs[i]) bs[i][f] = f === 'label' ? v.trim().slice(0, 40) : v; });
+});
+document.addEventListener('click', (e) => {
+  const d = e.target.closest('[data-qbday]'), x = e.target.closest('[data-qbdel]'), a = e.target.closest('[data-qbadd]');
+  if (d) setBlocks((bs) => { const b = bs[Number(d.dataset.qbday)]; if (!b) return; const v = Number(d.dataset.v), k = b.days.indexOf(v); if (k >= 0) b.days.splice(k, 1); else b.days.push(v); b.days.sort(); });
+  else if (x) setBlocks((bs) => { bs.splice(Number(x.dataset.qbdel), 1); });
+  else if (a) { const [label, from, to, days] = QB_PRESETS[Number(a.dataset.qbadd)]; setBlocks((bs) => { bs.push({ id: uid(), label, from, to, days: [...days] }); }); }
+});
+document.addEventListener('change', (e) => {
+  const el = e.target.closest('[data-q]'); if (!el) return;
+  const k = el.dataset.q, v = el.type === 'checkbox' ? el.checked : el.value;
+  if (['from', 'to', 'wake', 'wakeWe'].includes(k) && !v) return;
+  setPref('quiet', { [k]: v }); render();
+});
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-dnd]'); if (!b) return;
+  const m = Number(b.dataset.dnd);
+  if (!m && quietCfg().dndKind === 'night') logWake();
+  setPref('quiet', { dnd: m ? Date.now() + m * 60000 : 0, dndKind: m ? 'dnd' : '' });
+  if (m) flash(`Nicht stören bis ${hhmm(Date.now() + m * 60000)} Uhr`);
+  renderQuiet($('#quietBox')); const ob = $('#onbQuiet'); if (ob) renderQuiet(ob);
+  render();
+});
+function renderQuietBar(){
+  const s = quietState(), el = $('#quietBar');
+  $('#btnNight').textContent = s && s.kind === 'night' ? '☀' : '🌙';
+  $('#btnNight').setAttribute('aria-label', s && s.kind === 'night' ? 'Aufwachen: Gute-Nacht-Ruhe beenden' : 'Gute Nacht: ruhig bis zum Aufstehen');
+  if (!s) { el.innerHTML = ''; renderSleepHint(); return; }
+  const until = hhmm(s.until) + ' Uhr';
+  const txt = s.kind === 'night' ? `🌙 Gute Nacht · ruhig bis ${until}` : s.kind === 'dnd' ? `🔕 Nicht stören bis ${until}`
+    : s.kind === 'event' ? `🔕 Ruhig während „${esc(s.label)}“ bis ${until}` : `🔕 ${esc(s.label)} · ruhig bis ${until}`;
+  const btn = s.kind === 'night' ? '<button class="btn ghost" data-dnd="0">Aufwachen</button>' : s.kind === 'dnd' ? '<button class="btn ghost" data-dnd="0">Beenden</button>' : '';
+  el.innerHTML = `<div class="quietbar"><span>${txt}</span>${btn}</div>`;
+  $('#sleepHint').innerHTML = '';
+}
+
+/* ---------- Heute-Bildschirm anpassen ---------- */
+const HOME_SECS = [['checkin', 'Check-in'], ['one', 'Eine Sache jetzt'], ['routines', 'Routinen heute'], ['calendar', 'Heute im Kalender'], ['reminders', 'Meine Erinnerungen'], ['review', 'Rückblick'], ['log', 'Verlauf']];
+function homeCfg(){
+  const p = getPref('home', { order: [], hidden: [] }), keys = HOME_SECS.map(([k]) => k);
+  const order = (Array.isArray(p.order) ? p.order : []).filter((k) => keys.includes(k));
+  for (const k of keys) if (!order.includes(k)) order.push(k);
+  return { order, hidden: (Array.isArray(p.hidden) ? p.hidden : []).filter((k) => keys.includes(k)) };
+}
+function applyHome(){
+  const c = homeCfg(), box = $('#homeSecs');
+  for (const k of c.order) { const el = box.querySelector(`[data-sec="${k}"]`); if (!el) continue; box.appendChild(el); el.hidden = c.hidden.includes(k); }
+}
+function renderHomeList(){
+  const c = homeCfg(), label = Object.fromEntries(HOME_SECS);
+  $('#homeList').innerHTML = c.order.map((k, i) => `<div class="list-item">
+    <label class="chk" style="flex:1"><input type="checkbox" data-hshow="${k}" ${c.hidden.includes(k) ? '' : 'checked'}><span>${label[k]}</span></label>
+    <button type="button" class="icon-btn" data-hmove="${i}" data-dir="-1" aria-label="${label[k]} nach oben" ${i ? '' : 'disabled'}>↑</button>
+    <button type="button" class="icon-btn" data-hmove="${i}" data-dir="1" aria-label="${label[k]} nach unten" ${i < c.order.length - 1 ? '' : 'disabled'}>↓</button></div>`).join('');
+}
+function openHome(){ renderHomeList(); $('#homeDlg').showModal(); }
+$('#homeList').addEventListener('change', (e) => {
+  const k = e.target.dataset.hshow; if (!k) return;
+  const c = homeCfg(), hidden = c.hidden.filter((x) => x !== k);
+  if (!e.target.checked) hidden.push(k);
+  setPref('home', { order: c.order, hidden }); applyHome();
+});
+$('#homeList').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-hmove]'); if (!b) return;
+  const c = homeCfg(), i = Number(b.dataset.hmove), j = i + Number(b.dataset.dir);
+  if (j < 0 || j >= c.order.length) return;
+  [c.order[i], c.order[j]] = [c.order[j], c.order[i]];
+  setPref('home', { order: c.order, hidden: c.hidden }); applyHome(); renderHomeList();
+  const nb = $('#homeList').querySelectorAll('[data-hmove]')[j * 2 + (Number(b.dataset.dir) > 0 ? 1 : 0)]; if (nb && !nb.disabled) nb.focus();
+});
+$('#homeReset').onclick = () => { setPref('home', { order: HOME_SECS.map(([k]) => k), hidden: [] }); applyHome(); renderHomeList(); };
+$('#homeClose').onclick = () => $('#homeDlg').close();
+$('#homeDlg').addEventListener('close', () => { render(); showAlertIfNeeded(); });
+$('#btnHome').onclick = () => { $('#setDlg').close(); openHome(); };
+$('#btnHome2').onclick = openHome;
+
+/* ---------- Sync-Code sichern ---------- */
+function codeBlockHtml(){
+  return `<div class="code-box">${esc(fmtCode(sync.code || ''))}</div>
+    <div class="warnbox"><b>Wichtig:</b> Heb diesen Code gut auf, zum Beispiel im Passwort-Manager oder als Datei. Ohne ihn kommst du auf einem neuen Gerät nicht mehr an deine Daten. Weil deine Inhalte verschlüsselt sind, kann sie sonst niemand wiederherstellen.</div>
+    <div class="btnrow" style="margin-top:0"><button class="btn" type="button" data-code="copy">Code kopieren</button><button class="btn" type="button" data-code="file">Als Datei sichern</button></div>`;
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-code]'); if (!b || !sync.code) return;
+  if (b.dataset.code === 'copy') {
+    try { await navigator.clipboard.writeText(fmtCode(sync.code)); flash('Code kopiert.'); }
+    catch (err) { flash('Kopieren nicht möglich. Markiere den Code und kopiere ihn von Hand.'); }
+  } else {
+    const txt = `Fokus – dein Sync-Code\n\n${fmtCode(sync.code)}\n\nGib diesen Code auf jedem Gerät unter ⚙ → „Geräte & Push“ ein.\nOhne ihn kommst du auf einem neuen Gerät nicht mehr an deine Daten.\nBewahre ihn sicher auf (zum Beispiel im Passwort-Manager) und gib ihn nicht weiter.\n`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
+    a.download = 'fokus-sync-code.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    flash('Code als Datei gespeichert.');
+  }
+});
+async function createSync(){ sync = { code: genCode() }; saveSync(); return syncNow(); }
+
+/* ---------- Einführung beim ersten Start ---------- */
+const onbDone = () => { try { return localStorage.getItem('fokus.onb') === '1'; } catch (e) { return true; } };
+let onbStep = 0;
+const ONB = [
+  () => `<h3>Willkommen bei Fokus</h3>
+    <p>Fokus hilft dir, an Dinge zu denken, anzufangen und dranzubleiben. Nutz nur, was dir hilft. Alles andere kannst du ausblenden.</p>
+    <div class="onb-list">
+      <div><b>☀ Heute</b><span>Was jetzt dran ist, auf einen Blick</span></div>
+      <div><b>✓ Aufgaben</b><span>Große Dinge in Mini-Schritte zerlegen, dazu Routinen</span></div>
+      <div><b>◷ Fokus</b><span>Timer für konzentrierte Runden mit Pausen</span></div>
+      <div><b>▦ Kalender</b><span>Termine, auf Wunsch mit Erinnerung ans Losgehen</span></div>
+      <div><b>✎ Notizen</b><span>Gedanken schnell loswerden</span></div>
+    </div>`,
+  () => `<h3>Klein anfangen</h3>
+    <p>„Eine Sache jetzt“ zeigt dir immer nur den nächsten kleinen Schritt. Wirkt etwas zu groß, tipp auf „Aufteilen“.</p>
+    <p>Erinnerungen kannst du snoozen oder für heute ruhen lassen. Wenn du willst, hakt die App nach, bis du reagierst.</p>
+    <p>Mit dem Fokus-Timer arbeitest du in Runden. Schon 5 Minuten zählen.</p>
+    <p class="small">Kein Druck, keine Serien: Was du schaffst, zählt.</p>`,
+  () => `<h3>Benachrichtigungen</h3>
+    <p>Damit Erinnerungen auch im Hintergrund auftauchen, braucht die App deine Erlaubnis.</p>
+    <div id="onbPerm"></div>
+    <h3 style="font-size:18px;margin-top:6px">Ruhezeit</h3>
+    <div id="onbQuiet"></div>`,
+  () => {
+    if (!API) return `<h3>Mehrere Geräte</h3><p>Mit einem Sync-Code nutzt du Fokus auf Handy und PC gemeinsam. Der Abgleich wird gerade eingerichtet. Du findest ihn später unter ⚙ → „Geräte &amp; Push“.</p>`;
+    if (sync.code) return `<h3>Dein Sync-Code</h3><p>Gib diesen Code auf deinen anderen Geräten unter ⚙ → „Geräte &amp; Push“ ein.</p>${codeBlockHtml()}`;
+    return `<h3>Mehrere Geräte</h3>
+      <p>Mit einem Sync-Code nutzt du Fokus auf Handy und PC gemeinsam, und die App erinnert dich auch, wenn sie geschlossen ist. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden verschlüsselt.</p>
+      <button class="btn primary" type="button" data-onb="sync">Sync einschalten</button>
+      <button class="btn" type="button" data-onb="join">Ich habe schon einen Code</button>
+      <p class="small">Das geht auch später unter ⚙ → „Geräte &amp; Push“.</p>`;
+  },
+];
+function renderOnb(){
+  $('#onbStep').textContent = `Schritt ${onbStep + 1} von ${ONB.length}`;
+  $('#onbBody').innerHTML = ONB[onbStep]();
+  $('#onbBack').hidden = onbStep === 0;
+  $('#onbSkip').hidden = onbStep === ONB.length - 1;
+  $('#onbNext').textContent = onbStep === ONB.length - 1 ? 'Los geht’s' : 'Weiter';
+  const pp = $('#onbPerm');
+  if (pp) pp.innerHTML = !('Notification' in window) ? '<p class="small">Dieser Browser unterstützt keine Benachrichtigungen.</p>'
+    : Notification.permission === 'granted' ? '<p class="msg good">Benachrichtigungen sind erlaubt ✓</p>'
+    : Notification.permission === 'denied' ? '<p class="small">Benachrichtigungen sind im Browser blockiert. Du kannst sie in den Website-Einstellungen erlauben.</p>'
+    : '<button class="btn primary" type="button" data-onb="perm">Benachrichtigungen erlauben</button>';
+  renderQuiet($('#onbQuiet'));
+}
+function openOnb(){ onbStep = 0; $('#onbMsg').textContent = ''; renderOnb(); $('#onbDlg').showModal(); }
+function finishOnb(){ try { localStorage.setItem('fokus.onb', '1'); } catch (e) {} $('#onbDlg').close(); }
+$('#onbNext').onclick = () => { if (onbStep < ONB.length - 1) { onbStep++; $('#onbMsg').textContent = ''; renderOnb(); } else finishOnb(); };
+$('#onbBack').onclick = () => { if (onbStep > 0) { onbStep--; $('#onbMsg').textContent = ''; renderOnb(); } };
+$('#onbSkip').onclick = finishOnb;
+$('#onbDlg').addEventListener('cancel', () => { try { localStorage.setItem('fokus.onb', '1'); } catch (e) {} });
+$('#onbDlg').addEventListener('close', () => { render(); showAlertIfNeeded(true); });
+$('#onbBody').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-onb]'); if (!b) return;
+  const a = b.dataset.onb, msg = $('#onbMsg');
+  if (a === 'perm') { await askPermission(); renderOnb(); }
+  else if (a === 'sync') {
+    b.disabled = true; msg.className = 'msg'; msg.textContent = 'Richte Sync ein …';
+    const ok = await createSync();
+    renderOnb();
+    msg.className = 'msg ' + (ok ? 'good' : 'bad');
+    msg.textContent = ok ? 'Sync ist eingeschaltet. Sichere jetzt deinen Code.' : (sync.error || 'Das hat nicht geklappt. Du kannst es später unter ⚙ → „Geräte & Push“ erneut versuchen.');
+  } else if (a === 'join') { finishOnb(); syncMsg = { text: '', cls: '' }; $('#syncDlg').showModal(); renderSync(); setTimeout(() => { const j = $('#joinCode'); if (j) j.focus(); }, 50); }
+});
+$('#btnOnb').onclick = () => { $('#setDlg').close(); openOnb(); };
+
+/* ---------- Ende-zu-Ende-Verschlüsselung ---------- */
+// Schlüssel = HKDF(Sync-Code). Der Server kennt nur SHA-256 des Codes (als Profil-ID) und kann den Schlüssel nicht ableiten.
+const te = new TextEncoder(), td = new TextDecoder();
+let encKeyP = null, encKeyFor = null;
+function encKey(){
+  if (encKeyFor !== sync.code) {
+    encKeyFor = sync.code;
+    encKeyP = (async () => {
+      const raw = await crypto.subtle.importKey('raw', te.encode('fokus:' + sync.code), 'HKDF', false, ['deriveKey']);
+      return crypto.subtle.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: te.encode('fokus-e2e-v1'), info: te.encode('data') }, raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    })();
+  }
+  return encKeyP;
+}
+const b64e = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const b64d = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+const encCache = new Map(), decCache = new Map();
+async function encItem(item, key){
+  if (!item || item.deleted) return item;
+  const ck = (sync.code || '') + '|' + item.id + '|' + (item.updatedAt || 0) + '|' + JSON.stringify(item).length;
+  const hit = encCache.get(ck); if (hit) return hit;
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: te.encode(item.id) }, key, te.encode(JSON.stringify(item))));
+  const buf = new Uint8Array(12 + ct.length); buf.set(iv); buf.set(ct, 12);
+  const out = { id: item.id, updatedAt: item.updatedAt || 0, enc: b64e(buf) };
+  if (encCache.size > 8000) encCache.clear();
+  encCache.set(ck, out);
+  return out;
+}
+async function decItem(x, key){
+  if (!x || x.deleted || !x.enc) return x;
+  const hit = decCache.get(x.enc); if (hit) return hit;
+  try {
+    const buf = b64d(x.enc);
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.subarray(0, 12), additionalData: te.encode(x.id) }, key, buf.subarray(12));
+    const obj = { ...JSON.parse(td.decode(pt)), id: x.id, updatedAt: x.updatedAt };
+    if (decCache.size > 8000) decCache.clear();
+    decCache.set(x.enc, obj);
+    return obj;
+  } catch (e) { return null; } // nicht lesbar (falscher Schlüssel): ignorieren
+}
+async function encPayload(p){
+  const key = await encKey(), out = { ...p };
+  for (const c of ENC_COLS) out[c] = await Promise.all((p[c] || []).map((x) => encItem(x, key)));
+  return out;
+}
+async function decResponse(res){
+  const key = await encKey(), out = { ...res };
+  let plain = false;
+  for (const c of ENC_COLS) {
+    const arr = Array.isArray(res[c]) ? res[c] : [];
+    out[c] = (await Promise.all(arr.map((x) => { if (x && !x.deleted && !x.enc) plain = true; return decItem(x, key); }))).filter(Boolean);
+  }
+  out._plain = plain;
+  return out;
+}
+// Unverschlüsselte Altbestände auf dem Server: lokal minimal neuer machen, damit die verschlüsselte Fassung gewinnt
+function migratePlain(){
+  for (const c of ENC_COLS) for (const x of (c === 'notes' ? state.notes : state[c])) x.updatedAt = (x.updatedAt || 0) + 1;
+  scheduleSync();
+}
+
+/* ---------- Sync & Push (Backend) ---------- */
+let sync = (() => { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch (e) { return {}; } })();
+function idb(){ return new Promise((res, rej) => { const q = indexedDB.open('fokus-sw', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+async function idbSet(k, v){ try { const db = await idb(); await new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); } catch (e) {} }
+function saveSync(){
+  try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch (e) {}
+  idbSet('cfg', { api: API, code: sync.code || null });
+}
+const normCode = (s) => String(s || '').replace(/[^A-Za-z2-7]/g, '').toUpperCase();
+const fmtCode = (c) => (c.match(/.{1,4}/g) || []).join('-');
+function genCode(){
+  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', b = crypto.getRandomValues(new Uint8Array(20));
+  let bits = '', out = '';
+  for (const x of b) bits += x.toString(2).padStart(8, '0');
+  for (let i = 0; i < 160; i += 5) out += A[parseInt(bits.slice(i, i + 5), 2)];
+  return out;
+}
+const urlB64ToU8 = (s) => { const p = '='.repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, (c) => c.charCodeAt(0)); };
+
+async function api(path, body){
+  const r = await fetch(API + path, {
+    method: body ? 'POST' : 'GET',
+    headers: { ...(sync.code ? { Authorization: 'Bearer ' + sync.code } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!r.ok) { const e = new Error('HTTP ' + r.status); e.status = r.status; throw e; }
+  return r.json();
+}
+
+// Gleiche Zusammenführung wie im Backend: Definition und Laufzeitstatus getrennt, jeweils "neuester gewinnt"
+function mergeStates(a, b){
+  const map = new Map();
+  for (const r of a.reminders || []) if (r && r.id) map.set(r.id, { ...r });
+  for (const c of b.reminders || []) {
+    if (!c || !c.id) continue;
+    const s = map.get(c.id);
+    if (!s) { map.set(c.id, { ...c }); continue; }
+    const out = { ...((c.updatedAt || 0) > (s.updatedAt || 0) ? c : s) };
+    const rt = (c.rtAt || 0) > (s.rtAt || 0) ? c : s;
+    for (const k of RUNTIME) { if (rt[k] === undefined) delete out[k]; else out[k] = rt[k]; }
+    map.set(c.id, out);
+  }
+  const cutoff = Date.now() - 30 * DAY;
+  const reminders = [...map.values()].filter((r) => !(r.deleted && (r.updatedAt || 0) < cutoff));
+  const seen = new Set(), log = [];
+  for (const e of [...(a.log || []), ...(b.log || [])]) {
+    if (!e) continue;
+    const k = `${e.t}|${e.rid}|${e.kind}`;
+    if (!seen.has(k)) { seen.add(k); log.push(e); }
+  }
+  log.sort((x, y) => y.t - x.t);
+  const out = { reminders, log: log.slice(0, 200) };
+  for (const col of ['notes', ...GCOLS]) out[col] = mergeCol(a[col], b[col], cutoff);
+  return out;
+}
+function mergeCol(x, y, cutoff){
+  const m = new Map();
+  for (const n of [...(Array.isArray(x) ? x : []), ...(Array.isArray(y) ? y : [])]) {
+    if (!n || typeof n.id !== 'string') continue;
+    const o = m.get(n.id);
+    if (!o || (n.updatedAt || 0) > (o.updatedAt || 0)) m.set(n.id, n);
+  }
+  return [...m.values()].filter((n) => !(n.deleted && (n.updatedAt || 0) < cutoff)).sort((p, q) => (q.updatedAt || 0) - (p.updatedAt || 0)).slice(0, 3000);
+}
+
+let syncing = false, syncTimer = null, syncAgain = false;
+function scheduleSync(){ if (!API || !sync.code) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow(), 1200); }
+const withDead = (items, dead) => [...items, ...dead.map((t) => ({ id: t.id, deleted: true, updatedAt: t.updatedAt }))];
+function localPayload(){
+  const p = { reminders: withDead(state.reminders, state.tombs), log: state.log, notes: withDead(state.notes, state.noteTombs) };
+  for (const c of GCOLS) p[c] = withDead(state[c], state.dead[c]);
+  return p;
+}
+
+async function syncNow(join){
+  if (!API || !sync.code) return false;
+  if (syncing) { syncAgain = true; return false; }
+  syncing = true; renderSync();
+  const before = new Set(pendingActive().map((r) => r.id));
+  try {
+    const raw = await api('/api/sync', { tz: Intl.DateTimeFormat().resolvedOptions().timeZone, ...(await encPayload(localPayload())), join: !!join });
+    const res = await decResponse(raw);
+    const merged = mergeStates(res, localPayload());
+    state.reminders = merged.reminders.filter((r) => !r.deleted);
+    state.tombs = merged.reminders.filter((r) => r.deleted).map((r) => ({ id: r.id, updatedAt: r.updatedAt || 0 }));
+    state.log = merged.log;
+    state.notes = merged.notes.filter((n) => !n.deleted);
+    state.noteTombs = merged.notes.filter((n) => n.deleted).map((n) => ({ id: n.id, updatedAt: n.updatedAt || 0 }));
+    for (const c of GCOLS) {
+      state[c] = merged[c].filter((n) => !n.deleted);
+      state.dead[c] = merged[c].filter((n) => n.deleted).map((n) => ({ id: n.id, updatedAt: n.updatedAt || 0 }));
+    }
+    if (res._plain) migratePlain(); // alte, unverschlüsselte Einträge auf dem Server ersetzen
+    saveLocal();
+    sync.last = Date.now(); sync.error = null; saveSync();
+    render();
+    if (pendingActive().some((r) => !before.has(r.id))) showAlertIfNeeded(true);
+    return true;
+  } catch (e) {
+    sync.error = e.status === 401 ? 'Der Code wird nicht akzeptiert.' : e.status === 404 ? 'Diesen Code gibt es nicht.' : e.status === 413 ? 'Zu viele Daten für den Abgleich.' : 'Keine Verbindung zum Backend.';
+    sync.errorStatus = e.status || 0;
+    return false;
+  } finally {
+    syncing = false; renderSync();
+    if (syncAgain) { syncAgain = false; scheduleSync(); }
+  }
+}
+
+async function enablePush(){
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) throw new Error('Dieser Browser unterstützt keine Push-Nachrichten.');
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') throw new Error('Benachrichtigungen sind nicht erlaubt. Bitte in den Browser-Einstellungen freigeben.');
+  const reg = await navigator.serviceWorker.ready;
+  const { publicKey } = await api('/api/vapid');
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToU8(publicKey) });
+  await api('/api/subscribe', { endpoint: sub.endpoint });
+  sync.push = true; saveSync();
+}
+async function disablePush(){
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub) { try { await api('/api/unsubscribe', { endpoint: sub.endpoint }); } catch (e) {} await sub.unsubscribe(); }
+  } catch (e) {}
+  sync.push = false; saveSync();
+}
+
+let syncMsg = { text: '', cls: '' };
+function say(text, cls){ syncMsg = { text, cls: cls || '' }; renderSync(); }
+function renderSync(){
+  const el = $('#syncBody'); if (!el || !$('#syncDlg').open) return;
+  const focusId = document.activeElement && document.activeElement.id;
+  const val = ($('#joinCode') || {}).value || '';
+  if (!API) { el.innerHTML = '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>'; return; }
+  let h = '';
+  if (!sync.code) {
+    h = `<p class="small" style="margin:0">Mit einem Sync-Code teilen deine Geräte dieselben Daten, und das Backend kann dich auch bei geschlossener App erinnern. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden dabei verschlüsselt.</p>
+      <button class="btn primary" data-sync="create">Sync einschalten (neuer Code)</button>
+      <div class="small" style="text-align:center">oder</div>
+      <label>Mit vorhandenem Code verbinden<input id="joinCode" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-…" value="${esc(val)}"></label>
+      <button class="btn" data-sync="join">Verbinden</button>`;
+  } else {
+    const last = sync.last ? new Date(sync.last).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
+    h = `<div><div class="small" style="margin-bottom:6px;font-weight:600">Dein Sync-Code (geheim halten, auf jedem Gerät eingeben)</div>${codeBlockHtml()}</div>
+      <div class="small">🔒 Notizen, Aufgaben, Routinen, Check-ins und Fokus-Zeiten werden auf deinem Gerät verschlüsselt, bevor sie zum Server gehen. Erinnerungen und Termine bleiben für den Server lesbar, damit er dich rechtzeitig erinnern kann.</div>
+      <div class="small">${syncing ? 'Synchronisiere …' : sync.error ? '⚠ ' + esc(sync.error) : 'Zuletzt synchronisiert: ' + last + ' Uhr'}</div>
+      <div><div class="small" style="margin-bottom:6px;font-weight:600">Push-Erinnerungen (auch bei geschlossener App)</div>
+        <div class="small" style="margin-bottom:8px">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
+        <div class="dlg-actions" style="justify-content:flex-start">
+          ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
+        </div></div>
+      <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" data-sync="now">Jetzt synchronisieren</button><button class="btn danger" data-sync="leave">Sync ausschalten</button></div>`;
+  }
+  h += `<div class="msg ${syncMsg.cls}" role="status">${esc(syncMsg.text)}</div>`;
+  el.innerHTML = h;
+  if (focusId === 'joinCode') { const j = $('#joinCode'); if (j) { j.focus(); j.setSelectionRange(val.length, val.length); } }
+}
+
+$('#syncBody').addEventListener('click', async (e) => {
+  const t = e.target.closest('[data-sync]'); if (!t) return;
+  const a = t.dataset.sync;
+  try {
+    if (a === 'create') {
+      say('Code erstellt, synchronisiere …');
+      const ok = await createSync();
+      say(ok ? 'Fertig. Sichere den Code und gib ihn auf deinen anderen Geräten ein.' : (sync.error || 'Das hat nicht geklappt.'), ok ? 'good' : 'bad');
+    } else if (a === 'join') {
+      const code = normCode($('#joinCode').value);
+      if (code.length < 26) { say('Der Code ist zu kurz.', 'bad'); return; }
+      sync = { code }; saveSync(); say('Verbinde …');
+      const ok = await syncNow(true);
+      if (!ok) { const why = sync.error; sync = {}; saveSync(); say(why || 'Verbindung fehlgeschlagen. Stimmt der Code?', 'bad'); return; }
+      say('Verbunden. Deine Erinnerungen wurden zusammengeführt.', 'good');
+    } else if (a === 'copy') {
+      try { await navigator.clipboard.writeText(fmtCode(sync.code)); say('Code kopiert.', 'good'); } catch (err) { say('Kopieren nicht möglich, markiere den Code und kopiere ihn von Hand.', 'bad'); }
+    } else if (a === 'now') {
+      const ok = await syncNow(); say(ok ? 'Synchronisiert.' : (sync.error || 'Fehlgeschlagen.'), ok ? 'good' : 'bad');
+    } else if (a === 'pushon') {
+      say('Aktiviere Push …'); await enablePush(); say('Push ist aktiv. Mit „Test-Push senden“ kannst du es prüfen.', 'good');
+    } else if (a === 'pushoff') {
+      await disablePush(); say('Push ausgeschaltet.', '');
+    } else if (a === 'testpush') {
+      const r = await api('/api/test-push', {});
+      say(r.sent ? 'Test gesendet. Es sollte gleich eine Benachrichtigung erscheinen.' : 'Kein Gerät hat den Push angenommen. Schalte Push aus und wieder an.', r.sent ? 'good' : 'bad');
+    } else if (a === 'leave') {
+      if (!confirm('Sync auf diesem Gerät ausschalten? Die Erinnerungen bleiben hier gespeichert.')) return;
+      await disablePush(); sync = {}; saveSync(); say('Sync ausgeschaltet.', '');
+    }
+  } catch (err) { say(err.message || 'Das hat nicht geklappt.', 'bad'); }
+});
+$('#btnSyncOpen').onclick = () => { $('#setDlg').close(); syncMsg = { text: '', cls: '' }; $('#syncDlg').showModal(); renderSync(); };
+$('#btnSyncClose').onclick = () => $('#syncDlg').close();
+$('#syncDlg').addEventListener('close', () => showAlertIfNeeded());
 
 /* ---------- Start ---------- */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
   navigator.serviceWorker.addEventListener('message', (e) => {
     const m = e.data || {};
+    if (m.type === 'sync') { syncNow(); return; }
     if (m.type === 'notif-action' && m.id) {
       if (m.action === 'done' || m.action === 'skip') act(m.id, m.action);
       else if (m.action === 'snooze') act(m.id, 'snooze');
@@ -643,19 +2482,31 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 
 (function init(){
   const p = new URLSearchParams(location.search);
-  const id = p.get('id'), action = p.get('action');
+  const id = p.get('id'), action = p.get('action'), nw = p.get('new'), tb = p.get('tab');
+  if (TABS.includes(tb)) tab = tb;
+  prune();
+  logWake();
   tick();
   if (id && find(id)) {
     if (action === 'done' || action === 'skip') act(id, action);
     else if (action === 'snooze') act(id, 'snooze');
     history.replaceState(null, '', location.pathname);
   }
-  render();
+  setTab(tab);
+  if (nw === 'note') { setTab('notes'); openNote(null); }
+  else if (nw === 'task') { setTab('tasks'); setSeg('tasks'); openTask(null); }
+  else if (nw === 'reminder') { setTab('today'); openForm(null); }
+  else if (nw === 'event') { setTab('cal'); openEvent(null, calSel); }
+  if (nw || tb) history.replaceState(null, '', location.pathname);
+  if (!nw && !onbDone()) openOnb();
   showAlertIfNeeded(true);
+  ensureTicker();
   setInterval(tick, 10000);
+  if (API && sync.code) { saveSync(); syncNow(); }
+  setInterval(() => { if (document.visibilityState === 'visible') syncNow(); }, 60000);
   // Anzeige ("Nächste: …") jede Minute auffrischen, ohne Eingaben zu stören
   setInterval(() => { if (!document.activeElement || !document.activeElement.matches('.inline-min')) render(); }, 60000);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { tick(); render(); } });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { logWake(); tick(); render(); syncNow(); } });
   window.addEventListener('focus', tick);
 })();
 </script>

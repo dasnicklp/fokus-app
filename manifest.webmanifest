@@ -1,7 +1,7 @@
 {
  "name": "Fokus – ADHS-Begleiter",
  "short_name": "Fokus",
- "description": "Erinnerungen mit Notizen, Wiederholung und Snooze",
+ "description": "ADHS-Begleiter: Erinnerungen, Aufgaben in Mini-Schritten, Fokus-Timer, Routinen, Kalender und Notizen",
  "start_url": "./index.html",
  "scope": "./",
  "display": "standalone",
@@ -27,6 +27,56 @@
    "sizes": "512x512",
    "type": "image/png",
    "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "Neue Notiz",
+   "short_name": "Notiz",
+   "url": "./index.html?new=note",
+   "icons": [
+    {
+     "src": "icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Neue Aufgabe",
+   "short_name": "Aufgabe",
+   "url": "./index.html?new=task",
+   "icons": [
+    {
+     "src": "icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Fokus-Timer",
+   "short_name": "Fokus",
+   "url": "./index.html?tab=focus",
+   "icons": [
+    {
+     "src": "icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "Neue Erinnerung",
+   "short_name": "Erinnerung",
+   "url": "./index.html?new=reminder",
+   "icons": [
+    {
+     "src": "icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
   }
  ]
 }
