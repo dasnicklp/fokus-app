@@ -485,7 +485,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.06.4';
+const APP_VERSION = '2026.10.06.5';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -1538,6 +1538,20 @@ $('#taskQuick').addEventListener('submit', (e) => {
   colPut('tasks', newTask(v.slice(0, 160))); $('#taskQuickIn').value = '';
   save(); render();
 });
+// Eingefügte Listen: jede Zeile ein Eintrag. Aufzählungszeichen wie „- “, „• “, „1. “ oder „[ ] “ fallen weg.
+// (Einzeilige Eingabefelder würden die Zeilenumbrüche sonst einfach verschlucken.)
+const LIST_MARK = /^\s*(?:[-*•–]|\d+[.)]|\[[ xX]?\])\s+/;
+const pastedLines = (e) => String((e.clipboardData && e.clipboardData.getData('text')) || '')
+  .split(/\r?\n/).map((l) => l.replace(LIST_MARK, '').replace(LIST_MARK, '').trim()).filter(Boolean);
+// Liste ins Feld „Neue Aufgabe“: erste Zeile wird die Aufgabe (oder der schon getippte Text), die übrigen werden Mini-Schritte
+$('#taskQuickIn').addEventListener('paste', (e) => {
+  const lines = pastedLines(e); if (lines.length < 2) return;
+  e.preventDefault();
+  const typed = e.target.value.trim(), t = newTask((typed || lines.shift()).slice(0, 160));
+  t.steps = lines.map((text) => ({ id: uid(), text: text.slice(0, 200), done: false, doneAt: null }));
+  colPut('tasks', t); e.target.value = ''; save(); render();
+  flash(`Aufgabe „${t.title}“ mit ${t.steps.length} Schritten angelegt.`);
+});
 
 // Aufgaben-Dialog (speichert beim Schließen)
 const STEP_IDEAS = ['Alles Nötige zusammensuchen', 'Unterlagen oder Datei öffnen', '5 Minuten einfach anfangen', 'Aufschreiben, was unklar ist', 'Jemanden um Hilfe fragen', 'Nächsten Schritt festlegen'];
@@ -1569,6 +1583,7 @@ $('#tkSteps').addEventListener('click', (e) => {
   if (x) { tkDraft.steps.splice(Number(x.dataset.sdel), 1); renderTkSteps(); }
 });
 function addStepText(v){ v = String(v || '').trim(); if (!v) return; tkDraft.steps.push({ id: uid(), text: v.slice(0, 200), done: false, doneAt: null }); renderTkSteps(); }
+$('#tkAdd').addEventListener('paste', (e) => { const lines = pastedLines(e); if (lines.length < 2) return; e.preventDefault(); lines.forEach((l) => addStepText(l)); });
 $('#tkAddForm').addEventListener('submit', (e) => { e.preventDefault(); addStepText($('#tkAdd').value); $('#tkAdd').value = ''; $('#tkAdd').focus(); });
 $('#tkIdeas').addEventListener('click', (e) => { const b = e.target.closest('[data-idea]'); if (b) addStepText(STEP_IDEAS[Number(b.dataset.idea)]); });
 $('#tkNow').onclick = () => { tkDraft.now = !tkDraft.now; renderTkSteps(); };
@@ -1699,6 +1714,7 @@ $('#rtSteps').addEventListener('click', (e) => {
 });
 function rtAddStep(){ const v = $('#rtAdd').value.trim(); if (!v) return; rtDraft.steps.push({ id: uid(), text: v.slice(0, 120) }); $('#rtAdd').value = ''; renderRtForm(); }
 $('#rtAddBtn').onclick = () => { rtAddStep(); $('#rtAdd').focus(); };
+$('#rtAdd').addEventListener('paste', (e) => { const lines = pastedLines(e); if (lines.length < 2) return; e.preventDefault(); for (const l of lines) rtDraft.steps.push({ id: uid(), text: l.slice(0, 120) }); renderRtForm(); });
 $('#rtAdd').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); rtAddStep(); } });
 $('#rtCancel').onclick = () => $('#rtDlg').close();
 $('#rtDlg').addEventListener('close', () => showAlertIfNeeded());
