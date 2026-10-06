@@ -1,5 +1,5 @@
 // Service Worker: Offline-Cache, Push-Empfang und Klicks auf Benachrichtigungen
-const CACHE = 'fokus-v4';
+const CACHE = 'fokus-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const ICON = 'icon-192.png';
 
@@ -66,12 +66,13 @@ async function onPush() {
   try { data = await apiSW('/api/pending'); } catch (err) { /* offline oder nicht eingerichtet */ }
   const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   wins.forEach((c) => c.postMessage({ type: 'sync' }));
-  if (wins.some((c) => c.visibilityState === 'visible')) return; // App im Vordergrund zeigt es selbst
   const reg = self.registration;
   const list = (data && data.pending) || [];
+  // Den Test immer anzeigen, auch bei offener App. Sonst sieht er nach dem Tipp auf „Test-Push senden“ wie ein Fehlschlag aus.
   if (data && data.test) {
     await reg.showNotification('Test erfolgreich', { body: 'So meldet sich Fokus, auch wenn die App geschlossen ist.', icon: ICON, badge: ICON, tag: 'fokus-test' });
   }
+  if (wins.some((c) => c.visibilityState === 'visible')) return; // App im Vordergrund zeigt Erinnerungen selbst
   if (!data) {
     await reg.showNotification('Fokus', { body: 'Du hast eine fällige Erinnerung. Öffne die App.', icon: ICON, badge: ICON, tag: 'fokus-due', vibrate: [200, 100, 200] });
     return;

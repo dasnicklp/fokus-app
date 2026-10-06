@@ -479,7 +479,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.06.2';
+const APP_VERSION = '2026.10.06.3';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -2435,7 +2435,9 @@ function mergeCol(x, y, cutoff){
 }
 
 let syncing = false, syncTimer = null, syncAgain = false;
-function scheduleSync(){ if (!API || !sync.code) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow(), 1200); }
+function scheduleSync(){ if (!API || !sync.code) return; clearTimeout(syncTimer); syncTimer = setTimeout(() => { syncTimer = null; syncNow(); }, 1200); }
+// Geht die App in den Hintergrund, offene Änderungen sofort abgleichen. Sonst erfährt der Server womöglich nie von einer gerade angelegten Erinnerung.
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && syncTimer) { clearTimeout(syncTimer); syncTimer = null; syncNow(); } });
 const withDead = (items, dead) => [...items, ...dead.map((t) => ({ id: t.id, deleted: true, updatedAt: t.updatedAt }))];
 function localPayload(){
   const p = { reminders: withDead(state.reminders, state.tombs), log: state.log, notes: withDead(state.notes, state.noteTombs) };
@@ -2498,7 +2500,7 @@ async function disablePush(){
 }
 
 // Meldungen erscheinen in dem Bereich, aus dem die Aktion kam (Push unter Benachrichtigungen, sonst Sync)
-let syncMsg = { text: '', cls: '', at: '' };
+let syncMsg = { text: '', cls: '', at: '' }, testPushAt = 0;
 function say(text, cls){ syncMsg = { ...syncMsg, text, cls: cls || '' }; renderSync(); }
 const msgHtml = (at) => `<div class="msg ${syncMsg.at === at ? syncMsg.cls : ''}" role="status">${syncMsg.at === at ? esc(syncMsg.text) : ''}</div>`;
 function pushHtml(){
@@ -2508,7 +2510,7 @@ function pushHtml(){
     ${msgHtml('push')}`;
   return `<div class="small">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
     <div class="dlg-actions" style="justify-content:flex-start">
-      ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
+      ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="testrem">Test bei geschlossener App</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
     </div>
     ${msgHtml('push')}`;
 }
@@ -2571,8 +2573,19 @@ $('#setDlg').addEventListener('click', async (e) => {
       say(fresh ? 'Push ist aktiv. Deinen Sync-Code findest du unter „Sync & Daten“, heb ihn gut auf.' : 'Push ist aktiv. Mit „Test-Push senden“ kannst du es prüfen.', 'good');
     } else if (a === 'pushoff') {
       await disablePush(); say('Push ausgeschaltet.', '');
+    } else if (a === 'testrem') {
+      // Echte Erinnerung in gut 2 Minuten: prüft den ganzen Weg Server → Push → Handy bei geschlossener App
+      const at = new Date(Date.now() + 120000); at.setSeconds(0, 0); at.setMinutes(at.getMinutes() + 1);
+      const now = Date.now(), when = hhmm(at.getTime());
+      state.reminders.push(Object.assign(blank(), { title: 'Test-Erinnerung', note: 'Ist die angekommen, obwohl Fokus geschlossen war? Dann klappt Push. Du kannst sie danach löschen.', type: 'once', date: ymd(at), times: [when], createdAt: now, checkedUntil: now, updatedAt: now, rtAt: now }));
+      saveLocal(); render(); say('Lege Test-Erinnerung an …');
+      if (!(await syncNow())) { say(sync.error || 'Der Abgleich hat nicht geklappt. Versuch es noch einmal.', 'bad'); return; }
+      const q = quietState(at);
+      say(`Test-Erinnerung für ${when} Uhr angelegt. Schließ Fokus jetzt ganz (aus der App-Übersicht wegwischen) und warte. Sie kann bis zu einer Minute später kommen.${q ? ` Achtung: Um ${when} Uhr ist „${q.label}“, dann kommt sie erst danach.` : ''}`, 'good');
     } else if (a === 'testpush') {
+      testPushAt = Date.now();
       const r = await api('/api/test-push', {});
+      if (r.sent && !testPushAt) return; // schon angekommen, Erfolgsmeldung steht bereits da
       say(r.sent ? 'Test gesendet. Es sollte gleich eine Benachrichtigung erscheinen.' : 'Kein Gerät hat den Push angenommen. Schalte Push aus und wieder an.', r.sent ? 'good' : 'bad');
     } else if (a === 'leave') {
       if (!confirm('Sync auf diesem Gerät ausschalten? Die Erinnerungen bleiben hier gespeichert.')) return;
@@ -2642,7 +2655,11 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   navigator.serviceWorker.register('sw.js').catch(() => {});
   navigator.serviceWorker.addEventListener('message', (e) => {
     const m = e.data || {};
-    if (m.type === 'sync') { syncNow(); return; }
+    if (m.type === 'sync') {
+      // Der Service Worker meldet jeden ankommenden Push. Kurz nach „Test-Push senden“ heißt das: Push kommt auf diesem Gerät an.
+      if (testPushAt && Date.now() - testPushAt < 120000) { testPushAt = 0; if ($('#setDlg').open) { syncMsg.at = 'push'; say('Test-Push ist auf diesem Gerät angekommen ✓', 'good'); } else flash('Test-Push ist angekommen ✓'); }
+      syncNow(); return;
+    }
     if (m.type === 'notif-action' && m.id) {
       if (m.action === 'done' || m.action === 'skip') act(m.id, m.action);
       else if (m.action === 'snooze') act(m.id, 'snooze');
