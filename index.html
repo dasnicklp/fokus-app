@@ -146,6 +146,16 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 #onbBody h3{margin:0;font-size:22px}
 #onbBody p{margin:0}
 #homeList .list-item{gap:6px}
+#setDlg{width:min(600px,calc(100vw - 20px))}
+.set-dlg{height:min(680px,calc(100dvh - 22px))}
+.set-tabs{flex:none;display:flex;gap:2px;overflow-x:auto;margin:-4px -18px 0;padding:0 18px;border-bottom:1px solid var(--line);scrollbar-width:none;scroll-padding:0 18px}
+.set-tabs::-webkit-scrollbar{display:none}
+.set-tabs button{flex:none;min-height:44px;padding:8px 12px;border:0;background:transparent;color:var(--muted);font-weight:600;white-space:nowrap;box-shadow:inset 0 -3px 0 transparent;outline-offset:-3px}
+.set-tabs button[aria-selected="true"]{color:var(--text);box-shadow:inset 0 -3px 0 var(--accent)}
+.set-panes{flex:1;min-height:0;overflow-y:auto;margin:-14px -18px 0;padding:14px 18px 4px}
+.set-pane{display:flex;flex-direction:column;gap:14px}
+.set-h{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-top:6px}
+.set-h:first-child{margin-top:0}
 </style>
 </head>
 <body>
@@ -278,28 +288,51 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 </dialog>
 
 <!-- Einstellungen -->
-<dialog id="setDlg">
-  <div class="dlg">
-    <h3>Einstellungen</h3>
-    <div id="permInfo" class="small"></div>
-    <div class="dlg-actions" style="justify-content:flex-start">
-      <button class="btn" id="btnPerm">Benachrichtigungen erlauben</button>
-      <button class="btn" id="btnTest">Test-Benachrichtigung</button>
+<dialog id="setDlg" aria-labelledby="setHead">
+  <div class="dlg set-dlg">
+    <h3 id="setHead">Einstellungen</h3>
+    <div class="set-tabs" id="setTabs" role="tablist" aria-label="Bereiche der Einstellungen">
+      <button type="button" role="tab" id="stab-general" data-stab="general" aria-controls="spane-general" aria-selected="true" tabindex="0">Allgemein</button>
+      <button type="button" role="tab" id="stab-notif" data-stab="notif" aria-controls="spane-notif" aria-selected="false" tabindex="-1">Benachrichtigungen</button>
+      <button type="button" role="tab" id="stab-quiet" data-stab="quiet" aria-controls="spane-quiet" aria-selected="false" tabindex="-1">Ruhezeiten</button>
+      <button type="button" role="tab" id="stab-sync" data-stab="sync" aria-controls="spane-sync" aria-selected="false" tabindex="-1">Sync &amp; Daten</button>
     </div>
-    <p class="small" style="margin:0"><b>Wichtig:</b> Ohne Push kommen Erinnerungen nur, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Mit „Geräte &amp; Push“ meldet sich das Backend auch bei geschlossener App.</p>
-    <div class="dlg-actions" style="justify-content:flex-start"><button class="btn primary" id="btnSyncOpen">Geräte &amp; Push …</button></div>
-    <div><div class="small" style="margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Ruhezeiten</div><div id="quietBox"></div></div>
-    <div class="dlg-actions" style="justify-content:flex-start">
-      <button class="btn" id="btnHome">Heute-Bildschirm anpassen …</button>
-      <button class="btn" id="btnOnb">Einführung ansehen</button>
+    <div class="set-panes" id="setPanes">
+      <section class="set-pane" id="spane-general" data-spane="general" role="tabpanel" aria-labelledby="stab-general">
+        <div class="set-h">Heute-Bildschirm</div>
+        <p class="small" style="margin:0">Blende aus, was du gerade nicht brauchst, und hol Wichtiges nach oben. „Jetzt dran“ und ein laufender Timer stehen immer ganz oben.</p>
+        <div id="homeList"></div>
+        <div class="dlg-actions" style="justify-content:flex-start"><button class="btn ghost" id="homeReset" type="button">Heute-Bildschirm zurücksetzen</button></div>
+        <div class="set-h">Einführung</div>
+        <p class="small" style="margin:0">Die kurze Tour vom ersten Start: was die Bereiche können, Benachrichtigungen, Ruhezeit und Sync.</p>
+        <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" id="btnOnb" type="button">Einführung ansehen</button></div>
+      </section>
+      <section class="set-pane" id="spane-notif" data-spane="notif" role="tabpanel" aria-labelledby="stab-notif" hidden>
+        <div id="permInfo" class="small"></div>
+        <div class="dlg-actions" style="justify-content:flex-start">
+          <button class="btn" id="btnPerm" type="button">Benachrichtigungen erlauben</button>
+          <button class="btn" id="btnTest" type="button">Test-Benachrichtigung</button>
+        </div>
+        <p class="small" style="margin:0"><b>Wichtig:</b> Ohne Push kommen Erinnerungen nur, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Mit Push meldet sich das Backend auch bei geschlossener App.</p>
+        <div class="set-h">Push auf diesem Gerät</div>
+        <div id="pushBody" class="set-pane"></div>
+      </section>
+      <section class="set-pane" id="spane-quiet" data-spane="quiet" role="tabpanel" aria-labelledby="stab-quiet" hidden>
+        <div id="quietBox"></div>
+      </section>
+      <section class="set-pane" id="spane-sync" data-spane="sync" role="tabpanel" aria-labelledby="stab-sync" hidden>
+        <div class="set-h">Sync zwischen Geräten</div>
+        <div id="syncBody" class="set-pane"></div>
+        <div class="set-h">Sicherung als Datei</div>
+        <div class="dlg-actions" style="justify-content:flex-start">
+          <button class="btn" id="btnExport" type="button">Daten exportieren</button>
+          <button class="btn" id="btnImport" type="button">Daten importieren</button>
+          <input type="file" id="fileImport" accept="application/json,.json" hidden>
+        </div>
+        <p class="small" style="margin:0">Export/Import ist eine Sicherung als Datei (unverschlüsselt) und funktioniert auch ohne Sync.</p>
+      </section>
     </div>
-    <div class="dlg-actions" style="justify-content:flex-start">
-      <button class="btn" id="btnExport">Daten exportieren</button>
-      <button class="btn" id="btnImport">Daten importieren</button>
-      <input type="file" id="fileImport" accept="application/json,.json" hidden>
-    </div>
-    <p class="small" style="margin:0">Export/Import ist eine Sicherung als Datei (unverschlüsselt) und funktioniert auch ohne Sync.</p>
-    <div class="dlg-actions"><button class="btn primary" id="btnSetClose">Schließen</button></div>
+    <div class="dlg-actions"><button class="btn primary" id="btnSetClose" type="button">Schließen</button></div>
   </div>
 </dialog>
 
@@ -422,16 +455,6 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
   </div>
 </dialog>
 
-<!-- Heute anpassen -->
-<dialog id="homeDlg">
-  <div class="dlg">
-    <h3>Heute-Bildschirm anpassen</h3>
-    <p class="small" style="margin:0">Blende aus, was du gerade nicht brauchst, und hol Wichtiges nach oben. „Jetzt dran“ und ein laufender Timer stehen immer ganz oben.</p>
-    <div id="homeList"></div>
-    <div class="dlg-actions"><button class="btn ghost" id="homeReset" type="button">Zurücksetzen</button><button class="btn primary" id="homeClose" type="button">Fertig</button></div>
-  </div>
-</dialog>
-
 <!-- Einführung -->
 <dialog id="onbDlg">
   <div class="dlg">
@@ -442,15 +465,6 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
       <button class="btn ghost" id="onbSkip" type="button">Überspringen</button>
       <div style="display:flex;gap:8px"><button class="btn" id="onbBack" type="button">Zurück</button><button class="btn primary" id="onbNext" type="button">Weiter</button></div>
     </div>
-  </div>
-</dialog>
-
-<!-- Geräte & Push -->
-<dialog id="syncDlg">
-  <div class="dlg">
-    <h3>Geräte &amp; Push</h3>
-    <div id="syncBody" style="display:flex;flex-direction:column;gap:14px"></div>
-    <div class="dlg-actions"><button class="btn primary" id="btnSyncClose">Schließen</button></div>
   </div>
 </dialog>
 
@@ -960,7 +974,7 @@ $('#btnDup').onclick = () => {
   renderFields(); $('#formDlg').showModal();
 };
 $('#formDlg').addEventListener('close', () => showAlertIfNeeded());
-$('#setDlg').addEventListener('close', () => showAlertIfNeeded());
+$('#setDlg').addEventListener('close', () => { render(); showAlertIfNeeded(); });
 
 /* Einstellungen */
 function permText(){
@@ -972,7 +986,43 @@ async function askPermission(){
   try { await Notification.requestPermission(); } catch (e) {}
   $('#permInfo').textContent = permText(); renderBanner();
 }
-$('#btnSettings').onclick = () => { $('#permInfo').textContent = permText(); renderQuiet($('#quietBox')); $('#setDlg').showModal(); };
+// Reiter im Einstellungs-Dialog
+const SET_PANES = ['general', 'notif', 'quiet', 'sync'];
+let setPane = 'general';
+function renderSetPane(k){
+  if (k === 'general') renderHomeList();
+  else if (k === 'notif') { $('#permInfo').textContent = permText(); renderSync(); }
+  else if (k === 'quiet') renderQuiet($('#quietBox'));
+  else renderSync();
+}
+function showSetPane(k, focus){
+  if (!SET_PANES.includes(k)) k = 'general';
+  setPane = k;
+  for (const b of document.querySelectorAll('[data-stab]')) {
+    const on = b.dataset.stab === k;
+    b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1;
+    if (on) { b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); if (focus) b.focus(); }
+  }
+  for (const p of document.querySelectorAll('[data-spane]')) p.hidden = p.dataset.spane !== k;
+  $('#setPanes').scrollTop = 0;
+  renderSetPane(k);
+}
+function openSettings(k){
+  syncMsg = { text: '', cls: '', at: '' };
+  if (!$('#setDlg').open) $('#setDlg').showModal();
+  for (const p of SET_PANES) renderSetPane(p);
+  showSetPane(k || setPane);
+}
+$('#setTabs').addEventListener('click', (e) => { const b = e.target.closest('[data-stab]'); if (b) showSetPane(b.dataset.stab); });
+$('#setTabs').addEventListener('keydown', (e) => {
+  const i = SET_PANES.indexOf(setPane), n = SET_PANES.length;
+  const j = { ArrowRight: i + 1, ArrowLeft: i - 1 + n, Home: 0, End: n - 1 }[e.key];
+  if (j === undefined) return;
+  e.preventDefault(); showSetPane(SET_PANES[j % n], true);
+});
+// Querverweise zwischen den Reitern, z. B. „Sync einrichten“ unter Push
+$('#setDlg').addEventListener('click', (e) => { const b = e.target.closest('[data-spgo]'); if (b) showSetPane(b.dataset.spgo, true); });
+$('#btnSettings').onclick = () => openSettings();
 $('#btnSetClose').onclick = () => $('#setDlg').close();
 $('#btnPerm').onclick = askPermission;
 $('#btnTest').onclick = async () => {
@@ -1950,7 +2000,7 @@ function nextWake(now = new Date()){
 function nightKey(d = new Date()){ const x = new Date(d); if (x.getHours() < 12) x.setDate(x.getDate() - 1); return ymd(x); }
 function goodNight(){
   const until = nextWake(), now = new Date();
-  if (now.getHours() >= 5 && now.getHours() < 18 && !confirm(`Es ist noch Tag. Trotzdem ruhig bis ${new Date(until).toLocaleDateString('de-DE', { weekday: 'long' })} ${hhmm(until)} Uhr? Für kürzere Pausen gibt es „Nicht stören“ in den Einstellungen.`)) return;
+  if (now.getHours() >= 5 && now.getHours() < 18 && !confirm(`Es ist noch Tag. Trotzdem ruhig bis ${new Date(until).toLocaleDateString('de-DE', { weekday: 'long' })} ${hhmm(until)} Uhr? Für kürzere Pausen gibt es „Nicht stören“ unter ⚙ → „Ruhezeiten“.`)) return;
   setPref('quiet', { dnd: until, dndKind: 'night' });
   if (now.getHours() >= 18 || now.getHours() < 4) {
     const id = nightKey(now), old = state.sleep.find((s) => s.id === id);
@@ -2036,7 +2086,7 @@ function renderQuiet(box){
     <div style="display:flex;gap:10px;margin-top:8px"><label style="flex:1">Aufstehen Mo–Fr<input type="time" data-q="wake" value="${esc(q.wake || '07:00')}"></label><label style="flex:1">Aufstehen Sa–So<input type="time" data-q="wakeWe" value="${esc(q.wakeWe || '09:00')}"></label></div>
     ${sug ? `<div class="hint" style="margin-top:10px">In den letzten ${sug.n} Nächten: meist schlafen gegen ${sug.from}, aufstehen gegen ${sug.to} Uhr.<div class="btnrow" style="margin-top:8px"><button type="button" class="btn" data-sleep="apply">Als Schlafenszeit übernehmen</button></div></div>`
       : `<div class="small" style="margin-top:8px">${nights ? `Bisher ${nights} von ${SLEEP_MIN_NIGHTS} Nächten erfasst. ` : ''}Nach ${SLEEP_MIN_NIGHTS} Nächten mit „Gute Nacht“ schlage ich dir passende Schlafenszeiten vor.</div>`}`
-    : '<div class="small" style="margin-top:6px">Feste Zeiten für Schlaf, Arbeit oder Schule und den Gute-Nacht-Knopf 🌙 findest du später in den Einstellungen.</div>'}
+    : '<div class="small" style="margin-top:6px">Feste Zeiten für Schlaf, Arbeit oder Schule und den Gute-Nacht-Knopf 🌙 findest du später unter ⚙ → „Ruhezeiten“.</div>'}
     <div class="small" style="margin:16px 0 6px;font-weight:600">Nicht stören</div>
     ${dndActive(q) ? `<div class="row"><span>${q.dndKind === 'night' ? 'Gute Nacht' : 'Aktiv'} bis ${hhmm(q.dnd)} Uhr</span><button class="btn" type="button" data-dnd="0">Beenden</button></div>`
       : '<div class="chips"><button class="chip" type="button" data-dnd="60">1 Std</button><button class="chip" type="button" data-dnd="120">2 Std</button><button class="chip" type="button" data-dnd="240">4 Std</button></div>'}`;
@@ -2101,7 +2151,6 @@ function renderHomeList(){
     <button type="button" class="icon-btn" data-hmove="${i}" data-dir="-1" aria-label="${label[k]} nach oben" ${i ? '' : 'disabled'}>↑</button>
     <button type="button" class="icon-btn" data-hmove="${i}" data-dir="1" aria-label="${label[k]} nach unten" ${i < c.order.length - 1 ? '' : 'disabled'}>↓</button></div>`).join('');
 }
-function openHome(){ renderHomeList(); $('#homeDlg').showModal(); }
 $('#homeList').addEventListener('change', (e) => {
   const k = e.target.dataset.hshow; if (!k) return;
   const c = homeCfg(), hidden = c.hidden.filter((x) => x !== k);
@@ -2117,10 +2166,7 @@ $('#homeList').addEventListener('click', (e) => {
   const nb = $('#homeList').querySelectorAll('[data-hmove]')[j * 2 + (Number(b.dataset.dir) > 0 ? 1 : 0)]; if (nb && !nb.disabled) nb.focus();
 });
 $('#homeReset').onclick = () => { setPref('home', { order: HOME_SECS.map(([k]) => k), hidden: [] }); applyHome(); renderHomeList(); };
-$('#homeClose').onclick = () => $('#homeDlg').close();
-$('#homeDlg').addEventListener('close', () => { render(); showAlertIfNeeded(); });
-$('#btnHome').onclick = () => { $('#setDlg').close(); openHome(); };
-$('#btnHome2').onclick = openHome;
+$('#btnHome2').onclick = () => openSettings('general');
 
 /* ---------- Sync-Code sichern ---------- */
 function codeBlockHtml(){
@@ -2134,7 +2180,7 @@ document.addEventListener('click', async (e) => {
     try { await navigator.clipboard.writeText(fmtCode(sync.code)); flash('Code kopiert.'); }
     catch (err) { flash('Kopieren nicht möglich. Markiere den Code und kopiere ihn von Hand.'); }
   } else {
-    const txt = `Fokus – dein Sync-Code\n\n${fmtCode(sync.code)}\n\nGib diesen Code auf jedem Gerät unter ⚙ → „Geräte & Push“ ein.\nOhne ihn kommst du auf einem neuen Gerät nicht mehr an deine Daten.\nBewahre ihn sicher auf (zum Beispiel im Passwort-Manager) und gib ihn nicht weiter.\n`;
+    const txt = `Fokus – dein Sync-Code\n\n${fmtCode(sync.code)}\n\nGib diesen Code auf jedem Gerät unter ⚙ → „Sync & Daten“ ein.\nOhne ihn kommst du auf einem neuen Gerät nicht mehr an deine Daten.\nBewahre ihn sicher auf (zum Beispiel im Passwort-Manager) und gib ihn nicht weiter.\n`;
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' }));
     a.download = 'fokus-sync-code.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     flash('Code als Datei gespeichert.');
@@ -2166,13 +2212,13 @@ const ONB = [
     <h3 style="font-size:18px;margin-top:6px">Ruhezeit</h3>
     <div id="onbQuiet"></div>`,
   () => {
-    if (!API) return `<h3>Mehrere Geräte</h3><p>Mit einem Sync-Code nutzt du Fokus auf Handy und PC gemeinsam. Der Abgleich wird gerade eingerichtet. Du findest ihn später unter ⚙ → „Geräte &amp; Push“.</p>`;
-    if (sync.code) return `<h3>Dein Sync-Code</h3><p>Gib diesen Code auf deinen anderen Geräten unter ⚙ → „Geräte &amp; Push“ ein.</p>${codeBlockHtml()}`;
+    if (!API) return `<h3>Mehrere Geräte</h3><p>Mit einem Sync-Code nutzt du Fokus auf Handy und PC gemeinsam. Der Abgleich wird gerade eingerichtet. Du findest ihn später unter ⚙ → „Sync &amp; Daten“.</p>`;
+    if (sync.code) return `<h3>Dein Sync-Code</h3><p>Gib diesen Code auf deinen anderen Geräten unter ⚙ → „Sync &amp; Daten“ ein.</p>${codeBlockHtml()}`;
     return `<h3>Mehrere Geräte</h3>
       <p>Mit einem Sync-Code nutzt du Fokus auf Handy und PC gemeinsam, und die App erinnert dich auch, wenn sie geschlossen ist. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden verschlüsselt.</p>
       <button class="btn primary" type="button" data-onb="sync">Sync einschalten</button>
       <button class="btn" type="button" data-onb="join">Ich habe schon einen Code</button>
-      <p class="small">Das geht auch später unter ⚙ → „Geräte &amp; Push“.</p>`;
+      <p class="small">Das geht auch später unter ⚙ → „Sync &amp; Daten“.</p>`;
   },
 ];
 function renderOnb(){
@@ -2204,8 +2250,8 @@ $('#onbBody').addEventListener('click', async (e) => {
     const ok = await createSync();
     renderOnb();
     msg.className = 'msg ' + (ok ? 'good' : 'bad');
-    msg.textContent = ok ? 'Sync ist eingeschaltet. Sichere jetzt deinen Code.' : (sync.error || 'Das hat nicht geklappt. Du kannst es später unter ⚙ → „Geräte & Push“ erneut versuchen.');
-  } else if (a === 'join') { finishOnb(); syncMsg = { text: '', cls: '' }; $('#syncDlg').showModal(); renderSync(); setTimeout(() => { const j = $('#joinCode'); if (j) j.focus(); }, 50); }
+    msg.textContent = ok ? 'Sync ist eingeschaltet. Sichere jetzt deinen Code.' : (sync.error || 'Das hat nicht geklappt. Du kannst es später unter ⚙ → „Sync & Daten“ erneut versuchen.');
+  } else if (a === 'join') { finishOnb(); openSettings('sync'); setTimeout(() => { const j = $('#joinCode'); if (j) j.focus(); }, 50); }
 });
 $('#btnOnb').onclick = () => { $('#setDlg').close(); openOnb(); };
 
@@ -2399,40 +2445,53 @@ async function disablePush(){
   sync.push = false; saveSync();
 }
 
-let syncMsg = { text: '', cls: '' };
-function say(text, cls){ syncMsg = { text, cls: cls || '' }; renderSync(); }
-function renderSync(){
-  const el = $('#syncBody'); if (!el || !$('#syncDlg').open) return;
-  const focusId = document.activeElement && document.activeElement.id;
-  const val = ($('#joinCode') || {}).value || '';
-  if (!API) { el.innerHTML = '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>'; return; }
-  let h = '';
-  if (!sync.code) {
-    h = `<p class="small" style="margin:0">Mit einem Sync-Code teilen deine Geräte dieselben Daten, und das Backend kann dich auch bei geschlossener App erinnern. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden dabei verschlüsselt.</p>
+// Meldungen erscheinen in dem Bereich, aus dem die Aktion kam (Push unter Benachrichtigungen, sonst Sync)
+let syncMsg = { text: '', cls: '', at: '' };
+function say(text, cls){ syncMsg = { ...syncMsg, text, cls: cls || '' }; renderSync(); }
+const msgHtml = (at) => `<div class="msg ${syncMsg.at === at ? syncMsg.cls : ''}" role="status">${syncMsg.at === at ? esc(syncMsg.text) : ''}</div>`;
+function pushHtml(){
+  if (!API) return '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>';
+  if (!sync.code) return `<p class="small" style="margin:0">Push gibt es nur zusammen mit Sync. Richte dazu zuerst einen Sync-Code ein, auch wenn du nur ein Gerät nutzt.</p>
+    <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" type="button" data-spgo="sync">Sync einrichten</button></div>`;
+  return `<div class="small">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
+    <div class="dlg-actions" style="justify-content:flex-start">
+      ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
+    </div>
+    ${msgHtml('push')}`;
+}
+function syncHtml(val){
+  if (!API) return '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>';
+  if (!sync.code) return `<p class="small" style="margin:0">Mit einem Sync-Code teilen deine Geräte dieselben Daten, und das Backend kann dich auch bei geschlossener App erinnern. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden dabei verschlüsselt.</p>
       <button class="btn primary" data-sync="create">Sync einschalten (neuer Code)</button>
       <div class="small" style="text-align:center">oder</div>
       <label>Mit vorhandenem Code verbinden<input id="joinCode" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-…" value="${esc(val)}"></label>
-      <button class="btn" data-sync="join">Verbinden</button>`;
-  } else {
-    const last = sync.last ? new Date(sync.last).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
-    h = `<div><div class="small" style="margin-bottom:6px;font-weight:600">Dein Sync-Code (geheim halten, auf jedem Gerät eingeben)</div>${codeBlockHtml()}</div>
+      <button class="btn" data-sync="join">Verbinden</button>
+      ${msgHtml('sync')}`;
+  const last = sync.last ? new Date(sync.last).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
+  return `<div><div class="small" style="margin-bottom:6px;font-weight:600">Dein Sync-Code (geheim halten, auf jedem Gerät eingeben)</div>${codeBlockHtml()}</div>
       <div class="small">🔒 Notizen, Aufgaben, Routinen, Check-ins und Fokus-Zeiten werden auf deinem Gerät verschlüsselt, bevor sie zum Server gehen. Erinnerungen und Termine bleiben für den Server lesbar, damit er dich rechtzeitig erinnern kann.</div>
       <div class="small">${syncing ? 'Synchronisiere …' : sync.error ? '⚠ ' + esc(sync.error) : 'Zuletzt synchronisiert: ' + last + ' Uhr'}</div>
-      <div><div class="small" style="margin-bottom:6px;font-weight:600">Push-Erinnerungen (auch bei geschlossener App)</div>
-        <div class="small" style="margin-bottom:8px">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
-        <div class="dlg-actions" style="justify-content:flex-start">
-          ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
-        </div></div>
-      <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" data-sync="now">Jetzt synchronisieren</button><button class="btn danger" data-sync="leave">Sync ausschalten</button></div>`;
-  }
-  h += `<div class="msg ${syncMsg.cls}" role="status">${esc(syncMsg.text)}</div>`;
-  el.innerHTML = h;
+      ${sync.push ? '' : '<div class="hint">Push ist auf diesem Gerät aus. Dann erinnert dich Fokus nur, solange die App offen ist.<div class="btnrow" style="margin-top:8px"><button class="btn" type="button" data-spgo="notif">Push einschalten</button></div></div>'}
+      <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" data-sync="now">Jetzt synchronisieren</button><button class="btn danger" data-sync="leave">Sync ausschalten</button></div>
+      ${msgHtml('sync')}`;
+}
+function renderSync(){
+  if (!$('#setDlg').open) return;
+  // Fokus nach dem Neuzeichnen wiederfinden (Code-Feld oder derselbe Knopf)
+  const ae = document.activeElement, focusId = ae && ae.id;
+  const box = ae && ae.closest && ae.closest('#pushBody, #syncBody');
+  const sel = box && ae.dataset && (ae.dataset.sync ? `[data-sync="${ae.dataset.sync}"]` : ae.dataset.code ? `[data-code="${ae.dataset.code}"]` : '');
+  const val = ($('#joinCode') || {}).value || '';
+  $('#pushBody').innerHTML = pushHtml();
+  $('#syncBody').innerHTML = syncHtml(val);
   if (focusId === 'joinCode') { const j = $('#joinCode'); if (j) { j.focus(); j.setSelectionRange(val.length, val.length); } }
+  else if (box && !box.contains(document.activeElement)) { const nb = (sel && box.querySelector(sel)) || box.querySelector('button'); if (nb) nb.focus(); }
 }
 
-$('#syncBody').addEventListener('click', async (e) => {
+$('#setDlg').addEventListener('click', async (e) => {
   const t = e.target.closest('[data-sync]'); if (!t) return;
   const a = t.dataset.sync;
+  syncMsg = { text: '', cls: '', at: t.closest('#pushBody') ? 'push' : 'sync' };
   try {
     if (a === 'create') {
       say('Code erstellt, synchronisiere …');
@@ -2462,9 +2521,6 @@ $('#syncBody').addEventListener('click', async (e) => {
     }
   } catch (err) { say(err.message || 'Das hat nicht geklappt.', 'bad'); }
 });
-$('#btnSyncOpen').onclick = () => { $('#setDlg').close(); syncMsg = { text: '', cls: '' }; $('#syncDlg').showModal(); renderSync(); };
-$('#btnSyncClose').onclick = () => $('#syncDlg').close();
-$('#syncDlg').addEventListener('close', () => showAlertIfNeeded());
 
 /* ---------- Start ---------- */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
