@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14161c">
+<meta name="theme-color" content="#14161c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f6fa" media="(prefers-color-scheme: light)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -11,10 +12,10 @@
 <style>
 :root{
   --bg:#14161c; --surface:#1d2028; --surface2:#262a35; --text:#eef0f5; --muted:#9aa1b2;
-  --accent:#ffc43d; --accent-ink:#1a1500; --ok:#4cd08a; --warn:#ff7a59; --line:#2f3442; --radius:16px;
+  --accent:#ffc43d; --accent-ink:#1a1500; --accent-fg:#ffc43d; --accent-line:#ffc43d; --ok:#4cd08a; --warn:#ff7a59; --line:#2f3442; --radius:16px;
 }
 @media (prefers-color-scheme: light){
-  :root{ --bg:#f5f6fa; --surface:#fff; --surface2:#eceef4; --text:#1a1d26; --muted:#5d6577; --accent:#e8a400; --accent-ink:#1a1500; --ok:#1f9d5c; --warn:#d9482a; --line:#dcdfe8; }
+  :root{ --bg:#f5f6fa; --surface:#fff; --surface2:#eceef4; --text:#1a1d26; --muted:#5d6577; --accent:#e8a400; --accent-ink:#1a1500; --accent-fg:#8a5c00; --accent-line:#b07600; --ok:#17804a; --warn:#b8371c; --line:#dcdfe8; }
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -31,7 +32,7 @@ button{cursor:pointer}
 .btn.danger{color:var(--warn)}
 .btn.ghost{background:transparent}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
-.card.pending{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.card.pending{border-color:var(--accent-line);box-shadow:0 0 0 1px var(--accent-line) inset}
 .card.snoozed{border-style:dashed}
 .card.off{opacity:.55}
 .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
@@ -53,7 +54,7 @@ button{cursor:pointer}
 .chips .lbl{color:var(--muted);font-size:14px;margin-right:2px}
 .inline-min{width:84px;min-height:44px}
 .fab{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom));width:64px;height:64px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:34px;line-height:1;box-shadow:0 6px 18px rgba(0,0,0,.35)}
-.banner{background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:12px 14px;margin:8px 0;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.banner{background:var(--surface);border:1px solid var(--accent-line);border-radius:var(--radius);padding:12px 14px;margin:8px 0;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .empty{text-align:center;color:var(--muted);padding:34px 10px}
 .empty p{margin:0 0 14px}
 dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:0;width:min(560px,calc(100vw - 20px));max-height:calc(100dvh - 20px)}
@@ -75,13 +76,13 @@ summary{cursor:pointer;font-weight:600;min-height:32px}
 .log{list-style:none;margin:8px 0 0;padding:0;font-size:14px;color:var(--muted)}
 .log li{padding:5px 0;border-top:1px solid var(--line)}
 .small{font-size:14px;color:var(--muted)}
-.code-box{font:600 18px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.04em;word-break:break-all;background:var(--bg);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;user-select:all}
+.code-box{font:600 18px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.04em;word-break:break-all;background:var(--bg);border:1px dashed var(--accent-line);border-radius:12px;padding:12px 14px;user-select:all}
 .msg{min-height:1.2em;font-weight:600}
 .msg.bad{color:var(--warn)}.msg.good{color:var(--ok)}
 [hidden]{display:none !important}
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
 .tabs button{flex:1;min-height:56px;border:0;background:transparent;font-weight:600;color:var(--muted);font-size:15px}
-.tabs button.on{color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.tabs button.on{color:var(--accent-fg);box-shadow:inset 0 3px 0 var(--accent-line)}
 .fab{bottom:calc(76px + env(safe-area-inset-bottom)) !important}
 body{padding-bottom:170px}
 label.inl{flex-direction:row;align-items:center;gap:10px;font-size:15px;color:var(--text);font-weight:500}
@@ -94,7 +95,7 @@ label.inl input{width:22px;height:22px;min-height:0}
 .cal-cell{min-height:54px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:5px 2px 3px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px}
 .cal-cell.other{opacity:.45}
 .cal-cell.today .dn{background:var(--accent);color:var(--accent-ink);border-radius:999px;min-width:26px;text-align:center;font-weight:800}
-.cal-cell.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.cal-cell.sel{border-color:var(--accent-line);box-shadow:0 0 0 2px var(--accent-line) inset}
 .dots{display:flex;gap:3px;min-height:8px;align-items:center}
 .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .ag-item{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
@@ -106,13 +107,13 @@ label.inl input{width:22px;height:22px;min-height:0}
 .quick input{flex:1}
 input[type=search]{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px;min-height:48px;width:100%}
 #noteBody{min-height:42vh}
-.pin{color:var(--accent)}
+.pin{color:var(--accent-fg)}
 .tabs button{font-size:12.5px;padding:4px 0 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0}
 .tabs .ti{font-size:19px;line-height:1.1}
 .seg{display:flex;gap:8px;margin:8px 0 4px}
 .prog{height:8px;border-radius:8px;background:var(--surface2);overflow:hidden;margin-top:10px}
 .prog > i{display:block;height:100%;background:var(--ok);border-radius:8px;transition:width .3s}
-.card.one{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.card.one{border-color:var(--accent-line);box-shadow:0 0 0 1px var(--accent-line) inset}
 .one .step{font-size:22px;font-weight:800;margin:6px 0 2px;word-break:break-word}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 label.chk{flex-direction:row;align-items:center;gap:12px;min-height:44px;cursor:pointer;font-size:16px;color:var(--text);font-weight:500}
@@ -125,7 +126,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 .clock{font:800 64px/1 ui-monospace,Consolas,monospace;text-align:center;margin:16px 0 6px;font-variant-numeric:tabular-nums}
 .phase{text-align:center;color:var(--muted);font-weight:600}
 #fxTaskSel{margin-top:2px}
-.timer-mini{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:16px;text-align:left;color:var(--text);border-color:var(--accent);margin-top:14px;cursor:pointer}
+.timer-mini{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:16px;text-align:left;color:var(--text);border-color:var(--accent-line);margin-top:14px;cursor:pointer}
 .timer-mini b{font:800 22px ui-monospace,Consolas,monospace}
 .task-card{cursor:pointer}
 .stat{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -137,7 +138,8 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 .bar-row .b{flex:1;height:12px;background:var(--surface2);border-radius:6px;overflow:hidden}
 .bar-row .b i{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0}
 .hint{background:var(--surface2);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--muted);margin:0}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:20;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;z-index:20;width:max-content;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:14px}
+.toast-btn{flex:none;min-height:40px;padding:0 6px;border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px}
 .warnbox{border:1px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin:10px 0}
 .quietbar{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 14px;margin:8px 0;font-size:14px;font-weight:600;min-height:48px}
 .onb-list{display:flex;flex-direction:column;gap:8px}
@@ -151,7 +153,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 .set-tabs{flex:none;display:flex;gap:2px;overflow-x:auto;margin:-4px -18px 0;padding:0 18px;border-bottom:1px solid var(--line);scrollbar-width:none;scroll-padding:0 18px}
 .set-tabs::-webkit-scrollbar{display:none}
 .set-tabs button{flex:none;min-height:44px;padding:8px 12px;border:0;background:transparent;color:var(--muted);font-weight:600;white-space:nowrap;box-shadow:inset 0 -3px 0 transparent;outline-offset:-3px}
-.set-tabs button[aria-selected="true"]{color:var(--text);box-shadow:inset 0 -3px 0 var(--accent)}
+.set-tabs button[aria-selected="true"]{color:var(--text);box-shadow:inset 0 -3px 0 var(--accent-line)}
 .set-panes{flex:1;min-height:0;overflow-y:auto;margin:-14px -18px 0;padding:14px 18px 4px}
 .set-pane{display:flex;flex-direction:column;gap:14px}
 .set-h{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-top:6px}
@@ -168,6 +170,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 </header>
 
 <main>
+  <div id="updBanner"></div>
   <div id="quietBar"></div>
   <div id="sleepHint"></div>
   <div id="notifBanner"></div>
@@ -306,6 +309,8 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
         <div class="set-h">Einführung</div>
         <p class="small" style="margin:0">Die kurze Tour vom ersten Start: was die Bereiche können, Benachrichtigungen, Ruhezeit und Sync.</p>
         <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" id="btnOnb" type="button">Einführung ansehen</button></div>
+        <div class="set-h">Über Fokus</div>
+        <div id="aboutBox" class="set-pane"></div>
       </section>
       <section class="set-pane" id="spane-notif" data-spane="notif" role="tabpanel" aria-labelledby="stab-notif" hidden>
         <div id="permInfo" class="small"></div>
@@ -313,7 +318,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
           <button class="btn" id="btnPerm" type="button">Benachrichtigungen erlauben</button>
           <button class="btn" id="btnTest" type="button">Test-Benachrichtigung</button>
         </div>
-        <p class="small" style="margin:0"><b>Wichtig:</b> Ohne Push kommen Erinnerungen nur, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Mit Push meldet sich das Backend auch bei geschlossener App.</p>
+        <p class="small" style="margin:0"><b>Wichtig:</b> Ohne Push kommen Erinnerungen nur, solange die App geöffnet ist (auch als Hintergrund-Tab oder installierte App). Mit Push meldet sich der Server auch bei geschlossener App.</p>
         <div class="set-h">Push auf diesem Gerät</div>
         <div id="pushBody" class="set-pane"></div>
       </section>
@@ -330,6 +335,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
           <input type="file" id="fileImport" accept="application/json,.json" hidden>
         </div>
         <p class="small" style="margin:0">Export/Import ist eine Sicherung als Datei (unverschlüsselt) und funktioniert auch ohne Sync.</p>
+        <div class="small" id="storeInfo"></div>
       </section>
     </div>
     <div class="dlg-actions"><button class="btn primary" id="btnSetClose" type="button">Schließen</button></div>
@@ -472,6 +478,8 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 'use strict';
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
+// Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
+const APP_VERSION = '2026.10.06';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -960,10 +968,11 @@ $('#btnAdd').onclick = () => { if (tab === 'cal') openEvent(null, calSel); else 
 $('#frm').addEventListener('submit', submitForm);
 $('#btnCancel').onclick = () => $('#formDlg').close();
 $('#btnDelete').onclick = () => {
-  if (!confirm('Diese Erinnerung wirklich löschen?')) return;
+  const old = find(draft.id);
   state.reminders = state.reminders.filter((r) => r.id !== draft.id);
   state.tombs.push({ id: draft.id, updatedAt: Date.now() });
   save(); $('#formDlg').close(); render();
+  if (old) offerUndo('Erinnerung gelöscht.', (now) => upsertRem({ ...old, updatedAt: now }));
 };
 $('#btnDup').onclick = () => {
   const copy = JSON.parse(JSON.stringify(draft));
@@ -990,10 +999,10 @@ async function askPermission(){
 const SET_PANES = ['general', 'notif', 'quiet', 'sync'];
 let setPane = 'general';
 function renderSetPane(k){
-  if (k === 'general') renderHomeList();
+  if (k === 'general') { renderHomeList(); renderAbout(); }
   else if (k === 'notif') { $('#permInfo').textContent = permText(); renderSync(); }
   else if (k === 'quiet') renderQuiet($('#quietBox'));
-  else renderSync();
+  else { renderSync(); renderStore(); }
 }
 function showSetPane(k, focus){
   if (!SET_PANES.includes(k)) k = 'general';
@@ -1087,9 +1096,19 @@ function setTab(t){
   render();
 }
 $('#tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) { setTab(b.dataset.tab); window.scrollTo(0, 0); } });
-function flash(msg){
-  const el = $('#toast'); el.textContent = msg; el.hidden = false;
-  clearTimeout(flash.t); flash.t = setTimeout(() => { el.hidden = true; }, 4000);
+function flash(msg, action){
+  const el = $('#toast');
+  el.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button" class="toast-btn">${esc(action.label)}</button>` : ''}`;
+  el.hidden = false; flash.fn = action ? action.fn : null;
+  clearTimeout(flash.t); flash.t = setTimeout(() => { el.hidden = true; flash.fn = null; }, action ? 8000 : 4000);
+}
+$('#toast').addEventListener('click', (e) => {
+  if (!e.target.closest('.toast-btn') || !flash.fn) return;
+  const fn = flash.fn; flash.fn = null; $('#toast').hidden = true; fn();
+});
+// Löschen ohne Nachfrage, dafür ein paar Sekunden „Rückgängig“. Wiederhergestellt wird mit neuem Zeitstempel, damit es auch per Sync gewinnt.
+function offerUndo(msg, restore){
+  flash(msg, { label: 'Rückgängig', fn: () => { restore(Date.now()); save(); render(); flash('Wiederhergestellt.'); } });
 }
 
 /* ---------- Termine ---------- */
@@ -1222,10 +1241,11 @@ $('#evFrm').addEventListener('submit', (e) => {
   save(); $('#evDlg').close(); render();
 });
 $('#evDelete').onclick = () => {
-  if (!confirm('Diesen Termin wirklich löschen?')) return;
+  const old = find(evDraft.id);
   state.reminders = state.reminders.filter((r) => r.id !== evDraft.id);
   state.tombs.push({ id: evDraft.id, updatedAt: Date.now() });
   save(); $('#evDlg').close(); render();
+  if (old) offerUndo('Termin gelöscht.', (now) => upsertRem({ ...old, updatedAt: now }));
 };
 $('#evDup').onclick = () => {
   const copy = JSON.parse(JSON.stringify(evDraft)); copy.id = uid(); copy.title = (evDraft.title || '') + ' (Kopie)'; copy.pendingAt = null; copy.pendingStart = null;
@@ -1364,11 +1384,16 @@ $('#noteDone').onclick = () => $('#noteDlg').close();
 $('#noteDlg').addEventListener('close', () => { commitNote(); noteDraft = null; showAlertIfNeeded(); });
 $('#notePin').onclick = () => { noteDraft.pinned = !noteDraft.pinned; $('#notePin').textContent = noteDraft.pinned ? 'Lösen' : 'Anheften'; };
 $('#noteDel').onclick = () => {
-  if (!confirm('Diese Notiz wirklich löschen?')) return;
+  commitNote();
+  const old = state.notes.find((n) => n.id === noteDraft.id);
   noteDeleted = true;
   state.notes = state.notes.filter((n) => n.id !== noteDraft.id);
   state.noteTombs.push({ id: noteDraft.id, updatedAt: Date.now() });
   save(); $('#noteDlg').close(); render();
+  if (old) offerUndo('Notiz gelöscht.', (now) => {
+    state.noteTombs = state.noteTombs.filter((t) => t.id !== old.id);
+    state.notes = [...state.notes.filter((n) => n.id !== old.id), { ...old, updatedAt: now }];
+  });
 };
 $('#noteRem').onclick = () => {
   const t = $('#noteTitle').value.trim(), b = $('#noteBody').value;
@@ -1550,8 +1575,10 @@ function commitTask(){
 $('#tkDone').onclick = () => $('#taskDlg').close();
 $('#taskDlg').addEventListener('close', () => { commitTask(); tkDraft = null; showAlertIfNeeded(); });
 $('#tkDel').onclick = () => {
-  if (!confirm('Diese Aufgabe wirklich löschen?')) return;
+  commitTask();
+  const old = findTask(tkDraft.id) && clone(findTask(tkDraft.id));
   tkDeleted = true; colDel('tasks', tkDraft.id); save(); $('#taskDlg').close(); render();
+  if (old) offerUndo('Aufgabe gelöscht.', () => colPut('tasks', old));
 };
 $('#tkRem').onclick = () => {
   const title = $('#tkTitle').value.trim().slice(0, 120), st = nextStep(tkDraft);
@@ -1674,9 +1701,10 @@ $('#rtFrm').addEventListener('submit', (e) => {
   save(); $('#rtDlg').close(); render();
 });
 $('#rtDel').onclick = () => {
-  if (!confirm('Diese Routine wirklich löschen?')) return;
+  const old = state.routines.find((r) => r.id === rtDraft.id), oldRem = find('rt-' + rtDraft.id);
   colDel('routines', rtDraft.id); syncRoutineReminder({ ...rtDraft, time: '' });
   save(); $('#rtDlg').close(); render();
+  if (old) offerUndo('Routine gelöscht.', (now) => { colPut('routines', clone(old)); if (oldRem) upsertRem({ ...oldRem, updatedAt: now }); });
 };
 
 /* ---------- Täglicher Check-in ---------- */
@@ -2336,6 +2364,23 @@ function genCode(){
 }
 const urlB64ToU8 = (s) => { const p = '='.repeat((4 - s.length % 4) % 4), r = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, (c) => c.charCodeAt(0)); };
 
+// Verständliche Meldung statt technischer Browser-Texte wie „Failed to fetch“
+const userErr = (msg) => Object.assign(new Error(msg), { user: true });
+function errText(e){
+  const s = (e && e.status) || 0;
+  if (e && e.user) return e.message;
+  if (s === 401) return 'Der Code wird nicht akzeptiert.';
+  if (s === 404) return 'Diesen Code gibt es nicht.';
+  if (s === 413) return 'Zu viele Daten für den Abgleich.';
+  if (s === 429) return 'Gerade zu viele Anfragen. Versuch es in einer Minute noch einmal.';
+  if (s >= 500) return 'Der Server hat gerade ein Problem. Versuch es später noch einmal.';
+  if (!navigator.onLine) return 'Du bist offline. Versuch es noch einmal, wenn du wieder Internet hast.';
+  if (e && e.name === 'TypeError') return 'Keine Verbindung zum Server. Versuch es gleich noch einmal.';
+  if (e && e.name === 'NotAllowedError') return 'Benachrichtigungen sind nicht erlaubt. Bitte in den Browser-Einstellungen freigeben.';
+  if (e && (e.name === 'AbortError' || e.name === 'InvalidStateError')) return 'Push ließ sich auf diesem Gerät nicht einrichten. Versuch es noch einmal.';
+  return 'Das hat nicht geklappt. Versuch es noch einmal.';
+}
+
 async function api(path, body){
   const r = await fetch(API + path, {
     method: body ? 'POST' : 'GET',
@@ -2416,7 +2461,7 @@ async function syncNow(join){
     if (pendingActive().some((r) => !before.has(r.id))) showAlertIfNeeded(true);
     return true;
   } catch (e) {
-    sync.error = e.status === 401 ? 'Der Code wird nicht akzeptiert.' : e.status === 404 ? 'Diesen Code gibt es nicht.' : e.status === 413 ? 'Zu viele Daten für den Abgleich.' : 'Keine Verbindung zum Backend.';
+    sync.error = errText(e);
     sync.errorStatus = e.status || 0;
     return false;
   } finally {
@@ -2426,9 +2471,9 @@ async function syncNow(join){
 }
 
 async function enablePush(){
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) throw new Error('Dieser Browser unterstützt keine Push-Nachrichten.');
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) throw userErr('Dieser Browser unterstützt keine Push-Nachrichten.');
   const perm = await Notification.requestPermission();
-  if (perm !== 'granted') throw new Error('Benachrichtigungen sind nicht erlaubt. Bitte in den Browser-Einstellungen freigeben.');
+  if (perm !== 'granted') throw userErr('Benachrichtigungen sind nicht erlaubt. Bitte in den Browser-Einstellungen freigeben.');
   const reg = await navigator.serviceWorker.ready;
   const { publicKey } = await api('/api/vapid');
   let sub = await reg.pushManager.getSubscription();
@@ -2450,7 +2495,7 @@ let syncMsg = { text: '', cls: '', at: '' };
 function say(text, cls){ syncMsg = { ...syncMsg, text, cls: cls || '' }; renderSync(); }
 const msgHtml = (at) => `<div class="msg ${syncMsg.at === at ? syncMsg.cls : ''}" role="status">${syncMsg.at === at ? esc(syncMsg.text) : ''}</div>`;
 function pushHtml(){
-  if (!API) return '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>';
+  if (!API) return '<p class="small" style="margin:0">Der Server ist noch nicht eingerichtet.</p>';
   if (!sync.code) return `<p class="small" style="margin:0">Push gibt es nur zusammen mit Sync. Richte dazu zuerst einen Sync-Code ein, auch wenn du nur ein Gerät nutzt.</p>
     <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" type="button" data-spgo="sync">Sync einrichten</button></div>`;
   return `<div class="small">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
@@ -2460,8 +2505,8 @@ function pushHtml(){
     ${msgHtml('push')}`;
 }
 function syncHtml(val){
-  if (!API) return '<p class="small" style="margin:0">Das Backend ist noch nicht eingerichtet.</p>';
-  if (!sync.code) return `<p class="small" style="margin:0">Mit einem Sync-Code teilen deine Geräte dieselben Daten, und das Backend kann dich auch bei geschlossener App erinnern. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden dabei verschlüsselt.</p>
+  if (!API) return '<p class="small" style="margin:0">Der Server ist noch nicht eingerichtet.</p>';
+  if (!sync.code) return `<p class="small" style="margin:0">Mit einem Sync-Code teilen deine Geräte dieselben Daten, und der Server kann dich auch bei geschlossener App erinnern. Kein Konto, kein Passwort. Deine persönlichen Inhalte werden dabei verschlüsselt.</p>
       <button class="btn primary" data-sync="create">Sync einschalten (neuer Code)</button>
       <div class="small" style="text-align:center">oder</div>
       <label>Mit vorhandenem Code verbinden<input id="joinCode" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX-…" value="${esc(val)}"></label>
@@ -2519,8 +2564,64 @@ $('#setDlg').addEventListener('click', async (e) => {
       if (!confirm('Sync auf diesem Gerät ausschalten? Die Erinnerungen bleiben hier gespeichert.')) return;
       await disablePush(); sync = {}; saveSync(); say('Sync ausgeschaltet.', '');
     }
-  } catch (err) { say(err.message || 'Das hat nicht geklappt.', 'bad'); }
+  } catch (err) { say(errText(err), 'bad'); }
 });
+
+/* ---------- Version, Updates und dauerhafter Speicher ---------- */
+const isInstalled = () => ['standalone', 'fullscreen', 'minimal-ui'].some((m) => matchMedia(`(display-mode: ${m})`).matches) || navigator.standalone === true;
+const verNum = (v) => String(v).split(/\D+/).filter(Boolean).map(Number);
+function newerVer(a, b){
+  const x = verNum(a), y = verNum(b);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d > 0; }
+  return false;
+}
+// Eine offene (installierte) App lädt sich nicht von selbst neu. Darum ab und zu nachsehen, ob es eine neuere index.html gibt.
+let updVer = null, updAt = 0, updMsg = { text: '', cls: '' };
+async function checkUpdate(force){
+  if (!force && (updVer || Date.now() - updAt < 30 * 60000)) return true;
+  updAt = Date.now();
+  try {
+    const r = await fetch('index.html', { cache: 'no-store' });
+    const m = r.ok && (await r.text()).match(/const APP_VERSION = '(\d[^']*)'/);
+    if (!m) return false;
+    if (newerVer(m[1], APP_VERSION)) { updVer = m[1]; renderUpdate(); }
+    return true;
+  } catch (e) { return false; }
+}
+function renderUpdate(){
+  $('#updBanner').innerHTML = updVer ? '<div class="banner"><span>Eine neue Version von Fokus ist da.</span><button class="btn primary" type="button" data-upd="reload">Neu laden</button></div>' : '';
+  renderAbout();
+}
+function renderAbout(){
+  const el = $('#aboutBox'); if (!el) return;
+  const had = el.contains(document.activeElement);
+  el.innerHTML = `<div class="small">Version ${APP_VERSION} · ${isInstalled() ? 'läuft als installierte App' : 'läuft im Browser'}</div>
+    ${updVer ? `<div class="hint">Version ${esc(updVer)} ist da.<div class="btnrow" style="margin-top:8px"><button class="btn primary" type="button" data-upd="reload">Neu laden</button></div></div>`
+      : '<div class="dlg-actions" style="justify-content:flex-start"><button class="btn" type="button" data-upd="check">Nach Updates suchen</button></div>'}
+    <div class="msg ${updMsg.cls}" role="status">${esc(updMsg.text)}</div>`;
+  if (had) { const b = el.querySelector('button'); if (b) b.focus(); }
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-upd]'); if (!b) return;
+  if (b.dataset.upd === 'reload') { location.reload(); return; }
+  b.disabled = true; updMsg = { text: 'Suche …', cls: '' }; renderAbout();
+  const ok = await checkUpdate(true);
+  updMsg = !ok ? { text: 'Konnte nicht nachsehen. Bist du online?', cls: 'bad' } : updVer ? { text: '', cls: '' } : { text: 'Du hast die neueste Version.', cls: 'good' };
+  renderAbout();
+});
+// Browser bitten, die Daten dauerhaft zu behalten. Nur wo das ohne Rückfrage geht: als installierte App und in Chrome & Co.
+async function keepData(){
+  try {
+    if (!navigator.storage || !navigator.storage.persist || await navigator.storage.persisted()) return;
+    if (isInstalled() || navigator.userAgentData) await navigator.storage.persist();
+  } catch (e) {}
+}
+async function renderStore(){
+  const el = $('#storeInfo'); if (!el) return;
+  let p = null;
+  try { if (navigator.storage && navigator.storage.persisted) p = await navigator.storage.persisted(); } catch (e) {}
+  el.textContent = p === true ? 'Speicher: dauerhaft ✓' : p === false ? 'Speicher: nicht dauerhaft. Bei Platzmangel darf der Browser die Daten löschen.' : '';
+}
 
 /* ---------- Start ---------- */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
@@ -2559,10 +2660,12 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   ensureTicker();
   setInterval(tick, 10000);
   if (API && sync.code) { saveSync(); syncNow(); }
-  setInterval(() => { if (document.visibilityState === 'visible') syncNow(); }, 60000);
+  keepData();
+  setTimeout(() => checkUpdate(), 15000);
+  setInterval(() => { if (document.visibilityState === 'visible') { syncNow(); checkUpdate(); } }, 60000);
   // Anzeige ("Nächste: …") jede Minute auffrischen, ohne Eingaben zu stören
   setInterval(() => { if (!document.activeElement || !document.activeElement.matches('.inline-min')) render(); }, 60000);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { logWake(); tick(); render(); syncNow(); } });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { logWake(); tick(); render(); syncNow(); checkUpdate(); } });
   window.addEventListener('focus', tick);
 })();
 </script>
