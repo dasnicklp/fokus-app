@@ -148,6 +148,12 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 #onbBody h3{margin:0;font-size:22px}
 #onbBody p{margin:0}
 #homeList .list-item{gap:6px}
+.step-row{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
+.step-row .cb{align-self:center}
+textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidden;field-sizing:content;line-height:1.35;padding:9px 12px}
+.step-row.done .step-text{text-decoration:line-through;color:var(--muted)}
+.step-tools{display:flex;flex-direction:column;gap:4px;flex:none}
+.step-tools .icon-btn{width:40px;height:36px;font-size:17px;border-radius:10px}
 #setDlg{width:min(640px,calc(100vw - 20px))}
 .set-dlg{height:min(680px,calc(100dvh - 22px))}
 .set-tabs{flex:none;display:flex;gap:2px;overflow-x:auto;margin:-4px -18px 0;padding:0 18px;border-bottom:1px solid var(--line);scrollbar-width:none;scroll-padding:0 18px}
@@ -485,7 +491,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.06.5';
+const APP_VERSION = '2026.10.06.6';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -1568,15 +1574,24 @@ function openTask(t){
   $('#taskDlg').showModal();
   if (!t) $('#tkTitle').focus();
 }
+// Schritt-Texte brechen um und wachsen mit. Ältere Browser ohne „field-sizing“ bekommen die Höhe per Skript.
+const FIELD_SIZING = !!(window.CSS && CSS.supports && CSS.supports('field-sizing', 'content'));
+function fitStep(el){ if (FIELD_SIZING || !el.isConnected) return; el.style.height = 'auto'; if (el.scrollHeight) el.style.height = (el.scrollHeight + 2) + 'px'; }
+function fitSteps(box){ if (!FIELD_SIZING) requestAnimationFrame(() => box.querySelectorAll('.step-text').forEach(fitStep)); }
+// Ein Schritt bleibt eine Zeile: Zeilenumbrüche werden zu Leerzeichen, Enter beendet die Eingabe
+function stepInput(el){ if (/\n/.test(el.value)) el.value = el.value.replace(/\s*\n+\s*/g, ' '); fitStep(el); return el.value; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches && e.target.matches('.step-text')) { e.preventDefault(); e.target.blur(); } });
+
 function renderTkSteps(){
   const d = tkDraft;
-  $('#tkSteps').innerHTML = d.steps.map((s, i) => `<div class="list-item"><input type="checkbox" class="cb" data-sdone="${i}" ${s.done ? 'checked' : ''} aria-label="Schritt ${i + 1} erledigt"><input type="text" data-stext="${i}" value="${esc(s.text)}" maxlength="200" aria-label="Schritt ${i + 1}"><button type="button" class="icon-btn" data-sup="${i}" aria-label="Schritt nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-sdel="${i}" aria-label="Schritt entfernen">✕</button></div>`).join('')
+  $('#tkSteps').innerHTML = d.steps.map((s, i) => `<div class="step-row${s.done ? ' done' : ''}"><input type="checkbox" class="cb" data-sdone="${i}" ${s.done ? 'checked' : ''} aria-label="Schritt ${i + 1} erledigt"><textarea class="step-text" rows="1" data-stext="${i}" maxlength="200" aria-label="Schritt ${i + 1}">${esc(s.text)}</textarea><div class="step-tools"><button type="button" class="icon-btn" data-sup="${i}" aria-label="Schritt ${i + 1} nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-sdel="${i}" aria-label="Schritt ${i + 1} entfernen">✕</button></div></div>`).join('')
     || '<div class="small" style="margin-bottom:8px">Noch keine Schritte. Was wäre der erste kleine Handgriff?</div>';
+  fitSteps($('#tkSteps'));
   $('#tkNow').textContent = d.now ? '★ Als Nächstes' : 'Als Nächstes';
   $('#tkNow').setAttribute('aria-pressed', String(!!d.now));
 }
-$('#tkSteps').addEventListener('input', (e) => { const i = e.target.dataset.stext; if (i !== undefined) tkDraft.steps[Number(i)].text = e.target.value; });
-$('#tkSteps').addEventListener('change', (e) => { const i = e.target.dataset.sdone; if (i !== undefined) { const s = tkDraft.steps[Number(i)]; s.done = e.target.checked; s.doneAt = s.done ? Date.now() : null; } });
+$('#tkSteps').addEventListener('input', (e) => { const i = e.target.dataset.stext; if (i !== undefined) { tkDraft.steps[Number(i)].text = stepInput(e.target); } });
+$('#tkSteps').addEventListener('change', (e) => { const i = e.target.dataset.sdone; if (i !== undefined) { const s = tkDraft.steps[Number(i)]; s.done = e.target.checked; s.doneAt = s.done ? Date.now() : null; e.target.closest('.step-row').classList.toggle('done', s.done); } });
 $('#tkSteps').addEventListener('click', (e) => {
   const u = e.target.closest('[data-sup]'), x = e.target.closest('[data-sdel]');
   if (u) { const i = Number(u.dataset.sup), s = tkDraft.steps; if (i > 0) { [s[i - 1], s[i]] = [s[i], s[i - 1]]; renderTkSteps(); } }
@@ -1703,10 +1718,11 @@ function openRoutine(r, tpl){
 }
 function renderRtForm(){
   $('#rtDays').innerHTML = WD.map((w) => `<button type="button" class="chip${rtDraft.days.includes(w.v) ? ' sel' : ''}" data-rday="${w.v}" aria-pressed="${rtDraft.days.includes(w.v)}">${w.l}</button>`).join('');
-  $('#rtSteps').innerHTML = rtDraft.steps.map((s, i) => `<div class="list-item"><input type="text" data-rtext="${i}" value="${esc(s.text)}" maxlength="120" aria-label="Schritt ${i + 1}"><button type="button" class="icon-btn" data-rup="${i}" aria-label="Schritt nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-rdel="${i}" aria-label="Schritt entfernen">✕</button></div>`).join('');
+  $('#rtSteps').innerHTML = rtDraft.steps.map((s, i) => `<div class="step-row"><textarea class="step-text" rows="1" data-rtext="${i}" maxlength="120" aria-label="Schritt ${i + 1}">${esc(s.text)}</textarea><div class="step-tools"><button type="button" class="icon-btn" data-rup="${i}" aria-label="Schritt ${i + 1} nach oben" ${i ? '' : 'disabled'}>↑</button><button type="button" class="icon-btn" data-rdel="${i}" aria-label="Schritt ${i + 1} entfernen">✕</button></div></div>`).join('');
+  fitSteps($('#rtSteps'));
 }
 $('#rtDays').addEventListener('click', (e) => { const b = e.target.closest('[data-rday]'); if (!b) return; const v = Number(b.dataset.rday), i = rtDraft.days.indexOf(v); if (i >= 0) rtDraft.days.splice(i, 1); else rtDraft.days.push(v); renderRtForm(); });
-$('#rtSteps').addEventListener('input', (e) => { const i = e.target.dataset.rtext; if (i !== undefined) rtDraft.steps[Number(i)].text = e.target.value; });
+$('#rtSteps').addEventListener('input', (e) => { const i = e.target.dataset.rtext; if (i !== undefined) rtDraft.steps[Number(i)].text = stepInput(e.target); });
 $('#rtSteps').addEventListener('click', (e) => {
   const u = e.target.closest('[data-rup]'), x = e.target.closest('[data-rdel]');
   if (u) { const i = Number(u.dataset.rup), s = rtDraft.steps; if (i > 0) { [s[i - 1], s[i]] = [s[i], s[i - 1]]; renderRtForm(); } }
