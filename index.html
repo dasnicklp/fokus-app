@@ -479,7 +479,7 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.06';
+const APP_VERSION = '2026.10.06.2';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -984,6 +984,13 @@ $('#btnDup').onclick = () => {
 };
 $('#formDlg').addEventListener('close', () => showAlertIfNeeded());
 $('#setDlg').addEventListener('close', () => { render(); showAlertIfNeeded(); });
+
+// Uhrzeit- und Datumsfelder: Auswahl beim Tipp aufs ganze Feld öffnen. Manche Browser öffnen sie sonst nur über das kleine Symbol rechts.
+document.addEventListener('click', (e) => {
+  const i = e.target.closest && e.target.closest('input[type="time"], input[type="date"], input[type="datetime-local"]');
+  if (!i || i.disabled || i.readOnly || typeof i.showPicker !== 'function') return;
+  try { i.showPicker(); } catch (err) {}
+});
 
 /* Einstellungen */
 function permText(){
@@ -2496,8 +2503,9 @@ function say(text, cls){ syncMsg = { ...syncMsg, text, cls: cls || '' }; renderS
 const msgHtml = (at) => `<div class="msg ${syncMsg.at === at ? syncMsg.cls : ''}" role="status">${syncMsg.at === at ? esc(syncMsg.text) : ''}</div>`;
 function pushHtml(){
   if (!API) return '<p class="small" style="margin:0">Der Server ist noch nicht eingerichtet.</p>';
-  if (!sync.code) return `<p class="small" style="margin:0">Push gibt es nur zusammen mit Sync. Richte dazu zuerst einen Sync-Code ein, auch wenn du nur ein Gerät nutzt.</p>
-    <div class="dlg-actions" style="justify-content:flex-start"><button class="btn" type="button" data-spgo="sync">Sync einrichten</button></div>`;
+  if (!sync.code) return `<p class="small" style="margin:0">Damit Erinnerungen auch bei geschlossener App kommen, schickt der Server sie per Push. Dafür legt Fokus einen Sync-Code an. Du brauchst kein Konto, und den Code findest du danach unter „Sync &amp; Daten“.</p>
+    <div class="dlg-actions" style="justify-content:flex-start"><button class="btn primary" type="button" data-sync="pushon">Push einschalten</button></div>
+    ${msgHtml('push')}`;
   return `<div class="small">Auf diesem Gerät: ${sync.push ? 'aktiv ✓' : 'aus'}</div>
     <div class="dlg-actions" style="justify-content:flex-start">
       ${sync.push ? '<button class="btn" data-sync="testpush">Test-Push senden</button><button class="btn" data-sync="pushoff">Push ausschalten</button>' : '<button class="btn primary" data-sync="pushon">Push auf diesem Gerät aktivieren</button>'}
@@ -2527,6 +2535,7 @@ function renderSync(){
   const box = ae && ae.closest && ae.closest('#pushBody, #syncBody');
   const sel = box && ae.dataset && (ae.dataset.sync ? `[data-sync="${ae.dataset.sync}"]` : ae.dataset.code ? `[data-code="${ae.dataset.code}"]` : '');
   const val = ($('#joinCode') || {}).value || '';
+  $('#permInfo').textContent = permText();
   $('#pushBody').innerHTML = pushHtml();
   $('#syncBody').innerHTML = syncHtml(val);
   if (focusId === 'joinCode') { const j = $('#joinCode'); if (j) { j.focus(); j.setSelectionRange(val.length, val.length); } }
@@ -2554,7 +2563,12 @@ $('#setDlg').addEventListener('click', async (e) => {
     } else if (a === 'now') {
       const ok = await syncNow(); say(ok ? 'Synchronisiert.' : (sync.error || 'Fehlgeschlagen.'), ok ? 'good' : 'bad');
     } else if (a === 'pushon') {
-      say('Aktiviere Push …'); await enablePush(); say('Push ist aktiv. Mit „Test-Push senden“ kannst du es prüfen.', 'good');
+      // Ohne Sync-Code kein Push: dann zuerst einen anlegen. Die Erlaubnis vorher fragen, solange der Tipp noch frisch ist.
+      if ('Notification' in window && Notification.permission !== 'granted' && (await Notification.requestPermission()) !== 'granted') throw userErr('Benachrichtigungen sind nicht erlaubt. Bitte in den Browser-Einstellungen freigeben.');
+      const fresh = !sync.code;
+      if (fresh) { say('Richte Sync ein …'); if (!(await createSync())) { say(sync.error || 'Das hat nicht geklappt.', 'bad'); return; } }
+      say('Aktiviere Push …'); await enablePush();
+      say(fresh ? 'Push ist aktiv. Deinen Sync-Code findest du unter „Sync & Daten“, heb ihn gut auf.' : 'Push ist aktiv. Mit „Test-Push senden“ kannst du es prüfen.', 'good');
     } else if (a === 'pushoff') {
       await disablePush(); say('Push ausgeschaltet.', '');
     } else if (a === 'testpush') {
