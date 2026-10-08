@@ -148,6 +148,8 @@ details.plain{background:none;border:0;padding:0;margin-top:4px}
 #onbBody h3{margin:0;font-size:22px}
 #onbBody p{margin:0}
 #homeList .list-item{gap:6px}
+.scale .nm small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.chip.was{border:2px dashed var(--muted)}
 .step-row{display:flex;gap:8px;align-items:stretch;margin-bottom:8px}
 .step-row .cb{align-self:center}
 textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidden;field-sizing:content;line-height:1.35;padding:9px 12px}
@@ -309,6 +311,10 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
     </div>
     <div class="set-panes" id="setPanes">
       <section class="set-pane" id="spane-general" data-spane="general" role="tabpanel" aria-labelledby="stab-general">
+        <div class="set-h">Abend-Check-in</div>
+        <label class="inl"><input type="checkbox" id="eveOn"> Jeden Abend fragen, wie der Tag war</label>
+        <label style="max-width:200px">Uhrzeit<input type="time" id="eveTime"></label>
+        <div class="small" id="eveInfo"></div>
         <div class="set-h">Heute-Bildschirm</div>
         <p class="small" style="margin:0">Blende aus, was du gerade nicht brauchst, und hol Wichtiges nach oben. „Jetzt dran“ und ein laufender Timer stehen immer ganz oben.</p>
         <div id="homeList"></div>
@@ -491,7 +497,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.06.6';
+const APP_VERSION = '2026.10.08';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -721,6 +727,10 @@ function closeAlertIfDone(){
 }
 
 function actionsHtml(r){
+  if (r.evening) return `<div class="actions">
+    <button class="btn primary" data-eve="go" data-id="${r.id}">Jetzt ausfüllen</button>
+    <div class="chips"><span class="lbl">Später:</span>${[15, 30, 60].map((m) => `<button class="chip" data-act="snooze" data-id="${r.id}" data-min="${m}">${m} Min</button>`).join('')}</div>
+    <button class="btn ghost" data-eve="skipnow" data-id="${r.id}">Heute nicht</button></div>`;
   if (r.type === 'timer') return `<div class="actions"><div class="btnrow" style="margin-top:0">
     ${r.phase === 'focus' ? `<button class="btn primary" data-act="fxa" data-fx="tobreak">Pause starten (${fx.breakMin} Min)</button>` : `<button class="btn primary" data-act="fxa" data-fx="again">Nächste Runde (${fx.durMin} Min)</button>`}
     <button class="btn" data-act="snooze" data-id="${r.id}" data-min="5">+5 Min</button>
@@ -772,7 +782,7 @@ function render(){
   }).join('');
 
   // Liste
-  const items = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId).map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
+  const items = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening).map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
     .sort((a,b) => (a.n ?? Infinity) - (b.n ?? Infinity));
   $('#list').innerHTML = items.length ? items.map(({ r, n }) => `
     <div class="card${r.enabled ? '' : ' off'}">
@@ -1018,7 +1028,7 @@ async function askPermission(){
 const SET_PANES = ['general', 'notif', 'quiet', 'sync', 'dev'];
 let setPane = 'general';
 function renderSetPane(k){
-  if (k === 'general') renderHomeList();
+  if (k === 'general') { renderHomeList(); renderEveSettings(); }
   else if (k === 'notif') { $('#permInfo').textContent = permText(); renderSync(); }
   else if (k === 'quiet') renderQuiet($('#quietBox'));
   else if (k === 'sync') { renderSync(); renderStore(); }
@@ -1282,7 +1292,7 @@ function itemsOnDay(day, withRem){
   for (const r of state.reminders) {
     if (r.type === 'event') {
       for (const t of eventInstances(r, a, b, r.allDay ? 0 : toMin(r.startTime))) items.push({ t, r, kind: 'event' });
-    } else if (withRem && r.enabled && r.type !== 'timer') {
+    } else if (withRem && r.enabled && r.type !== 'timer' && !r.evening) {
       const occ = occurrences(r, a, b);
       if (!occ.length) continue;
       if (r.type === 'interval' && occ.length > 3) items.push({ t: occ[0], r, kind: 'rem', many: occ.length });
@@ -1757,15 +1767,22 @@ $('#rtDel').onclick = () => {
 const CI = [['energy', 'Energie'], ['mood', 'Stimmung'], ['focus', 'Fokus'], ['sleep', 'Schlaf']];
 let ciEdit = false;
 function renderCheckin(){
+  const box = $('#checkin'), ae = document.activeElement;
+  if (ae && box.contains(ae) && ae.matches('textarea, input')) return; // nicht neu zeichnen, während getippt wird
+  const ek = eveDue();
+  box.innerHTML = morningHtml(!!ek) + (ek ? eveHtml(ek) : '');
+}
+function morningHtml(evening){
   const k = todayKey(), c = state.checkins.find((x) => x.id === k), full = !!c && CI.every(([q]) => c[q]);
   let skip = false; try { skip = localStorage.getItem('fokus.ciSkip') === k; } catch (e) {}
+  if (evening && !full) return ''; // abends nur noch das Ergebnis vom Morgen zeigen
   let h;
   if (full && !ciEdit) h = `<div class="card" style="margin-top:8px"><div class="row"><div style="min-width:0"><div class="small" style="font-weight:700">Check-in heute ✓</div><div class="meta" style="margin-top:2px">${CI.map(([q, l]) => `${l} ${c[q]}`).join(' · ')}</div></div><button class="btn ghost" data-ci="edit">Ändern</button></div></div>`;
   else if (skip && !c && !ciEdit) h = `<div style="margin-top:8px"><button class="btn ghost" data-ci="open">Check-in machen</button></div>`;
   else h = `<div class="card" style="margin-top:8px"><div class="title" style="font-size:17px">Wie geht's dir heute?</div><div class="small">Kurz antippen: 1 = sehr wenig, 5 = sehr gut.</div>
     ${CI.map(([q, l]) => `<div class="scale" role="group" aria-label="${l}"><span class="nm">${l}</span>${[1, 2, 3, 4, 5].map((v) => `<button class="chip${c && c[q] === v ? ' sel' : ''}" data-ci="set" data-k="${q}" data-v="${v}" aria-label="${l} ${v}" aria-pressed="${!!(c && c[q] === v)}">${v}</button>`).join('')}</div>`).join('')}
     <div class="btnrow">${ciEdit || full ? '<button class="btn primary" data-ci="close">Fertig</button>' : '<button class="btn ghost" data-ci="later">Heute nicht</button>'}</div></div>`;
-  $('#checkin').innerHTML = h;
+  return h;
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-ci]'); if (!b) return;
@@ -1781,6 +1798,116 @@ document.addEventListener('click', (e) => {
   else if (a === 'later') { try { localStorage.setItem('fokus.ciSkip', k); } catch (err) {} render(); }
   else if (a === 'open') { try { localStorage.removeItem('fokus.ciSkip'); } catch (err) {} ciEdit = true; render(); }
 });
+
+/* ---------- Abend-Check-in ---------- */
+// Zur eingestellten Uhrzeit: Wie war der Tag? Dazu Energie, Stimmung und Fokus im Vergleich zum Morgen, eine Notiz
+// und auf Wunsch eine Sache für morgen. Gespeichert im Check-in des Tages unter „eve“ (wird verschlüsselt synchronisiert).
+// Schlaf wird abends nicht noch einmal gefragt, der bezieht sich auf die letzte Nacht.
+const EVE_ID = 'eve-checkin';
+const EVE_Q = [['day', 'Tag insgesamt'], ['energy', 'Energie'], ['mood', 'Stimmung'], ['focus', 'Fokus']];
+const eveCfg = () => getPref('evening', { on: false, time: '21:00' });
+// Bis 4 Uhr nachts gehört der Abend noch zum Vortag
+function eveKey(d = new Date()){ const x = new Date(d); if (x.getHours() < 4) x.setDate(x.getDate() - 1); return ymd(x); }
+function eveDue(now = new Date()){
+  const p = eveCfg(); if (!p.on) return null;
+  if (now.getHours() < 4) return eveKey(now);
+  return now.getHours() * 60 + now.getMinutes() >= toMin(p.time) ? ymd(now) : null;
+}
+let eveEdit = false;
+const eveSkipped = (k) => { try { return localStorage.getItem('fokus.eveSkip') === k; } catch (e) { return false; } };
+function setEveSkip(k){ try { if (k) localStorage.setItem('fokus.eveSkip', k); else localStorage.removeItem('fokus.eveSkip'); } catch (e) {} }
+function dayDoneHtml(k){
+  const a = new Date(k + 'T00:00').getTime(), b = a + DAY, inR = (t) => typeof t === 'number' && t >= a && t < b;
+  const steps = state.tasks.reduce((x, t) => x + (t.steps || []).filter((s) => s.done && inR(s.doneAt)).length, 0);
+  const tasks = state.tasks.filter((t) => t.done && inR(t.doneAt)).length;
+  const rt = state.checks.filter((c) => c.date === k).reduce((x, c) => x + (c.done || []).length, 0);
+  const rems = state.log.filter((e) => e.kind === 'done' && inR(e.t) && e.rid !== TIMER_ID && e.rid !== EVE_ID).length;
+  const fmin = state.sessions.filter((s) => inR(s.start)).reduce((x, s) => x + sessMin(s), 0);
+  const parts = [[steps, 'Schritt', 'Schritte'], [tasks, 'Aufgabe', 'Aufgaben'], [rt, 'Routinen-Schritt', 'Routinen-Schritte'], [rems, 'Erinnerung', 'Erinnerungen']]
+    .filter(([n]) => n).map(([n, one, many]) => `${n} ${n === 1 ? one : many}`);
+  if (fmin) parts.push(`${fmin} Min Fokus`);
+  return parts.length ? `<b>Heute geschafft:</b> ${parts.join(' · ')}` : 'Heute nichts abgehakt. Auch okay, manche Tage sind zum Durchkommen da.';
+}
+function eveHtml(k){
+  const c = state.checkins.find((x) => x.id === k) || {}, e = c.eve || {};
+  const cmp = EVE_Q.slice(1).map(([q, l]) => `${l} ${c[q] ? c[q] + '→' : ''}${e[q] || '–'}`).join(' · ');
+  if (e.at && !eveEdit) return `<div class="card" id="eveCard" style="margin-top:8px"><div class="row"><div style="min-width:0">
+      <div class="small" style="font-weight:700">Abend-Check-in ✓</div>
+      <div class="meta" style="margin-top:2px">Tag ${e.day || '–'} · ${cmp}</div>
+      ${e.note ? `<div class="note" style="margin-top:4px">${esc(e.note)}</div>` : ''}
+      ${e.tomorrow ? `<div class="meta">Für morgen: ${esc(e.tomorrow)}</div>` : ''}
+    </div><button class="btn ghost" data-eve="edit">Ändern</button></div></div>`;
+  if (eveSkipped(k) && !eveEdit) return '<div style="margin-top:8px"><button class="btn ghost" data-eve="open">Abend-Check-in machen</button></div>';
+  return `<div class="card" id="eveCard" style="margin-top:8px">
+    <div class="title" style="font-size:17px">Wie war dein Tag?</div>
+    <div class="small">Kurz antippen: 1 = sehr wenig, 5 = sehr gut.${CI.some(([q]) => c[q]) ? ' Der gestrichelte Rahmen zeigt deinen Wert von heute Morgen.' : ''}</div>
+    ${EVE_Q.map(([q, l]) => `<div class="scale" role="group" aria-label="${l}"><span class="nm">${q === 'day' ? 'Tag<small>insgesamt</small>' : l + (c[q] ? `<small>morgens ${c[q]}</small>` : '')}</span>${[1, 2, 3, 4, 5].map((v) => `<button class="chip${e[q] === v ? ' sel' : ''}${c[q] === v ? ' was' : ''}" data-eve="set" data-k="${q}" data-v="${v}" aria-label="${l} ${v}${c[q] === v ? ' (wie heute Morgen)' : ''}" aria-pressed="${e[q] === v}">${v}</button>`).join('')}</div>`).join('')}
+    <p class="hint" style="margin:10px 0">${dayDoneHtml(k)}</p>
+    <label>Notiz zum Tag<textarea id="eveNote" rows="3" maxlength="2000" placeholder="Was lief gut? Was war schwer? Was willst du nicht vergessen?">${esc(e.note || '')}</textarea></label>
+    ${e.tomorrow ? `<div class="small" style="margin-top:10px">Für morgen: <b>${esc(e.tomorrow)}</b> ✓</div>`
+      : `<label style="margin-top:10px">Eine Sache für morgen (optional)<input id="eveTomorrow" type="text" maxlength="160" autocomplete="off" placeholder="z. B. Gewerbeanzeige ausfüllen"></label>
+    <div class="small" style="margin-top:4px">Wird als Aufgabe angelegt und steht morgen ganz oben bei „Eine Sache jetzt“.</div>`}
+    <div class="btnrow"><button class="btn primary" data-eve="done">Fertig</button>${e.at ? '' : '<button class="btn ghost" data-eve="later">Heute nicht</button>'}</div>
+  </div>`;
+}
+function eveSave(k, patch){
+  const old = state.checkins.find((c) => c.id === k), c = old ? { ...old } : { id: k, date: k };
+  c.eve = { ...(c.eve || {}), ...patch };
+  colPut('checkins', c); save();
+}
+// Fällige Abend-Erinnerung erledigen; ist sie noch nicht gekommen, für heute stumm schalten
+function eveMute(k, how){
+  const r = find(EVE_ID); if (!r) return;
+  if (r.pendingAt) { act(r.id, how); return; }
+  if (k === ymd(new Date())) { r.mutedDate = k; r.rtAt = Date.now(); save(); }
+}
+function finishEve(k){
+  const t = $('#eveTomorrow'), txt = t ? t.value.trim().slice(0, 160) : '', n = $('#eveNote');
+  const patch = { at: Date.now() };
+  if (n) patch.note = n.value;
+  if (txt) { const task = newTask(txt); colPut('tasks', task); setNow(task.id); patch.tomorrow = txt; }
+  eveSave(k, patch); eveMute(k, 'done'); eveEdit = false;
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  render();
+  flash(txt ? `Danke! „${txt}“ steht morgen bei „Eine Sache jetzt“.` : 'Danke! Abend-Check-in gespeichert.');
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-eve]'); if (!b) return;
+  const a = b.dataset.eve;
+  if (a === 'go') { // aus der Erinnerung: erledigt und direkt zum Abend-Check-in
+    act(b.dataset.id, 'done'); setEveSkip(''); eveEdit = true; setTab('today');
+    requestAnimationFrame(() => { const c = $('#eveCard'); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+    return;
+  }
+  if (a === 'skipnow') { act(b.dataset.id, 'skip'); setEveSkip(eveKey()); render(); return; }
+  const k = eveDue() || eveKey();
+  if (a === 'set') { eveSave(k, { [b.dataset.k]: Number(b.dataset.v) }); render(); }
+  else if (a === 'done') finishEve(k);
+  else if (a === 'later') { setEveSkip(k); eveMute(k, 'skip'); render(); }
+  else if (a === 'edit') { eveEdit = true; render(); }
+  else if (a === 'open') { setEveSkip(''); eveEdit = true; render(); }
+});
+document.addEventListener('input', (e) => { if (e.target.id === 'eveNote') eveSave(eveDue() || eveKey(), { note: e.target.value }); });
+// Erinnerung zum Abend-Check-in: eigener Eintrag in den Erinnerungen, damit Push und Snooze wie gewohnt funktionieren
+function syncEveReminder(){
+  const p = eveCfg(), ex = find(EVE_ID), now = Date.now();
+  if (!p.on) { if (ex) { state.reminders = state.reminders.filter((x) => x.id !== EVE_ID); state.tombs.push({ id: EVE_ID, updatedAt: now }); } return; }
+  const r = Object.assign(ex ? { ...ex } : blank(), { id: EVE_ID, evening: true, type: 'daily', times: [p.time], title: 'Wie war dein Tag?', note: 'Kurzer Abend-Check-in in Fokus', enabled: true, checkedUntil: now, updatedAt: now, rtAt: now });
+  if (!ex) r.createdAt = now;
+  upsertRem(r);
+}
+function renderEveSettings(){
+  const p = eveCfg();
+  $('#eveOn').checked = !!p.on; $('#eveTime').value = p.time; $('#eveTime').disabled = !p.on;
+  if (!p.on) { $('#eveInfo').textContent = 'Fokus fragt dich dann jeden Abend, wie dein Tag war: Tag insgesamt, Energie, Stimmung und Fokus im Vergleich zum Morgen, dazu eine Notiz.'; return; }
+  const at = new Date(); at.setHours(0, toMin(p.time), 0, 0);
+  const q = quietState(at);
+  $('#eveInfo').innerHTML = `Um ${esc(p.time)} Uhr erinnert dich Fokus, und auf „Heute“ erscheint der Abend-Check-in.`
+    + (q && q.kind !== 'dnd' && q.kind !== 'night' ? ` <b>Achtung:</b> Um ${esc(p.time)} Uhr ist „${esc(q.label)}“, die Erinnerung käme erst danach.` : '')
+    + (API && !sync.push ? ' Damit sie auch bei geschlossener App kommt, schalte unter „Benachrichtigungen“ Push ein.' : '');
+}
+$('#eveOn').onchange = (e) => { setPref('evening', { on: e.target.checked, time: eveCfg().time }); syncEveReminder(); save(); render(); renderEveSettings(); };
+$('#eveTime').onchange = (e) => { if (!e.target.value) return; setPref('evening', { time: e.target.value }); syncEveReminder(); save(); render(); renderEveSettings(); };
 
 /* ---------- Fokus-Timer ---------- */
 // Der laufende Timer ist ein Eintrag vom Typ "timer" in den Erinnerungen:
@@ -1954,12 +2081,18 @@ function renderReview(){
   h += '<h2>Check-ins</h2>';
   if (cis.some(Boolean)) {
     h += `<div class="heat"><span></span>${days.map((d) => `<span class="small" style="text-align:center">${WDS[d.getDay()]}</span>`).join('')}`;
-    for (const [k, l] of CI) {
-      const vals = cis.map((c) => (c && c[k]) || 0), got = vals.filter(Boolean);
+    const rows = [...CI.map(([k, l]) => [l, (c) => c && c[k]]), ['Tag (abends)', (c) => c && c.eve && c.eve.day]];
+    for (const [l, get] of rows) {
+      const vals = cis.map((c) => get(c) || 0), got = vals.filter(Boolean);
+      if (l === 'Tag (abends)' && !got.length) continue;
       h += `<span class="small" style="font-weight:600">${l}${got.length ? `<br><span style="font-weight:400">Ø ${fmt1(got.reduce((x, y) => x + y, 0) / got.length)}</span>` : ''}</span>`
         + vals.map((v, i) => `<span class="c" title="${l} am ${WDL[days[i].getDay()]}: ${v || 'kein Eintrag'}" style="${v ? `background:color-mix(in srgb, var(--accent) ${15 + v * 17}%, var(--surface2));${v >= 3 ? 'color:var(--accent-ink)' : ''}` : 'color:var(--muted)'}">${v || '–'}</span>`).join('');
     }
     h += '</div>';
+    // Morgen → Abend im Vergleich (wenn es genug Tage mit beiden Werten gibt)
+    const avgOf = (xs) => xs.reduce((x, y) => x + y, 0) / xs.length;
+    const trend = CI.filter(([q]) => q !== 'sleep').map(([q, l]) => { const pr = cis.filter((c) => c && c[q] && c.eve && c.eve[q]); return pr.length >= 3 ? `${l} ${fmt1(avgOf(pr.map((c) => c[q])))} → ${fmt1(avgOf(pr.map((c) => c.eve[q])))}` : ''; }).filter(Boolean);
+    if (trend.length) h += `<p class="small" style="margin:8px 0 0">Morgens → abends (Ø): ${trend.join(' · ')}</p>`;
   } else h += '<p class="small">Noch keine Check-ins in diesem Zeitraum. Ein kurzer Check-in pro Tag reicht, dann zeigen sich hier Muster.</p>';
   // Muster aus den letzten 4 Wochen
   const p0 = b - 28 * DAY, pats = [];
@@ -1986,6 +2119,8 @@ function renderReview(){
   if (sum(fz) >= 30) h += `<div class="small" style="font-weight:600;margin-top:10px">Fokus-Minuten nach Tageszeit</div>${bars(fz, 'Min')}`;
   if (sum(dn) >= 5) h += `<div class="small" style="font-weight:600;margin-top:10px">Erledigtes nach Tageszeit</div>${bars(dn, '')}`;
   if (!pats.length && sum(fz) < 30 && sum(dn) < 5) h += '<p class="small">Noch zu wenig Daten. Nach ein paar Check-ins, Fokus-Runden und erledigten Schritten siehst du hier, wann es bei dir am besten läuft.</p>';
+  const dnotes = days.map((d, i) => [d, cis[i]]).filter(([, c]) => c && c.eve && (c.eve.note || '').trim());
+  if (dnotes.length) h += `<h2>Notizen zum Tag</h2><ul class="log">${dnotes.map(([d, c]) => `<li style="white-space:pre-wrap"><b>${WDS[d.getDay()]} ${fmtD(d)}</b> ${esc(c.eve.note.trim())}</li>`).join('')}</ul>`;
   if (tDone.length) h += `<h2>Das hast du geschafft</h2><ul class="log">${tDone.slice(0, 12).map((t) => `<li>✓ ${esc(t.title)}</li>`).join('')}</ul>`;
   $('#rvBody').innerHTML = h;
 }
@@ -2216,7 +2351,9 @@ function homeCfg(){
 }
 function applyHome(){
   const c = homeCfg(), box = $('#homeSecs');
-  for (const k of c.order) { const el = box.querySelector(`[data-sec="${k}"]`); if (!el) continue; box.appendChild(el); el.hidden = c.hidden.includes(k); }
+  // Nur umhängen, wenn sich die Reihenfolge geändert hat: Umhängen nimmt Eingabefeldern darin den Fokus
+  const same = [...box.children].map((el) => el.dataset.sec).join() === c.order.join();
+  for (const k of c.order) { const el = box.querySelector(`[data-sec="${k}"]`); if (!el) continue; if (!same) box.appendChild(el); el.hidden = c.hidden.includes(k); }
 }
 function renderHomeList(){
   const c = homeCfg(), label = Object.fromEntries(HOME_SECS);
