@@ -156,7 +156,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 .step-row.done .step-text{text-decoration:line-through;color:var(--muted)}
 .step-tools{display:flex;flex-direction:column;gap:4px;flex:none}
 .step-tools .icon-btn{width:40px;height:36px;font-size:17px;border-radius:10px}
-#setDlg{width:min(640px,calc(100vw - 20px))}
+#setDlg{width:min(700px,calc(100vw - 20px))}
 .set-dlg{height:min(680px,calc(100dvh - 22px))}
 .set-tabs{flex:none;display:flex;gap:2px;overflow-x:auto;margin:-4px -18px 0;padding:0 18px;border-bottom:1px solid var(--line);scrollbar-width:none;scroll-padding:0 18px}
 .set-tabs::-webkit-scrollbar{display:none}
@@ -307,6 +307,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
       <button type="button" role="tab" id="stab-notif" data-stab="notif" aria-controls="spane-notif" aria-selected="false" tabindex="-1">Benachrichtigungen</button>
       <button type="button" role="tab" id="stab-quiet" data-stab="quiet" aria-controls="spane-quiet" aria-selected="false" tabindex="-1">Ruhezeiten</button>
       <button type="button" role="tab" id="stab-sync" data-stab="sync" aria-controls="spane-sync" aria-selected="false" tabindex="-1">Sync &amp; Daten</button>
+      <button type="button" role="tab" id="stab-ai" data-stab="ai" aria-controls="spane-ai" aria-selected="false" tabindex="-1">KI</button>
       <button type="button" role="tab" id="stab-dev" data-stab="dev" aria-controls="spane-dev" aria-selected="false" tabindex="-1">Dev</button>
     </div>
     <div class="set-panes" id="setPanes">
@@ -346,6 +347,30 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
         </div>
         <p class="small" style="margin:0">Export/Import ist eine Sicherung als Datei (unverschlüsselt) und funktioniert auch ohne Sync.</p>
         <div class="small" id="storeInfo"></div>
+      </section>
+ <section class="set-pane" id="spane-ai" data-spane="ai" role="tabpanel" aria-labelledby="stab-ai" hidden>
+        <div class="set-h">Daten an eine KI geben</div>
+        <p class="small" style="margin:0">Fokus stellt deine Daten als Text zusammen. Teile ihn mit einer KI-App wie Claude oder ChatGPT und lass dir helfen: auswerten, Muster finden, planen, Aufgaben zerlegen. Oben im Text steht eine Anleitung, wie die KI dir Änderungen zurückgibt. Was du teilst, geht im Klartext an den KI-Dienst.</p>
+        <div class="chips" role="group" aria-label="Zeitraum"><span class="lbl">Letzte Tage:</span><button type="button" class="chip" data-air="7" aria-pressed="false" aria-label="7 Tage">7</button><button type="button" class="chip sel" data-air="30" aria-pressed="true" aria-label="30 Tage">30</button><button type="button" class="chip" data-air="90" aria-pressed="false" aria-label="90 Tage">90</button></div>
+        <div style="display:flex;flex-direction:column">
+          <label class="chk"><input type="checkbox" data-aip="tasks" checked><span>Aufgaben und Routinen</span></label>
+          <label class="chk"><input type="checkbox" data-aip="reminders" checked><span>Erinnerungen und Termine</span></label>
+          <label class="chk"><input type="checkbox" data-aip="notes" checked><span>Notizen</span></label>
+          <label class="chk"><input type="checkbox" data-aip="checkins" checked><span>Check-ins, Tagesnotizen und Schlaf</span></label>
+          <label class="chk"><input type="checkbox" data-aip="activity" checked><span>Fokus-Zeiten und Erledigtes pro Tag</span></label>
+        </div>
+        <div class="dlg-actions" style="justify-content:flex-start"><button type="button" class="btn primary" data-ai="share" id="aiShareBtn">Teilen …</button><button type="button" class="btn" data-ai="copy">Kopieren</button><button type="button" class="btn" data-ai="file">Als Datei</button></div>
+        <div class="msg" id="aiOutMsg" role="status"></div>
+        <div class="set-h">Antwort einer KI übernehmen</div>
+        <p class="small" style="margin:0">Soll die KI etwas in Fokus anlegen, antwortet sie mit einem Block, der mit <code>```fokus</code> beginnt. Teile die Antwort an Fokus oder füge sie hier ein. Du siehst vorher genau, was sich ändert. Löschen kann eine KI über diesen Weg nichts.</p>
+        <textarea id="aiIn" rows="5" placeholder="KI-Antwort hier einfügen …" aria-label="Antwort einer KI"></textarea>
+        <div class="dlg-actions" style="justify-content:flex-start"><button type="button" class="btn" data-ai="check">Prüfen</button></div>
+        <div class="msg" id="aiInMsg" role="status"></div>
+        <div id="aiPreview"></div>
+        <div class="set-h">Nur die Anleitung</div>
+        <p class="small" style="margin:0">Du willst einer KI nur sagen „Leg mir dafür Aufgaben in Fokus an“, ohne deine Daten zu teilen? Dann kopier ihr diese Anleitung dazu.</p>
+        <div class="dlg-actions" style="justify-content:flex-start"><button type="button" class="btn" data-ai="spec">Anleitung kopieren</button></div>
+        <div class="msg" id="aiSpecMsg" role="status"></div>
       </section>
       <section class="set-pane" id="spane-dev" data-spane="dev" role="tabpanel" aria-labelledby="stab-dev" hidden>
         <div class="set-h">Version &amp; Updates</div>
@@ -497,7 +522,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.08';
+const APP_VERSION = '2026.10.08.2';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -1025,13 +1050,14 @@ async function askPermission(){
   $('#permInfo').textContent = permText(); renderBanner();
 }
 // Reiter im Einstellungs-Dialog
-const SET_PANES = ['general', 'notif', 'quiet', 'sync', 'dev'];
+const SET_PANES = ['general', 'notif', 'quiet', 'sync', 'ai', 'dev'];
 let setPane = 'general';
 function renderSetPane(k){
   if (k === 'general') { renderHomeList(); renderEveSettings(); }
   else if (k === 'notif') { $('#permInfo').textContent = permText(); renderSync(); }
   else if (k === 'quiet') renderQuiet($('#quietBox'));
   else if (k === 'sync') { renderSync(); renderStore(); }
+  else if (k === 'ai') { $('#aiShareBtn').hidden = !navigator.share; renderAiPreview(); }
   else { renderAbout(); renderSync(); }
 }
 function showSetPane(k, focus){
@@ -1817,15 +1843,10 @@ let eveEdit = false;
 const eveSkipped = (k) => { try { return localStorage.getItem('fokus.eveSkip') === k; } catch (e) { return false; } };
 function setEveSkip(k){ try { if (k) localStorage.setItem('fokus.eveSkip', k); else localStorage.removeItem('fokus.eveSkip'); } catch (e) {} }
 function dayDoneHtml(k){
-  const a = new Date(k + 'T00:00').getTime(), b = a + DAY, inR = (t) => typeof t === 'number' && t >= a && t < b;
-  const steps = state.tasks.reduce((x, t) => x + (t.steps || []).filter((s) => s.done && inR(s.doneAt)).length, 0);
-  const tasks = state.tasks.filter((t) => t.done && inR(t.doneAt)).length;
-  const rt = state.checks.filter((c) => c.date === k).reduce((x, c) => x + (c.done || []).length, 0);
-  const rems = state.log.filter((e) => e.kind === 'done' && inR(e.t) && e.rid !== TIMER_ID && e.rid !== EVE_ID).length;
-  const fmin = state.sessions.filter((s) => inR(s.start)).reduce((x, s) => x + sessMin(s), 0);
-  const parts = [[steps, 'Schritt', 'Schritte'], [tasks, 'Aufgabe', 'Aufgaben'], [rt, 'Routinen-Schritt', 'Routinen-Schritte'], [rems, 'Erinnerung', 'Erinnerungen']]
-    .filter(([n]) => n).map(([n, one, many]) => `${n} ${n === 1 ? one : many}`);
-  if (fmin) parts.push(`${fmin} Min Fokus`);
+  const n = dayCounts(k);
+  const parts = [[n.steps, 'Schritt', 'Schritte'], [n.tasks, 'Aufgabe', 'Aufgaben'], [n.rt, 'Routinen-Schritt', 'Routinen-Schritte'], [n.rems, 'Erinnerung', 'Erinnerungen']]
+    .filter(([v]) => v).map(([v, one, many]) => `${v} ${v === 1 ? one : many}`);
+  if (n.fmin) parts.push(`${n.fmin} Min Fokus`);
   return parts.length ? `<b>Heute geschafft:</b> ${parts.join(' · ')}` : 'Heute nichts abgehakt. Auch okay, manche Tage sind zum Durchkommen da.';
 }
 function eveHtml(k){
@@ -2778,6 +2799,298 @@ $('#setDlg').addEventListener('click', async (e) => {
   } catch (err) { say(errText(err), 'bad'); }
 });
 
+/* ---------- KI-Brücke: Daten an eine KI geben und ihre Antwort übernehmen ---------- */
+// Export: lesbarer Text mit Anleitung für die KI. Import: ```fokus-Block mit JSON, erst nach Vorschau und Bestätigung.
+// Über diesen Weg wird nichts gelöscht.
+const AI_SPEC = `## So gibst du Änderungen an Fokus zurück
+Wenn du etwas in Fokus anlegen oder ändern sollst, hänge an deine Antwort genau einen Codeblock mit der Sprache \`fokus\` an (also \`\`\`fokus in der ersten Zeile). Der Inhalt ist JSON. Die Person teilt deine Antwort an die App und bestätigt dort jede Änderung. Lass alles weg, was du nicht brauchst.
+Datum: JJJJ-MM-TT · Uhrzeit: HH:MM (24 h) · Wochentage: Mo, Di, Mi, Do, Fr, Sa, So
+Beispiel (in deiner Antwort heißt die erste Zeile \`\`\`fokus, nicht fokus-beispiel):
+\`\`\`fokus-beispiel
+{
+  "fokus": 1,
+  "add": {
+    "tasks": [{"title": "Steuererklärung", "steps": ["Laptop aufklappen", "Belege von 2025 raussuchen"], "due": "2026-10-20", "note": "", "next": false}],
+    "reminders": [
+      {"title": "Tabletten nehmen", "repeat": "daily", "time": "08:00"},
+      {"title": "Müll rausbringen", "repeat": "weekly", "days": ["Di"], "time": "19:00"},
+      {"title": "Arzt anrufen", "repeat": "once", "date": "2026-10-10", "time": "09:30"}
+    ],
+    "events": [{"title": "Zahnarzt", "date": "2026-10-12", "start": "10:00", "end": "11:00", "place": "", "note": ""}],
+    "notes": [{"title": "Ideen", "body": "Text der Notiz"}],
+    "routines": [{"title": "Abendroutine", "days": ["Mo", "Di", "Mi", "Do", "So"], "time": "21:30", "steps": ["Zähne putzen", "Handy laden"]}]
+  },
+  "update": {
+    "tasks": [{"id": "ID der Aufgabe", "addSteps": ["Neuer Schritt"], "doneSteps": ["ID eines Schritts"], "due": "2026-10-25", "next": true, "done": false}]
+  }
+}
+\`\`\`
+Regeln: Schritte klein halten (5 bis 15 Minuten, der erste sichtbare Handgriff). "next": true setzt eine Aufgabe ganz oben auf „Eine Sache jetzt“. IDs nur aus dem Export übernehmen (Aufgabe [t:…], Schritt [s:…]). Löschen geht über diesen Weg nicht.`;
+
+const fmtDE = (d) => new Date(typeof d === 'string' ? d + 'T12:00' : d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const dayNames = (ds) => ds.slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7)).map((d) => WDS[d]).join(', ');
+// Was an einem Tag geschafft wurde (auch für den Abend-Check-in)
+function dayCounts(k){
+  const a = new Date(k + 'T00:00').getTime(), b = a + DAY, inR = (t) => typeof t === 'number' && t >= a && t < b;
+  return {
+    steps: state.tasks.reduce((x, t) => x + (t.steps || []).filter((s) => s.done && inR(s.doneAt)).length, 0),
+    tasks: state.tasks.filter((t) => t.done && inR(t.doneAt)).length,
+    rt: state.checks.filter((c) => c.date === k).reduce((x, c) => x + (c.done || []).length, 0),
+    rems: state.log.filter((e) => e.kind === 'done' && inR(e.t) && e.rid !== TIMER_ID && e.rid !== EVE_ID).length,
+    fmin: state.sessions.filter((s) => inR(s.start)).reduce((x, s) => x + sessMin(s), 0),
+  };
+}
+function aiExport(days, parts){
+  const end = new Date(); end.setHours(0, 0, 0, 0); end.setDate(end.getDate() + 1);
+  const start = new Date(end); start.setDate(start.getDate() - days);
+  const a = start.getTime(), b = end.getTime(), inR = (t) => typeof t === 'number' && t >= a && t < b;
+  const dlist = []; for (let i = 0; i < days; i++) { const d = new Date(start); d.setDate(d.getDate() + i); dlist.push(d); }
+  const L = ['# Fokus – Daten für eine KI',
+    `Erstellt am ${fmtDE(Date.now())} um ${hhmm(Date.now())} Uhr · Zeitraum: die letzten ${days} Tage (${fmtDE(a)} bis ${fmtDE(b - 1)}) · Fokus ${APP_VERSION}`,
+    'Fokus ist eine ADHS-freundliche App für Erinnerungen, Aufgaben in Mini-Schritten, Fokus-Timer, Routinen, Kalender, Notizen und tägliche Check-ins. Hilf der Person freundlich und ohne Druck. Was geschafft ist, zählt.',
+    '', AI_SPEC];
+  if (parts.tasks) {
+    const open = openTasks();
+    L.push('', '## Offene Aufgaben (Reihenfolge wie in der App)');
+    if (!open.length) L.push('Keine.');
+    for (const t of open) {
+      L.push(`- ${t.title} [t:${t.id}]${t.due ? ` · fällig ${fmtDE(t.due)}` : ''}${t.now ? ' · ★ als Nächstes' : ''}`);
+      if ((t.note || '').trim()) L.push(`  Notiz: ${t.note.trim().replace(/\s*\n\s*/g, ' / ')}`);
+      for (const s of t.steps || []) L.push(`  - [${s.done ? 'x' : ' '}] ${s.text} [s:${s.id}]${s.done && s.doneAt ? ` (erledigt ${fmtDE(s.doneAt)})` : ''}`);
+    }
+    const done = state.tasks.filter((t) => t.done && inR(t.doneAt)).sort((x, y) => x.doneAt - y.doneAt);
+    L.push('', '## Erledigte Aufgaben im Zeitraum');
+    L.push(...(done.length ? done.map((t) => `- ${fmtDE(t.doneAt)}: ${t.title} [t:${t.id}]`) : ['Keine.']));
+    L.push('', '## Routinen');
+    L.push(...(state.routines.length ? state.routines.map((r) => `- ${r.title} · ${r.days && r.days.length ? dayNames(r.days) : 'jeden Tag'}${r.time ? ' · ' + r.time : ''} · Schritte: ${r.steps.map((s) => s.text).join(', ')}`) : ['Keine.']));
+  }
+  if (parts.reminders) {
+    const rems = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening);
+    L.push('', '## Erinnerungen');
+    L.push(...(rems.length ? rems.map((r) => `- ${r.title} · ${summary(r)} · ${r.enabled ? 'aktiv' : 'pausiert'}${(r.note || '').trim() ? ` · Notiz: ${r.note.trim().replace(/\s*\n\s*/g, ' / ')}` : ''}`) : ['Keine.']));
+    const evs = [];
+    for (const r of state.reminders) if (r.type === 'event') for (const t of eventInstances(r, a - 1, b + 30 * DAY, r.allDay ? 0 : toMin(r.startTime))) evs.push({ t, r });
+    evs.sort((x, y) => x.t - y.t);
+    L.push('', '## Termine (im Zeitraum und in den nächsten 30 Tagen)');
+    L.push(...(evs.length ? evs.slice(0, 150).map(({ t, r }) => `- ${fmtDE(t)} ${r.allDay ? 'ganztägig' : hhmm(t) + (r.endTime ? '–' + r.endTime : '')} · ${r.title}${r.place ? ' · Ort: ' + r.place : ''}${(r.note || '').trim() ? ' · Notiz: ' + r.note.trim().replace(/\s*\n\s*/g, ' / ') : ''}`) : ['Keine.']));
+  }
+  if (parts.notes) {
+    const notes = [...state.notes].sort((x, y) => (y.pinned ? 1 : 0) - (x.pinned ? 1 : 0) || (y.updatedAt || 0) - (x.updatedAt || 0)).slice(0, 50);
+    L.push('', '## Notizen (angeheftete zuerst, dann die neuesten, höchstens 50)');
+    if (!notes.length) L.push('Keine.');
+    for (const n of notes) {
+      const body = (n.body || '').trim();
+      L.push(`### ${n.title || 'Ohne Titel'}${n.pinned ? ' (angeheftet)' : ''} · geändert ${fmtDE(n.updatedAt || n.createdAt || Date.now())}`, body.length > 3000 ? body.slice(0, 3000) + ' … (gekürzt)' : body || '(leer)');
+    }
+  }
+  if (parts.checkins || parts.activity) {
+    const head = ['Datum'], cols = [];
+    if (parts.checkins) { head.push('M Energie', 'M Stimmung', 'M Fokus', 'M Schlaf', 'A Tag', 'A Energie', 'A Stimmung', 'A Fokus'); }
+    if (parts.activity) { head.push('Fokus-Min', 'Schritte', 'Aufgaben', 'Erinnerungen', 'Routinen-Schritte'); }
+    L.push('', '## Tagesübersicht', `Check-in-Werte 1 bis 5 (5 = sehr gut). M = morgens, A = abends (Tag = Tag insgesamt). – = kein Eintrag.`,
+      '| ' + head.join(' | ') + ' |', '|' + head.map(() => '---').join('|') + '|');
+    for (const d of dlist) {
+      const k = ymd(d), c = state.checkins.find((x) => x.id === k) || {}, e = c.eve || {}, v = (x) => x || '–', row = [`${WDS[d.getDay()]} ${fmtDE(d)}`];
+      if (parts.checkins) row.push(v(c.energy), v(c.mood), v(c.focus), v(c.sleep), v(e.day), v(e.energy), v(e.mood), v(e.focus));
+      if (parts.activity) { const n = dayCounts(k); row.push(n.fmin, n.steps, n.tasks, n.rems, n.rt); }
+      L.push('| ' + row.join(' | ') + ' |');
+    }
+  }
+  if (parts.checkins) {
+    const dn = dlist.map((d) => [d, state.checkins.find((x) => x.id === ymd(d))]).filter(([, c]) => c && c.eve && ((c.eve.note || '').trim() || c.eve.tomorrow));
+    L.push('', '## Tagesnotizen (Abend-Check-in)');
+    L.push(...(dn.length ? dn.map(([d, c]) => `- ${WDS[d.getDay()]} ${fmtDE(d)}: ${(c.eve.note || '').trim().replace(/\s*\n\s*/g, ' / ')}${c.eve.tomorrow ? ` (Für morgen: ${c.eve.tomorrow})` : ''}`) : ['Keine.']));
+    const sl = state.sleep.filter((s) => s.bed && s.up && inR(s.up)).sort((x, y) => x.bed - y.bed);
+    L.push('', '## Schlaf (aus „Gute Nacht“ und dem ersten Öffnen am Morgen)');
+    L.push(...(sl.length ? sl.map((s) => `- Nacht auf ${fmtDE(s.up)}: ${hhmm(s.bed)} bis ${hhmm(s.up)} Uhr (${fmt1((s.up - s.bed) / 3600e3)} h)`) : ['Keine Einträge.']));
+  }
+  return L.join('\n') + '\n';
+}
+
+// ---- Antwort einer KI lesen ----
+const AI_FENCE = /```fokus[ \t]*\r?\n([\s\S]*?)```/g;
+const aiArr = (v) => (Array.isArray(v) ? v : v && typeof v === 'object' ? [v] : []);
+const aiStr = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : typeof v === 'number' ? String(v) : '');
+const aiDate = (v) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v.trim()) && !isNaN(new Date(v.trim() + 'T00:00')) ? v.trim() : '');
+const aiTime = (v) => { const m = typeof v === 'string' && v.trim().match(/^([01]?\d|2[0-3])[:.]([0-5]\d)$/); return m ? pad(Number(m[1])) + ':' + m[2] : ''; };
+const AI_DAYS = { mo: 1, di: 2, tu: 2, mi: 3, we: 3, do: 4, th: 4, fr: 5, sa: 6, so: 0, su: 0 };
+const aiDayList = (v) => [...new Set(aiArr(v).map((d) => (Number.isInteger(d) && d >= 0 && d <= 6 ? d : AI_DAYS[String(d).trim().toLowerCase().slice(0, 2)])).filter((d) => d !== undefined))].sort();
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+function aiParse(text){
+  const src = String(text || ''), blocks = [...src.matchAll(AI_FENCE)].map((m) => m[1]);
+  if (!blocks.length && /^\s*\{/.test(src)) blocks.push(src);
+  if (!blocks.length) return { none: true };
+  const plan = { ops: [], skipped: [] };
+  for (const raw of blocks) {
+    let data = null;
+    try { data = JSON.parse(raw); } catch (e) {
+      // Häufige KI-Ausrutscher: Kommentare und Kommas vor schließenden Klammern
+      try { data = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, '').replace(/,\s*([}\]])/g, '$1')); } catch (e2) { return { error: 'Der Fokus-Block ist kein gültiges JSON. Bitte die KI, ihn zu korrigieren.' }; }
+    }
+    if (!data || typeof data !== 'object') return { error: 'Der Fokus-Block ist leer.' };
+    aiPlan(data, plan);
+  }
+  return plan;
+}
+function aiPlan(data, plan){
+  const add = data.add || {}, upd = data.update || {}, skip = (m) => plan.skipped.push(m), op = (label, apply) => plan.ops.push({ label, apply });
+  for (const x of aiArr(add.tasks)) {
+    const title = aiStr(x.title, 160); if (!title) { skip('Aufgabe ohne Titel'); continue; }
+    const steps = aiArr(x.steps).map((s) => aiStr(typeof s === 'object' && s ? s.text : s, 200)).filter(Boolean).slice(0, 100), due = aiDate(x.due);
+    op(`Aufgabe „${title}“${steps.length ? ' mit ' + plural(steps.length, 'Schritt', 'Schritten') : ''}${due ? ', fällig ' + fmtDE(due) : ''}${x.next ? ', als Nächstes' : ''}`, () => {
+      const t = newTask(title); t.note = aiStr(x.note, 2000); t.due = due;
+      t.steps = steps.map((text) => ({ id: uid(), text, done: false, doneAt: null }));
+      colPut('tasks', t); if (x.next) setNow(t.id);
+    });
+  }
+  for (const x of aiArr(add.reminders)) {
+    const title = aiStr(x.title, 120); if (!title) { skip('Erinnerung ohne Titel'); continue; }
+    const times = [...new Set((Array.isArray(x.times) ? x.times : [x.time]).map(aiTime).filter(Boolean))].sort();
+    const rep = String(x.repeat || (x.date ? 'once' : 'daily')).toLowerCase(), date = aiDate(x.date), days = aiDayList(x.days);
+    if (!times.length) { skip(`Erinnerung „${title}“: Uhrzeit fehlt`); continue; }
+    let type, when;
+    if (rep === 'once') {
+      if (!date) { skip(`Erinnerung „${title}“: Datum fehlt`); continue; }
+      if (atTime(new Date(date + 'T00:00'), times[0]) <= Date.now()) { skip(`Erinnerung „${title}“: liegt in der Vergangenheit`); continue; }
+      type = 'once'; when = `am ${fmtDE(date)} um ${times[0]}`;
+    } else if (rep === 'weekly') {
+      if (!days.length) { skip(`Erinnerung „${title}“: Wochentage fehlen`); continue; }
+      type = 'weekly'; when = `${dayNames(days)} um ${times.join(', ')}`;
+    } else if (rep === 'daily') { type = 'daily'; when = `täglich um ${times.join(', ')}`; }
+    else { skip(`Erinnerung „${title}“: Wiederholung „${rep}“ kenne ich nicht`); continue; }
+    op(`Erinnerung „${title}“ ${when}`, () => {
+      const now = Date.now(), r = Object.assign(blank(), { title, note: aiStr(x.note, 1000), type, times: type === 'once' ? [times[0]] : times, weekdays: type === 'weekly' ? days : [1, 2, 3, 4, 5], date: type === 'once' ? date : ymd(new Date()) });
+      Object.assign(r, { createdAt: now, checkedUntil: now, updatedAt: now, rtAt: now });
+      upsertRem(r);
+    });
+  }
+  for (const x of aiArr(add.events)) {
+    const title = aiStr(x.title, 120), date = aiDate(x.date); if (!title || !date) { skip(`Termin ${title ? `„${title}“` : 'ohne Titel'}: ${date ? 'Titel' : 'Datum'} fehlt`); continue; }
+    const start = aiTime(x.start), endT = aiTime(x.end), end = start && endT && toMin(endT) > toMin(start) ? endT : '';
+    op(`Termin „${title}“ am ${fmtDE(date)}${start ? ' um ' + start + (end ? '–' + end : '') : ' (ganztägig)'}`, () => {
+      const now = Date.now();
+      upsertRem({ id: uid(), type: 'event', title, note: aiStr(x.note, 2000), place: aiStr(x.place, 120), startDate: date, startTime: start, endTime: end, allDay: !start, repeat: 'none', repeatUntil: '', leads: [15], travel: 0, nag: 0, quiet: false, color: COLORS[0], enabled: true, snoozeDefault: 10, createdAt: now, checkedUntil: now, snoozeUntil: null, mutedDate: null, pendingAt: null, updatedAt: now, rtAt: now });
+    });
+  }
+  for (const x of aiArr(add.notes)) {
+    const title = aiStr(x.title, 120), body = typeof x.body === 'string' ? x.body.slice(0, 20000) : '';
+    if (!title && !body.trim()) { skip('Leere Notiz'); continue; }
+    op(`Notiz „${title || body.trim().split('\n')[0].slice(0, 40)}“`, () => { const now = Date.now(); state.notes.push({ id: uid(), title, body, pinned: false, createdAt: now, updatedAt: now }); });
+  }
+  for (const x of aiArr(add.routines)) {
+    const title = aiStr(x.title, 80), steps = aiArr(x.steps).map((s) => aiStr(typeof s === 'object' && s ? s.text : s, 120)).filter(Boolean).slice(0, 50), days = aiDayList(x.days), time = aiTime(x.time);
+    if (!title || !steps.length) { skip(`Routine ${title ? `„${title}“: Schritte fehlen` : 'ohne Namen'}`); continue; }
+    op(`Routine „${title}“ mit ${plural(steps.length, 'Schritt', 'Schritten')} · ${days.length ? dayNames(days) : 'jeden Tag'}${time ? ' · Erinnerung ' + time : ''}`, () => {
+      const rt = { id: uid(), title, days, time, steps: steps.map((text) => ({ id: uid(), text })), createdAt: Date.now() };
+      colPut('routines', rt); syncRoutineReminder(rt);
+    });
+  }
+  for (const x of aiArr(upd.tasks)) {
+    const id = aiStr(x.id, 80).replace(/^t:/, ''), t = findTask(id);
+    if (!t) { skip(`Aufgabe ${id ? `[${id}]` : 'ohne ID'} nicht gefunden`); continue; }
+    const addSteps = aiArr(x.addSteps).map((s) => aiStr(typeof s === 'object' && s ? s.text : s, 200)).filter(Boolean).slice(0, 100);
+    const doneIds = [];
+    for (const v of aiArr(x.doneSteps)) {
+      const key = aiStr(v, 200).replace(/^s:/, ''), s = (t.steps || []).find((y) => y.id === key) || (t.steps || []).find((y) => y.text === key);
+      if (s) { if (!s.done) doneIds.push(s.id); } else skip(`Schritt „${key}“ in „${t.title}“ nicht gefunden`);
+    }
+    const due = x.due === '' ? '' : aiDate(x.due), what = [];
+    if (addSteps.length) what.push(plural(addSteps.length, 'Schritt', 'Schritte') + ' anhängen');
+    if (doneIds.length) what.push(plural(doneIds.length, 'Schritt', 'Schritte') + ' abhaken');
+    if (x.due !== undefined && (due || x.due === '')) what.push(due ? 'fällig ' + fmtDE(due) : 'Fälligkeit entfernen');
+    if (x.next === true) what.push('als Nächstes');
+    if (x.done === true && !t.done) what.push('als erledigt markieren');
+    if (x.done === false && t.done) what.push('wieder öffnen');
+    if (!what.length) { skip(`„${t.title}“: keine Änderung`); continue; }
+    op(`„${t.title}“: ${what.join(', ')}`, () => {
+      const t0 = findTask(id); if (!t0) return;
+      const c = clone(t0), now = Date.now();
+      c.steps = c.steps || [];
+      for (const text of addSteps) c.steps.push({ id: uid(), text, done: false, doneAt: null });
+      for (const sid of doneIds) { const s = c.steps.find((y) => y.id === sid); if (s) { s.done = true; s.doneAt = now; } }
+      if (x.due !== undefined && (due || x.due === '')) c.due = due;
+      if (x.done === true) { c.done = true; c.doneAt = now; c.now = false; }
+      else if (x.done === false) { c.done = false; c.doneAt = null; }
+      else finishIfComplete(c, now, true);
+      colPut('tasks', c);
+      if (x.next === true && !c.done) setNow(id);
+    });
+  }
+  if (!plan.ops.length && !plan.skipped.length) plan.skipped.push('Der Block enthält nichts, was Fokus übernehmen kann.');
+}
+
+// ---- Oberfläche (Einstellungen → KI) ----
+let aiRange = 30, aiPending = null;
+const aiParts = () => Object.fromEntries([...document.querySelectorAll('[data-aip]')].map((c) => [c.dataset.aip, c.checked]));
+function aiMsg(el, text, cls){ const m = $(el); m.className = 'msg ' + (cls || ''); m.textContent = text; }
+function renderAiPreview(){
+  const el = $('#aiPreview'), p = aiPending;
+  if (!p) { el.innerHTML = ''; return; }
+  if (p.none) {
+    el.innerHTML = `<div class="hint">Kein Fokus-Block gefunden. Die KI-Antwort muss einen Block enthalten, der mit <code>\`\`\`fokus</code> beginnt.${$('#aiIn').value.trim() ? '<div class="btnrow" style="margin-top:8px"><button class="btn" type="button" data-ai="asnote">Stattdessen als Notiz speichern</button></div>' : ''}</div>`;
+    return;
+  }
+  if (p.error) { el.innerHTML = `<div class="msg bad">${esc(p.error)}</div>`; return; }
+  el.innerHTML = `<div class="card" style="margin:0">
+    <div class="small" style="font-weight:700">${p.ops.length ? `Das würde Fokus übernehmen (${p.ops.length}):` : 'Nichts zu übernehmen.'}</div>
+    <ul class="log" style="margin-top:6px">${p.ops.map((o) => `<li>＋ ${esc(o.label)}</li>`).join('')}${p.skipped.map((s) => `<li style="color:var(--warn)">⚠ übersprungen: ${esc(s)}</li>`).join('')}</ul>
+    <div class="btnrow">${p.ops.length ? `<button class="btn primary" type="button" data-ai="apply">Übernehmen</button>` : ''}<button class="btn ghost" type="button" data-ai="discard">Verwerfen</button></div></div>`;
+}
+function aiCheck(){
+  aiPending = aiParse($('#aiIn').value); aiMsg('#aiInMsg', ''); renderAiPreview();
+  requestAnimationFrame(() => { const el = $('#aiPreview'); if (el && el.firstElementChild) el.scrollIntoView({ block: 'start', behavior: 'smooth' }); });
+}
+async function aiOut(how){
+  const text = aiExport(aiRange, aiParts()), name = `fokus-ki-${ymd(new Date())}.md`, size = text.length.toLocaleString('de-DE');
+  if (how === 'spec') {
+    const spec = '# Fokus – Anleitung für eine KI\nFokus ist eine ADHS-freundliche App für Erinnerungen, Aufgaben in Mini-Schritten, Routinen, Kalender und Notizen.\n\n' + AI_SPEC + '\n';
+    try { await navigator.clipboard.writeText(spec); aiMsg('#aiSpecMsg', 'Anleitung kopiert. Füge sie in der KI-App vor deine Bitte ein.', 'good'); }
+    catch (e) { aiMsg('#aiSpecMsg', 'Kopieren hat nicht geklappt.', 'bad'); }
+    return;
+  }
+  if (how === 'share' && navigator.share) {
+    try {
+      const file = new File([text], name, { type: 'text/markdown' });
+      if (text.length > 100000 && navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: 'Fokus-Daten' });
+      else await navigator.share({ title: 'Fokus-Daten', text });
+      aiMsg('#aiOutMsg', `Geteilt (${size} Zeichen).`, 'good');
+    } catch (e) { if (e.name !== 'AbortError') aiMsg('#aiOutMsg', 'Teilen hat nicht geklappt. Nimm „Kopieren“ oder „Als Datei“.', 'bad'); }
+    return;
+  }
+  if (how === 'copy') {
+    try { await navigator.clipboard.writeText(text); aiMsg('#aiOutMsg', `Kopiert (${size} Zeichen). Jetzt in der KI-App einfügen.`, 'good'); return; }
+    catch (e) { /* weiter mit Datei */ }
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  aiMsg('#aiOutMsg', `Als Datei gespeichert: ${name} (${size} Zeichen).`, 'good');
+}
+document.addEventListener('click', (e) => {
+  const r = e.target.closest('[data-air]');
+  if (r) { aiRange = Number(r.dataset.air); document.querySelectorAll('[data-air]').forEach((b) => { b.classList.toggle('sel', b === r); b.setAttribute('aria-pressed', String(b === r)); }); return; }
+  const b = e.target.closest('[data-ai]'); if (!b) return;
+  const a = b.dataset.ai;
+  if (a === 'share' || a === 'copy' || a === 'file' || a === 'spec') aiOut(a);
+  else if (a === 'check') aiCheck();
+  else if (a === 'discard') { aiPending = null; $('#aiIn').value = ''; renderAiPreview(); aiMsg('#aiInMsg', 'Verworfen.'); }
+  else if (a === 'apply' && aiPending && aiPending.ops) {
+    const n = aiPending.ops.length;
+    for (const o of aiPending.ops) o.apply();
+    save(); render();
+    aiPending = null; $('#aiIn').value = ''; renderAiPreview();
+    aiMsg('#aiInMsg', `${plural(n, 'Änderung', 'Änderungen')} übernommen.`, 'good'); flash(`${plural(n, 'Änderung', 'Änderungen')} von der KI übernommen.`);
+  } else if (a === 'asnote') {
+    const body = $('#aiIn').value.trim(); if (!body) return;
+    const now = Date.now(); state.notes.push({ id: uid(), title: '', body, pinned: false, createdAt: now, updatedAt: now }); save(); render();
+    aiPending = null; $('#aiIn').value = ''; renderAiPreview(); aiMsg('#aiInMsg', 'Als Notiz gespeichert.', 'good');
+  }
+});
+// Etwas an Fokus geteilt (Android-Teilen-Menü): im Reiter KI prüfen
+function aiReceive(text){
+  openSettings('ai');
+  $('#aiIn').value = text; aiCheck();
+}
+
 /* ---------- Version, Updates und dauerhafter Speicher ---------- */
 const isInstalled = () => ['standalone', 'fullscreen', 'minimal-ui'].some((m) => matchMedia(`(display-mode: ${m})`).matches) || navigator.standalone === true;
 const verNum = (v) => String(v).split(/\D+/).filter(Boolean).map(Number);
@@ -2855,6 +3168,7 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
 (function init(){
   const p = new URLSearchParams(location.search);
   const id = p.get('id'), action = p.get('action'), nw = p.get('new'), tb = p.get('tab');
+  const shared = ['title', 'text', 'url'].map((k) => (p.get(k) || '').trim()).filter((v, i, a) => v && a.indexOf(v) === i).join('\n');
   if (TABS.includes(tb)) tab = tb;
   prune();
   logWake();
@@ -2869,8 +3183,9 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   else if (nw === 'task') { setTab('tasks'); setSeg('tasks'); openTask(null); }
   else if (nw === 'reminder') { setTab('today'); openForm(null); }
   else if (nw === 'event') { setTab('cal'); openEvent(null, calSel); }
-  if (nw || tb) history.replaceState(null, '', location.pathname);
-  if (!nw && !onbDone()) openOnb();
+  if (nw || tb || shared) history.replaceState(null, '', location.pathname);
+  if (shared) { try { localStorage.setItem('fokus.onb', '1'); } catch (e) {} aiReceive(shared); }
+  else if (!nw && !onbDone()) openOnb();
   showAlertIfNeeded(true);
   ensureTicker();
   setInterval(tick, 10000);
