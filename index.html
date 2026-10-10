@@ -52,6 +52,10 @@ button{cursor:pointer}
 .chip{min-height:44px;min-width:44px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);font-weight:600}
 .chip.sel{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .chips .lbl{color:var(--muted);font-size:14px;margin-right:2px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chips.scroll > *{flex:none;white-space:nowrap}
+.chip .dot{margin-right:7px;vertical-align:middle}
 .inline-min{width:84px;min-height:44px}
 .fab{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom));width:64px;height:64px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:34px;line-height:1;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .banner{background:var(--surface);border:1px solid var(--accent-line);border-radius:var(--radius);padding:12px 14px;margin:8px 0;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -263,6 +267,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
       <button class="btn primary" type="submit">Merken</button>
     </form>
     <input id="noteSearch" type="search" placeholder="Notizen durchsuchen" aria-label="Notizen durchsuchen" style="margin:12px 0 4px">
+    <div class="chips scroll" id="noteCats" role="group" aria-label="Nach Kategorie filtern" style="margin:8px 0 6px" hidden></div>
     <div id="noteList"></div>
   </div>
 </main>
@@ -424,6 +429,8 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
   <div class="dlg">
     <input id="noteTitle" type="text" maxlength="120" placeholder="Titel (optional)" aria-label="Titel der Notiz">
     <textarea id="noteBody" rows="12" maxlength="20000" placeholder="Schreib los …" aria-label="Text der Notiz"></textarea>
+    <div class="chips scroll" id="noteCatPick" role="group" aria-label="Kategorie"></div>
+    <input id="noteCatNew" type="text" maxlength="40" placeholder="Neue Kategorie, z. B. Uni" aria-label="Neue Kategorie" enterkeyhint="done" autocomplete="off" hidden>
     <div class="dlg-actions" style="justify-content:space-between">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" id="notePin" type="button">Anheften</button>
@@ -522,7 +529,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.08.2';
+const APP_VERSION = '2026.10.10';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -1390,47 +1397,95 @@ function openItem(id){ const r = find(id); if (!r) return; if (r.type === 'event
 
 /* ---------- Notizen ---------- */
 const noteTitleOf = (n) => (n.title || (n.body || '').split('\n').find((l) => l.trim()) || 'Ohne Titel').slice(0, 80);
+// Kategorien ergeben sich aus den Notizen selbst (Feld "cat"), eine pro Notiz. Leer = ohne Kategorie.
+const catNorm = (s) => String(s || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+const catOf = (n) => (typeof n.cat === 'string' ? catNorm(n.cat) : '');
+const noteCats = () => [...new Set(state.notes.map(catOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
+// Schon vorhandene Schreibweise übernehmen, damit aus „uni“ und „Uni“ keine zwei Kategorien werden
+const catCanon = (s) => { s = catNorm(s); return s && (noteCats().find((c) => c.toLowerCase() === s.toLowerCase()) || s); };
+const catColor = (c) => COLORS[[...c.toLowerCase()].reduce((h, ch) => (h * 31 + ch.codePointAt(0)) >>> 0, 7) % COLORS.length];
+const catDot = (c) => `<span class="dot" style="background:${catColor(c)}" aria-hidden="true"></span>`;
+// Filter im Notizen-Tab: null = alle, '' = ohne Kategorie, sonst der Name
+let noteFilter = (() => { try { const v = JSON.parse(localStorage.getItem('fokus.noteCat')); return typeof v === 'string' ? v : null; } catch (e) { return null; } })();
+function setNoteFilter(v){
+  noteFilter = v;
+  try { localStorage.setItem('fokus.noteCat', JSON.stringify(v)); } catch (e) {}
+}
 function renderNotes(){
   const q = ($('#noteSearch').value || '').trim().toLowerCase();
-  const list = state.notes.filter((n) => !q || ((n.title || '') + '\n' + (n.body || '')).toLowerCase().includes(q))
+  const cats = noteCats(), hasNone = state.notes.some((n) => !catOf(n));
+  if (noteFilter !== null && (noteFilter ? !cats.includes(noteFilter) : !hasNone || !cats.length)) setNoteFilter(null);
+  const chip = (v, label) => `<button type="button" class="chip${noteFilter === v ? ' sel' : ''}" data-ncat="${esc(JSON.stringify(v))}" aria-pressed="${noteFilter === v}">${v ? catDot(v) : ''}${esc(label)}</button>`;
+  $('#noteCats').hidden = !cats.length;
+  $('#noteCats').innerHTML = cats.length ? chip(null, 'Alle') + cats.map((c) => chip(c, c)).join('') + (hasNone ? chip('', 'Ohne Kategorie') : '') : '';
+  $('#quickNote').placeholder = noteFilter ? `Schnelle Notiz in „${noteFilter}“ …` : 'Schnelle Notiz, einfach reinschreiben …';
+  const list = state.notes.filter((n) => (noteFilter === null || catOf(n) === noteFilter) && (!q || ((n.title || '') + '\n' + (n.body || '') + '\n' + catOf(n)).toLowerCase().includes(q)))
     .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.updatedAt || 0) - (a.updatedAt || 0));
   $('#noteList').innerHTML = list.length ? list.map((n) => {
-    const body = n.title ? (n.body || '') : (n.body || '').split('\n').slice(1).join('\n');
+    const body = n.title ? (n.body || '') : (n.body || '').split('\n').slice(1).join('\n'), c = catOf(n);
     return `<div class="card" data-note="${n.id}" role="button" tabindex="0" style="cursor:pointer">
       <div class="title">${n.pinned ? '<span class="pin" aria-label="angeheftet">📌 </span>' : ''}${esc(noteTitleOf(n))}</div>
       ${body.trim() ? `<div class="note">${esc(body)}</div>` : ''}
-      <div class="meta">${new Date(n.updatedAt || 0).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}</div></div>`;
-  }).join('') : `<div class="empty"><p>${q ? 'Keine Treffer.' : 'Noch keine Notizen.<br>Schreib oben einfach los, auch Halbfertiges.'}</p></div>`;
+      <div class="meta">${c && noteFilter === null ? `${catDot(c)} ${esc(c)} · ` : ''}${new Date(n.updatedAt || 0).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}</div></div>`;
+  }).join('') : `<div class="empty"><p>${q ? 'Keine Treffer.' : noteFilter ? `Keine Notizen in „${esc(noteFilter)}“.` : 'Noch keine Notizen.<br>Schreib oben einfach los, auch Halbfertiges.'}</p></div>`;
 }
+$('#noteCats').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ncat]'); if (!b) return;
+  setNoteFilter(JSON.parse(b.dataset.ncat)); renderNotes();
+});
 function addNote(n){
   const now = Date.now();
-  state.notes.push({ id: uid(), title: '', body: '', pinned: false, createdAt: now, ...n, updatedAt: now });
+  state.notes.push({ id: uid(), title: '', body: '', pinned: false, cat: '', createdAt: now, ...n, updatedAt: now });
   save(); render();
 }
 $('#quickForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const v = $('#quickNote').value.trim(); if (!v) return;
-  addNote({ body: v }); $('#quickNote').value = '';
+  addNote({ body: v, cat: noteFilter || '' }); $('#quickNote').value = '';
 });
 $('#noteSearch').addEventListener('input', renderNotes);
-let noteDraft = null, noteIsNew = false, noteDeleted = false;
+let noteDraft = null, noteIsNew = false, noteDeleted = false, pickCats = [];
 function openNote(n){
   noteIsNew = !n; noteDeleted = false;
-  noteDraft = n ? { ...n } : { id: uid(), title: '', body: '', pinned: false, createdAt: Date.now() };
+  noteDraft = n ? { ...n, cat: catOf(n) } : { id: uid(), title: '', body: '', pinned: false, cat: noteFilter || '', createdAt: Date.now() };
   $('#noteTitle').value = noteDraft.title || ''; $('#noteBody').value = noteDraft.body || '';
   $('#notePin').textContent = noteDraft.pinned ? 'Lösen' : 'Anheften';
   $('#noteDel').hidden = noteIsNew;
+  $('#noteCatNew').value = ''; $('#noteCatNew').hidden = true;
+  renderNoteCatPick();
   $('#noteDlg').showModal();
   if (noteIsNew) $('#noteBody').focus();
 }
+// Kategorie im Notiz-Dialog: vorhandene antippen (nochmal tippen = keine), „＋ Neu“ für eine neue
+function renderNoteCatPick(){
+  const cur = noteDraft.cat;
+  pickCats = noteCats(); if (cur && !pickCats.includes(cur)) pickCats.push(cur);
+  $('#noteCatPick').innerHTML = `<span class="lbl">Kategorie:</span>${pickCats.map((c, i) => `<button type="button" class="chip${c === cur ? ' sel' : ''}" data-pcat="${i}" aria-pressed="${c === cur}">${catDot(c)}${esc(c)}</button>`).join('')}<button type="button" class="chip" data-pcat="new">＋ Neu</button>`;
+}
+// Beim Verlassen des Felds bleibt es stehen: würde es verschwinden, rutscht „Fertig“ unter dem Finger weg
+function acceptNewCat(hide){
+  const inp = $('#noteCatNew'); if (inp.hidden) return;
+  const v = catCanon(inp.value);
+  inp.value = ''; if (hide) inp.hidden = true;
+  if (v && noteDraft) { noteDraft.cat = v; renderNoteCatPick(); }
+}
+$('#noteCatPick').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pcat]'); if (!b || !noteDraft) return;
+  if (b.dataset.pcat === 'new') { const inp = $('#noteCatNew'); inp.hidden = false; inp.focus(); return; }
+  const c = pickCats[Number(b.dataset.pcat)];
+  noteDraft.cat = noteDraft.cat === c ? '' : c; renderNoteCatPick();
+});
+$('#noteCatNew').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); acceptNewCat(true); } });
+$('#noteCatNew').addEventListener('change', () => acceptNewCat(false));
 function commitNote(){
   if (!noteDraft || noteDeleted) return;
-  const t = $('#noteTitle').value.trim(), b = $('#noteBody').value;
+  acceptNewCat(true);
+  const t = $('#noteTitle').value.trim(), b = $('#noteBody').value, c = catNorm(noteDraft.cat);
   const i = state.notes.findIndex((x) => x.id === noteDraft.id);
   const empty = !t && !b.trim();
-  if (i < 0) { if (empty) return; state.notes.push({ ...noteDraft, title: t, body: b, updatedAt: Date.now() }); }
-  else if (state.notes[i].title !== t || state.notes[i].body !== b || state.notes[i].pinned !== noteDraft.pinned) {
-    state.notes[i] = { ...state.notes[i], title: t, body: b, pinned: noteDraft.pinned, updatedAt: Date.now() };
+  if (i < 0) { if (empty) return; state.notes.push({ ...noteDraft, title: t, body: b, cat: c, updatedAt: Date.now() }); }
+  else if (state.notes[i].title !== t || state.notes[i].body !== b || state.notes[i].pinned !== noteDraft.pinned || catOf(state.notes[i]) !== c) {
+    state.notes[i] = { ...state.notes[i], title: t, body: b, pinned: noteDraft.pinned, cat: c, updatedAt: Date.now() };
   } else return;
   save(); render();
 }
@@ -2817,7 +2872,7 @@ Beispiel (in deiner Antwort heißt die erste Zeile \`\`\`fokus, nicht fokus-beis
       {"title": "Arzt anrufen", "repeat": "once", "date": "2026-10-10", "time": "09:30"}
     ],
     "events": [{"title": "Zahnarzt", "date": "2026-10-12", "start": "10:00", "end": "11:00", "place": "", "note": ""}],
-    "notes": [{"title": "Ideen", "body": "Text der Notiz"}],
+    "notes": [{"title": "Ideen", "body": "Text der Notiz", "category": "Privat"}],
     "routines": [{"title": "Abendroutine", "days": ["Mo", "Di", "Mi", "Do", "So"], "time": "21:30", "steps": ["Zähne putzen", "Handy laden"]}]
   },
   "update": {
@@ -2825,7 +2880,7 @@ Beispiel (in deiner Antwort heißt die erste Zeile \`\`\`fokus, nicht fokus-beis
   }
 }
 \`\`\`
-Regeln: Schritte klein halten (5 bis 15 Minuten, der erste sichtbare Handgriff). "next": true setzt eine Aufgabe ganz oben auf „Eine Sache jetzt“. IDs nur aus dem Export übernehmen (Aufgabe [t:…], Schritt [s:…]). Löschen geht über diesen Weg nicht.`;
+Regeln: Schritte klein halten (5 bis 15 Minuten, der erste sichtbare Handgriff). "next": true setzt eine Aufgabe ganz oben auf „Eine Sache jetzt“. IDs nur aus dem Export übernehmen (Aufgabe [t:…], Schritt [s:…]). "category" bei Notizen ist optional, nimm möglichst eine Kategorie aus dem Export. Löschen geht über diesen Weg nicht.`;
 
 const fmtDE = (d) => new Date(typeof d === 'string' ? d + 'T12:00' : d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const dayNames = (ds) => ds.slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7)).map((d) => WDS[d]).join(', ');
@@ -2877,10 +2932,11 @@ function aiExport(days, parts){
   if (parts.notes) {
     const notes = [...state.notes].sort((x, y) => (y.pinned ? 1 : 0) - (x.pinned ? 1 : 0) || (y.updatedAt || 0) - (x.updatedAt || 0)).slice(0, 50);
     L.push('', '## Notizen (angeheftete zuerst, dann die neuesten, höchstens 50)');
+    if (noteCats().length) L.push(`Kategorien: ${noteCats().join(', ')}`);
     if (!notes.length) L.push('Keine.');
     for (const n of notes) {
       const body = (n.body || '').trim();
-      L.push(`### ${n.title || 'Ohne Titel'}${n.pinned ? ' (angeheftet)' : ''} · geändert ${fmtDE(n.updatedAt || n.createdAt || Date.now())}`, body.length > 3000 ? body.slice(0, 3000) + ' … (gekürzt)' : body || '(leer)');
+      L.push(`### ${n.title || 'Ohne Titel'}${catOf(n) ? ' · Kategorie: ' + catOf(n) : ''}${n.pinned ? ' (angeheftet)' : ''} · geändert ${fmtDE(n.updatedAt || n.createdAt || Date.now())}`, body.length > 3000 ? body.slice(0, 3000) + ' … (gekürzt)' : body || '(leer)');
     }
   }
   if (parts.checkins || parts.activity) {
@@ -2973,9 +3029,9 @@ function aiPlan(data, plan){
     });
   }
   for (const x of aiArr(add.notes)) {
-    const title = aiStr(x.title, 120), body = typeof x.body === 'string' ? x.body.slice(0, 20000) : '';
+    const title = aiStr(x.title, 120), body = typeof x.body === 'string' ? x.body.slice(0, 20000) : '', cat = catCanon(aiStr(x.category, 40));
     if (!title && !body.trim()) { skip('Leere Notiz'); continue; }
-    op(`Notiz „${title || body.trim().split('\n')[0].slice(0, 40)}“`, () => { const now = Date.now(); state.notes.push({ id: uid(), title, body, pinned: false, createdAt: now, updatedAt: now }); });
+    op(`Notiz „${title || body.trim().split('\n')[0].slice(0, 40)}“${cat ? ` in „${cat}“` : ''}`, () => { const now = Date.now(); state.notes.push({ id: uid(), title, body, pinned: false, cat, createdAt: now, updatedAt: now }); });
   }
   for (const x of aiArr(add.routines)) {
     const title = aiStr(x.title, 80), steps = aiArr(x.steps).map((s) => aiStr(typeof s === 'object' && s ? s.text : s, 120)).filter(Boolean).slice(0, 50), days = aiDayList(x.days), time = aiTime(x.time);
