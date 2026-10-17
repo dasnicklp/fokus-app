@@ -232,7 +232,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
       <details id="doneBox" style="margin-top:16px" hidden><summary>Erledigt (<span id="doneCount">0</span>)</summary><div id="taskDone" style="margin-top:10px"></div></details>
     </div>
     <div id="segRoutines" hidden>
-      <p class="small">Routinen sind Checklisten, die an den gewählten Tagen neu starten. Ohne Zähler und ohne Serien: Was geschafft ist, zählt.</p>
+      <p class="small">Routinen sind Checklisten oder einzelne Dinge zum Abhaken, die an den gewählten Tagen neu starten. Ohne Zähler und ohne Serien: Was geschafft ist, zählt.</p>
       <div id="rtList"></div>
       <div id="rtTemplates"></div>
     </div>
@@ -507,7 +507,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
     <div><div class="small" style="margin-bottom:6px;font-weight:600">An welchen Tagen? (keine Auswahl = jeden Tag)</div><div class="chips" id="rtDays"></div></div>
     <label>Erinnerung um (optional)<input id="rtTime" type="time"></label>
     <div>
-      <div class="small" style="margin-bottom:6px;font-weight:600">Schritte</div>
+      <div class="small" style="margin-bottom:6px;font-weight:600">Schritte (optional, ohne Schritte gibt es einen Haken „Erledigt“)</div>
       <div id="rtSteps"></div>
       <div class="quick"><input id="rtAdd" type="text" maxlength="120" autocomplete="off" placeholder="Schritt hinzufügen …" aria-label="Neuer Schritt"><button class="btn" type="button" id="rtAddBtn" aria-label="Schritt hinzufügen">+</button></div>
     </div>
@@ -572,7 +572,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.17';
+const APP_VERSION = '2026.10.17.2';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -1813,6 +1813,9 @@ const rtDaysText = (r) => (!(r.days && r.days.length) || r.days.length === 7) ? 
 // Tracker (kind: 'track') liegen mit in „routines“, siehe Routine-Tracker
 const isTrk = (r) => r.kind === 'track';
 const rtOnly = () => state.routines.filter((r) => !isTrk(r));
+// Routine ohne Schritte: ein einziger Haken, gespeichert unter dieser ID
+const RT_ALL = '_all';
+const rtIds = (r) => (r.steps.length ? r.steps.map((s) => s.id) : [RT_ALL]);
 const checkFor = (rid, date) => state.checks.find((c) => c.id === rid + '|' + date);
 const byTime = (a, b) => (a.time || '99').localeCompare(b.time || '99') || (a.createdAt || 0) - (b.createdAt || 0);
 function renderRoutinesToday(){
@@ -1820,6 +1823,11 @@ function renderRoutinesToday(){
   $('#rtSec').hidden = !list.length;
   $('#rtToday').innerHTML = list.map((r) => {
     const c = checkFor(r.id, k), done = new Set(c ? c.done : []);
+    if (!r.steps.length) {
+      const on = done.has(RT_ALL);
+      return `<div class="card"><div class="row"><div class="title">${esc(r.title)}</div>${on ? '<div class="small" style="color:var(--ok);font-weight:700">Geschafft ✓</div>' : ''}</div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" data-rtc="${r.id}" data-sid="${RT_ALL}" ${on ? 'checked' : ''}><span>Erledigt</span></label></div>`;
+    }
     const n = r.steps.length, kk = r.steps.filter((s) => done.has(s.id)).length, all = n > 0 && kk === n;
     const steps = r.steps.map((s) => `<label class="chk${done.has(s.id) ? ' done' : ''}"><input type="checkbox" data-rtc="${r.id}" data-sid="${s.id}" ${done.has(s.id) ? 'checked' : ''}><span>${esc(s.text)}</span></label>`).join('');
     return `<div class="card"><div class="row"><div class="title">${esc(r.title)}</div><div class="small">${kk} von ${n}</div></div>${progHtml(kk, n)}
@@ -1833,8 +1841,8 @@ document.addEventListener('change', (e) => {
   c.done = c.done.filter((x) => x !== sid); if (t.checked) c.done.push(sid);
   colPut('checks', c);
   const r = state.routines.find((x) => x.id === rid);
-  if (r && t.checked && r.steps.every((s) => c.done.includes(s.id))) {
-    flash(`${r.title}: alles geschafft ✓`);
+  if (r && t.checked && rtIds(r).every((id) => c.done.includes(id))) {
+    flash(`${r.title}: ${r.steps.length ? 'alles ' : ''}geschafft ✓`);
     const rem = find('rt-' + rid);
     if (rem && rem.pendingAt) { act(rem.id, 'done'); return; }
   }
@@ -1842,7 +1850,7 @@ document.addEventListener('change', (e) => {
 });
 function renderRoutineList(){
   const list = rtOnly().sort(byTime);
-  $('#rtList').innerHTML = list.map((r) => `<div class="card task-card" data-rt="${r.id}" role="button" tabindex="0"><div class="title">${esc(r.title)}</div><div class="meta">${esc(rtDaysText(r))}${r.time ? ' · Erinnerung ' + esc(r.time) : ''} · ${r.steps.length} Schritte</div></div>`).join('')
+  $('#rtList').innerHTML = list.map((r) => `<div class="card task-card" data-rt="${r.id}" role="button" tabindex="0"><div class="title">${esc(r.title)}</div><div class="meta">${esc(rtDaysText(r))}${r.time ? ' · Erinnerung ' + esc(r.time) : ''} · ${r.steps.length ? plural(r.steps.length, 'Schritt', 'Schritte') : 'ohne Schritte'}</div></div>`).join('')
     || '<div class="empty" style="padding:18px 10px"><p style="margin:0">Noch keine Routinen. Leg eine mit + an oder nimm eine Vorlage.</p></div>';
   $('#rtTemplates').innerHTML = `<h2>Vorlage nutzen</h2><div class="chips">${RT_TEMPLATES.map((t, i) => `<button class="chip" data-tpl="${i}">${esc(t.title)}</button>`).join('')}</div>`;
 }
@@ -1854,7 +1862,7 @@ function syncRoutineReminder(rt){
     return;
   }
   const days = rt.days && rt.days.length ? [...rt.days] : [0, 1, 2, 3, 4, 5, 6];
-  const r = Object.assign(ex ? { ...ex } : blank(), { id, routineId: rt.id, type: 'weekly', weekdays: days, times: [rt.time], title: rt.title, note: `Routine · ${rt.steps.length} Schritte`, enabled: true, updatedAt: now });
+  const r = Object.assign(ex ? { ...ex } : blank(), { id, routineId: rt.id, type: 'weekly', weekdays: days, times: [rt.time], title: rt.title, note: rt.steps.length ? `Routine · ${plural(rt.steps.length, 'Schritt', 'Schritte')}` : 'Routine', enabled: true, updatedAt: now });
   if (!ex) { r.createdAt = now; r.checkedUntil = now; r.rtAt = now; }
   upsertRem(r);
 }
@@ -1892,7 +1900,6 @@ $('#rtFrm').addEventListener('submit', (e) => {
   d.title = $('#rtTitle').value.trim().slice(0, 80); d.time = $('#rtTime').value || '';
   d.steps = d.steps.map((s) => ({ ...s, text: String(s.text || '').trim() })).filter((s) => s.text);
   if (!d.title) { $('#rtErr').textContent = 'Bitte gib der Routine einen Namen.'; return; }
-  if (!d.steps.length) { $('#rtErr').textContent = 'Bitte mindestens einen Schritt eintragen.'; return; }
   d.days.sort((a, b) => a - b);
   colPut('routines', d); syncRoutineReminder(d);
   save(); $('#rtDlg').close(); render();
@@ -2491,7 +2498,7 @@ function renderReview(){
     for (const r of rtOnly()) {
       if (!rtActive(r, d) || (r.createdAt && new Date(r.createdAt).setHours(0, 0, 0, 0) > d.getTime())) continue;
       const c = checkFor(r.id, k), set = new Set(c ? c.done : []);
-      rTot += r.steps.length; rDone += r.steps.filter((s) => set.has(s.id)).length;
+      const ids = rtIds(r); rTot += ids.length; rDone += ids.filter((id) => set.has(id)).length;
     }
   }
   const lg = state.log.filter((e) => inR(e.t) && e.rid !== TIMER_ID && !isTrkRem(e.rid)), cnt = (k) => lg.filter((e) => e.kind === k).length;
@@ -3242,7 +3249,7 @@ Beispiel (in deiner Antwort heißt die erste Zeile \`\`\`fokus, nicht fokus-beis
   }
 }
 \`\`\`
-Regeln: Schritte klein halten (5 bis 15 Minuten, der erste sichtbare Handgriff). "next": true setzt eine Aufgabe ganz oben auf „Eine Sache jetzt“. IDs nur aus dem Export übernehmen (Aufgabe [t:…], Schritt [s:…]). "category" bei Notizen ist optional, nimm möglichst eine Kategorie aus dem Export. Löschen geht über diesen Weg nicht.`;
+Regeln: Schritte klein halten (5 bis 15 Minuten, der erste sichtbare Handgriff). Bei Routinen sind Schritte optional, ohne Schritte wird sie mit einem Haken erledigt. "next": true setzt eine Aufgabe ganz oben auf „Eine Sache jetzt“. IDs nur aus dem Export übernehmen (Aufgabe [t:…], Schritt [s:…]). "category" bei Notizen ist optional, nimm möglichst eine Kategorie aus dem Export. Löschen geht über diesen Weg nicht.`;
 
 const fmtDE = (d) => new Date(typeof d === 'string' ? d + 'T12:00' : d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const dayNames = (ds) => ds.slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7)).map((d) => WDS[d]).join(', ');
@@ -3279,7 +3286,7 @@ function aiExport(days, parts){
     L.push('', '## Erledigte Aufgaben im Zeitraum');
     L.push(...(done.length ? done.map((t) => `- ${fmtDE(t.doneAt)}: ${t.title} [t:${t.id}]`) : ['Keine.']));
     L.push('', '## Routinen');
-    L.push(...(rtOnly().length ? rtOnly().map((r) => `- ${r.title} · ${r.days && r.days.length ? dayNames(r.days) : 'jeden Tag'}${r.time ? ' · ' + r.time : ''} · Schritte: ${r.steps.map((s) => s.text).join(', ')}`) : ['Keine.']));
+    L.push(...(rtOnly().length ? rtOnly().map((r) => `- ${r.title} · ${r.days && r.days.length ? dayNames(r.days) : 'jeden Tag'}${r.time ? ' · ' + r.time : ''}${r.steps.length ? ' · Schritte: ' + r.steps.map((s) => s.text).join(', ') : ' · ohne Schritte (ein Haken)'}`) : ['Keine.']));
     L.push('', '## Routine-Tracker (gemacht oder nicht, mit Kommentar)');
     if (!trackers().length) L.push('Keine.');
     for (const h of trackers()) {
@@ -3410,8 +3417,8 @@ function aiPlan(data, plan){
   }
   for (const x of aiArr(add.routines)) {
     const title = aiStr(x.title, 80), steps = aiArr(x.steps).map((s) => aiStr(typeof s === 'object' && s ? s.text : s, 120)).filter(Boolean).slice(0, 50), days = aiDayList(x.days), time = aiTime(x.time);
-    if (!title || !steps.length) { skip(`Routine ${title ? `„${title}“: Schritte fehlen` : 'ohne Namen'}`); continue; }
-    op(`Routine „${title}“ mit ${plural(steps.length, 'Schritt', 'Schritten')} · ${days.length ? dayNames(days) : 'jeden Tag'}${time ? ' · Erinnerung ' + time : ''}`, () => {
+    if (!title) { skip('Routine ohne Namen'); continue; }
+    op(`Routine „${title}“ ${steps.length ? 'mit ' + plural(steps.length, 'Schritt', 'Schritten') : 'ohne Schritte'} · ${days.length ? dayNames(days) : 'jeden Tag'}${time ? ' · Erinnerung ' + time : ''}`, () => {
       const rt = { id: uid(), title, days, time, steps: steps.map((text) => ({ id: uid(), text })), createdAt: Date.now() };
       colPut('routines', rt); syncRoutineReminder(rt);
     });
