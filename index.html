@@ -170,6 +170,17 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 .set-pane{display:flex;flex-direction:column;gap:14px}
 .set-h{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-top:6px}
 .set-h:first-child{margin-top:0}
+.trk-st{font-weight:700}
+.trk-st.ok{color:var(--ok)}
+.trk-st.miss{color:var(--warn)}
+.card.trk .title{font-size:17px}
+.trk-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.trk-strip span{text-align:center;border-radius:8px;padding:4px 0;font-size:14px;font-weight:700;background:var(--surface2);color:var(--muted)}
+.trk-strip small{display:block;font-size:11px;font-weight:600}
+.trk-c-ok{background:color-mix(in srgb, var(--ok) 30%, var(--surface2)) !important;color:var(--text) !important}
+.trk-c-miss{background:color-mix(in srgb, var(--warn) 26%, var(--surface2)) !important;color:var(--text) !important}
+.trk-c-part{background:color-mix(in srgb, var(--ok) 14%, var(--surface2)) !important;color:var(--text) !important}
+.trk-c-off{background:transparent !important}
 </style>
 </head>
 <body>
@@ -195,6 +206,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
     <div id="timerMini"></div>
     <div id="homeSecs">
       <div data-sec="checkin"><div id="checkin"></div></div>
+      <div data-sec="tracker"><section id="trkSec" hidden><h2>Routine-Tracker</h2><div id="trkToday"></div></section></div>
       <div data-sec="one"><section id="oneSec"><h2>Eine Sache jetzt</h2><div id="oneThing"></div></section></div>
       <div data-sec="routines"><section id="rtSec" hidden><h2>Routinen heute</h2><div id="rtToday"></div></section></div>
       <div data-sec="calendar"><section id="todaySec" hidden><h2>Heute im Kalender</h2><div id="todayList"></div></section></div>
@@ -209,6 +221,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
     <div class="seg" role="group" aria-label="Ansicht">
       <button class="chip sel" data-seg="tasks">Aufgaben</button>
       <button class="chip" data-seg="routines">Routinen</button>
+      <button class="chip" data-seg="tracker">Tracker</button>
     </div>
     <div id="segTasks">
       <form class="quick" id="taskQuick">
@@ -222,6 +235,11 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
       <p class="small">Routinen sind Checklisten, die an den gewählten Tagen neu starten. Ohne Zähler und ohne Serien: Was geschafft ist, zählt.</p>
       <div id="rtList"></div>
       <div id="rtTemplates"></div>
+    </div>
+    <div id="segTracker" hidden>
+      <p class="small">Der Routine-Tracker fragt zur gewählten Tageszeit nach: gemacht oder nicht? Dazu kannst du kurz notieren, was los war, etwa „zu spät“ oder was dich abgehalten hat. Mit der Zeit siehst du, woran es hängt.</p>
+      <div id="trkList"></div>
+      <div id="trkTemplates"></div>
     </div>
   </div>
 
@@ -358,7 +376,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
         <p class="small" style="margin:0">Fokus stellt deine Daten als Text zusammen. Teile ihn mit einer KI-App wie Claude oder ChatGPT und lass dir helfen: auswerten, Muster finden, planen, Aufgaben zerlegen. Oben im Text steht eine Anleitung, wie die KI dir Änderungen zurückgibt. Was du teilst, geht im Klartext an den KI-Dienst.</p>
         <div class="chips" role="group" aria-label="Zeitraum"><span class="lbl">Letzte Tage:</span><button type="button" class="chip" data-air="7" aria-pressed="false" aria-label="7 Tage">7</button><button type="button" class="chip sel" data-air="30" aria-pressed="true" aria-label="30 Tage">30</button><button type="button" class="chip" data-air="90" aria-pressed="false" aria-label="90 Tage">90</button></div>
         <div style="display:flex;flex-direction:column">
-          <label class="chk"><input type="checkbox" data-aip="tasks" checked><span>Aufgaben und Routinen</span></label>
+          <label class="chk"><input type="checkbox" data-aip="tasks" checked><span>Aufgaben, Routinen und Tracker</span></label>
           <label class="chk"><input type="checkbox" data-aip="reminders" checked><span>Erinnerungen und Termine</span></label>
           <label class="chk"><input type="checkbox" data-aip="notes" checked><span>Notizen</span></label>
           <label class="chk"><input type="checkbox" data-aip="checkins" checked><span>Check-ins, Tagesnotizen und Schlaf</span></label>
@@ -502,6 +520,31 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
   </form>
 </dialog>
 
+<!-- Routine-Tracker -->
+<dialog id="trkDlg">
+  <form class="dlg" id="trkFrm" novalidate>
+    <h3 id="trkHead">Neuer Tracker</h3>
+    <label>Was willst du tracken?<input id="trkTitle" type="text" maxlength="80" placeholder="z. B. Tablette nehmen"></label>
+    <div><div class="small" style="margin-bottom:6px;font-weight:600">Tageszeit (mehrere möglich)</div><div class="chips" id="trkSlots"></div></div>
+    <div id="trkTimes"></div>
+    <label class="inl"><input type="checkbox" id="trkAsk"> Zur Tageszeit nachfragen (Erinnerung)</label>
+    <div><div class="small" style="margin-bottom:6px;font-weight:600">An welchen Tagen? (keine Auswahl = jeden Tag)</div><div class="chips" id="trkDays"></div></div>
+    <div class="err" id="trkErr" role="alert"></div>
+    <div class="dlg-actions">
+      <button type="button" class="btn danger" id="trkDel" hidden>Löschen</button>
+      <button type="button" class="btn ghost" id="trkCancel">Abbrechen</button>
+      <button type="submit" class="btn primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="trkHistDlg">
+  <div class="dlg">
+    <h3 id="trkHistHead"></h3>
+    <div id="trkHistBody"></div>
+    <div class="dlg-actions"><button class="btn" id="trkHistEdit" type="button">Bearbeiten</button><button class="btn primary" id="trkHistClose" type="button">Schließen</button></div>
+  </div>
+</dialog>
+
 <!-- Wochenrückblick -->
 <dialog id="reviewDlg">
   <div class="dlg">
@@ -529,7 +572,7 @@ textarea.step-text{flex:1;min-width:0;min-height:76px;resize:none;overflow:hidde
 const $ = (s) => document.querySelector(s);
 const KEY = 'fokus.v1';
 // Bei jeder neuen Version hochzählen (Datum, am selben Tag z. B. 2026.10.06.2). Daran erkennt die App ein Update.
-const APP_VERSION = '2026.10.10';
+const APP_VERSION = '2026.10.17';
 const WD = [{v:1,l:'Mo'},{v:2,l:'Di'},{v:3,l:'Mi'},{v:4,l:'Do'},{v:5,l:'Fr'},{v:6,l:'Sa'},{v:0,l:'So'}];
 const TYPES = [
   ['daily','Täglich'],
@@ -715,7 +758,7 @@ async function notify(r){
     body: notifBody(r), tag: r.id, renotify: true, requireInteraction: true,
     icon: ICON, badge: ICON, vibrate: [200,100,200,100,200], data: { id: r.id },
     actions: r.type === 'timer' ? [{ action:'done', title:'OK' }, { action:'snooze', title:'+5 Min' }]
-      : [{ action:'done', title: r.type === 'event' ? 'Gesehen' : 'Erledigt' }, { action:'snooze', title:`Snooze ${r.snoozeDefault || 10} Min` }]
+      : [{ action:'done', title: r.type === 'event' ? 'Gesehen' : r.trk ? 'Gemacht' : 'Erledigt' }, { action:'snooze', title:`Snooze ${r.snoozeDefault || 10} Min` }]
   };
   try {
     const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
@@ -745,6 +788,7 @@ function act(id, action, arg){
   }
   r.nagAt = null; r.nagN = 0;
   r.rtAt = now;
+  if (r.trk) trkFromLog();
   save(); render();
   closeAlertIfDone();
 }
@@ -759,6 +803,12 @@ function closeAlertIfDone(){
 }
 
 function actionsHtml(r){
+  if (r.trk) {
+    const d = `data-h="${esc(r.trk)}" data-k="${ymd(new Date(r.pendingAt || Date.now()))}" data-s="${esc(r.trkSlot)}" data-tgo="1"`;
+    return `<div class="actions"><div class="btnrow" style="margin-top:0">
+      <button class="btn primary" data-trk="done" ${d}>✓ Gemacht</button><button class="btn" data-trk="miss" ${d}>✗ Nicht gemacht</button></div>
+      <div class="chips"><span class="lbl">Später:</span>${[15, 30, 60].map((m) => `<button class="chip" data-act="snooze" data-id="${r.id}" data-min="${m}">${m} Min</button>`).join('')}</div></div>`;
+  }
   if (r.evening) return `<div class="actions">
     <button class="btn primary" data-eve="go" data-id="${r.id}">Jetzt ausfüllen</button>
     <div class="chips"><span class="lbl">Später:</span>${[15, 30, 60].map((m) => `<button class="chip" data-act="snooze" data-id="${r.id}" data-min="${m}">${m} Min</button>`).join('')}</div>
@@ -800,7 +850,8 @@ function showAlertIfNeeded(force){
 function render(){
   const now = Date.now();
   // Offene / schlummernde
-  const pend = state.reminders.filter((r) => r.pendingAt).sort((a,b) => a.pendingAt - b.pendingAt);
+  const trkHome = !homeCfg().hidden.includes('tracker');
+  const pend = state.reminders.filter((r) => r.pendingAt && !(r.trk && trkHome)).sort((a,b) => a.pendingAt - b.pendingAt);
   $('#pendingSec').hidden = !pend.length;
   $('#pendingList').innerHTML = pend.map((r) => {
     const sn = r.snoozeUntil && r.snoozeUntil > now;
@@ -814,7 +865,7 @@ function render(){
   }).join('');
 
   // Liste
-  const items = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening).map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
+  const items = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening && !r.trk).map((r) => ({ r, n: r.enabled ? nextOcc(r, now) : null }))
     .sort((a,b) => (a.n ?? Infinity) - (b.n ?? Infinity));
   $('#list').innerHTML = items.length ? items.map(({ r, n }) => `
     <div class="card${r.enabled ? '' : ' off'}">
@@ -839,6 +890,8 @@ function render(){
   renderQuietBar();
   applyHome();
   renderCheckin();
+  renderTrkToday();
+  if ($('#trkHistDlg').open) renderTrkHist();
   renderOne();
   renderRoutinesToday();
   if (tab === 'tasks') renderTasks();
@@ -1018,7 +1071,7 @@ document.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.tap')) { e.preventDefault(); e.target.click(); }
 });
 
-$('#btnAdd').onclick = () => { if (tab === 'cal') openEvent(null, calSel); else if (tab === 'notes') openNote(null); else if (tab === 'tasks') { if (seg === 'routines') openRoutine(null); else openTask(null); } else openForm(null); };
+$('#btnAdd').onclick = () => { if (tab === 'cal') openEvent(null, calSel); else if (tab === 'notes') openNote(null); else if (tab === 'tasks') { if (seg === 'routines') openRoutine(null); else if (seg === 'tracker') openTrk(null); else openTask(null); } else openForm(null); };
 $('#frm').addEventListener('submit', submitForm);
 $('#btnCancel').onclick = () => $('#formDlg').close();
 $('#btnDelete').onclick = () => {
@@ -1154,7 +1207,7 @@ function setTab(t){
   for (const k of TABS) $(TAB_EL[k]).hidden = k !== t;
   document.querySelectorAll('#tabs button').forEach((b) => { b.classList.toggle('on', b.dataset.tab === t); if (b.dataset.tab === t) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   $('#btnAdd').hidden = t === 'focus';
-  $('#btnAdd').setAttribute('aria-label', { today: 'Neue Erinnerung', tasks: seg === 'routines' ? 'Neue Routine' : 'Neue Aufgabe', cal: 'Neuer Termin', notes: 'Neue Notiz' }[t] || 'Neu');
+  $('#btnAdd').setAttribute('aria-label', { today: 'Neue Erinnerung', tasks: SEG_ADD[seg], cal: 'Neuer Termin', notes: 'Neue Notiz' }[t] || 'Neu');
   if (t === 'tasks') setSeg(seg, true);
   render();
 }
@@ -1325,7 +1378,7 @@ function itemsOnDay(day, withRem){
   for (const r of state.reminders) {
     if (r.type === 'event') {
       for (const t of eventInstances(r, a, b, r.allDay ? 0 : toMin(r.startTime))) items.push({ t, r, kind: 'event' });
-    } else if (withRem && r.enabled && r.type !== 'timer' && !r.evening) {
+    } else if (withRem && r.enabled && r.type !== 'timer' && !r.evening && !r.trk) {
       const occ = occurrences(r, a, b);
       if (!occ.length) continue;
       if (r.type === 'interval' && occ.length > 3) items.push({ t: occ[0], r, kind: 'rem', many: occ.length });
@@ -1514,13 +1567,14 @@ $('#noteRem').onclick = () => {
 
 /* ---------- Aufgaben mit Mini-Schritten ---------- */
 let seg = 'tasks';
-try { if (localStorage.getItem('fokus.seg') === 'routines') seg = 'routines'; } catch (e) {}
+const SEG_ADD = { tasks: 'Neue Aufgabe', routines: 'Neue Routine', tracker: 'Neuer Tracker' };
+try { const s = localStorage.getItem('fokus.seg'); if (SEG_ADD[s]) seg = s; } catch (e) {}
 function setSeg(s, quiet){
   seg = s;
   try { localStorage.setItem('fokus.seg', s); } catch (e) {}
-  $('#segTasks').hidden = s !== 'tasks'; $('#segRoutines').hidden = s !== 'routines';
+  $('#segTasks').hidden = s !== 'tasks'; $('#segRoutines').hidden = s !== 'routines'; $('#segTracker').hidden = s !== 'tracker';
   document.querySelectorAll('[data-seg]').forEach((b) => { b.classList.toggle('sel', b.dataset.seg === s); b.setAttribute('aria-pressed', String(b.dataset.seg === s)); });
-  if (tab === 'tasks') $('#btnAdd').setAttribute('aria-label', s === 'routines' ? 'Neue Routine' : 'Neue Aufgabe');
+  if (tab === 'tasks') $('#btnAdd').setAttribute('aria-label', SEG_ADD[s]);
   if (!quiet) renderTasks();
 }
 document.querySelectorAll('[data-seg]').forEach((b) => { b.onclick = () => setSeg(b.dataset.seg); });
@@ -1620,15 +1674,18 @@ function renderTasks(){
   $('#doneCount').textContent = done.length;
   $('#taskDone').innerHTML = done.slice(0, 30).map((t) => `<div class="card task-card off" data-task="${t.id}" role="button" tabindex="0"><div class="row"><div style="flex:1;min-width:0"><div class="title" style="text-decoration:line-through">${esc(t.title)}</div><div class="meta">Erledigt ${t.doneAt ? new Date(t.doneAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) : ''}</div></div><button class="btn" data-treopen="${t.id}">Wieder öffnen</button></div></div>`).join('');
   renderRoutineList();
+  renderTrkList();
 }
 $('#tabTasks').addEventListener('click', (e) => {
   const c = e.target.closest('[data-tcheck]'); if (c) { completeTask(c.dataset.tcheck, true); return; }
   const r = e.target.closest('[data-treopen]'); if (r) { completeTask(r.dataset.treopen, false); return; }
   const tp = e.target.closest('[data-tpl]'); if (tp) { openRoutine(null, RT_TEMPLATES[Number(tp.dataset.tpl)]); return; }
   const ro = e.target.closest('[data-rt]'); if (ro) { openRoutine(state.routines.find((x) => x.id === ro.dataset.rt)); return; }
+  const tt = e.target.closest('[data-trktpl]'); if (tt) { openTrk(null, TRK_TEMPLATES[Number(tt.dataset.trktpl)]); return; }
+  const th = e.target.closest('[data-trkh]'); if (th) { openTrkHist(th.dataset.trkh); return; }
   const k = e.target.closest('[data-task]'); if (k) openTask(findTask(k.dataset.task));
 });
-$('#tabTasks').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-task],[data-rt]')) { e.preventDefault(); e.target.click(); } });
+$('#tabTasks').addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-task],[data-rt],[data-trkh]')) { e.preventDefault(); e.target.click(); } });
 $('#taskQuick').addEventListener('submit', (e) => {
   e.preventDefault();
   const v = $('#taskQuickIn').value.trim(); if (!v) return;
@@ -1753,10 +1810,13 @@ const RT_TEMPLATES = [
 ];
 const rtActive = (r, d = new Date()) => !(r.days && r.days.length) || r.days.includes(d.getDay());
 const rtDaysText = (r) => (!(r.days && r.days.length) || r.days.length === 7) ? 'Jeden Tag' : WD.filter((w) => r.days.includes(w.v)).map((w) => w.l).join(', ');
+// Tracker (kind: 'track') liegen mit in „routines“, siehe Routine-Tracker
+const isTrk = (r) => r.kind === 'track';
+const rtOnly = () => state.routines.filter((r) => !isTrk(r));
 const checkFor = (rid, date) => state.checks.find((c) => c.id === rid + '|' + date);
 const byTime = (a, b) => (a.time || '99').localeCompare(b.time || '99') || (a.createdAt || 0) - (b.createdAt || 0);
 function renderRoutinesToday(){
-  const k = todayKey(), list = state.routines.filter((r) => rtActive(r)).sort(byTime);
+  const k = todayKey(), list = rtOnly().filter((r) => rtActive(r)).sort(byTime);
   $('#rtSec').hidden = !list.length;
   $('#rtToday').innerHTML = list.map((r) => {
     const c = checkFor(r.id, k), done = new Set(c ? c.done : []);
@@ -1781,7 +1841,7 @@ document.addEventListener('change', (e) => {
   save(); render();
 });
 function renderRoutineList(){
-  const list = [...state.routines].sort(byTime);
+  const list = rtOnly().sort(byTime);
   $('#rtList').innerHTML = list.map((r) => `<div class="card task-card" data-rt="${r.id}" role="button" tabindex="0"><div class="title">${esc(r.title)}</div><div class="meta">${esc(rtDaysText(r))}${r.time ? ' · Erinnerung ' + esc(r.time) : ''} · ${r.steps.length} Schritte</div></div>`).join('')
     || '<div class="empty" style="padding:18px 10px"><p style="margin:0">Noch keine Routinen. Leg eine mit + an oder nimm eine Vorlage.</p></div>';
   $('#rtTemplates').innerHTML = `<h2>Vorlage nutzen</h2><div class="chips">${RT_TEMPLATES.map((t, i) => `<button class="chip" data-tpl="${i}">${esc(t.title)}</button>`).join('')}</div>`;
@@ -1842,6 +1902,292 @@ $('#rtDel').onclick = () => {
   colDel('routines', rtDraft.id); syncRoutineReminder({ ...rtDraft, time: '' });
   save(); $('#rtDlg').close(); render();
   if (old) offerUndo('Routine gelöscht.', (now) => { colPut('routines', clone(old)); if (oldRem) upsertRem({ ...oldRem, updatedAt: now }); });
+};
+
+/* ---------- Routine-Tracker ---------- */
+// Eine einzelne Sache zu einer Tageszeit abfragen (z. B. Tablette nehmen): gemacht oder nicht, dazu ein Kommentar.
+// Tracker liegen in „routines“ (kind: 'track'), Antworten in „checks“ (ID Tracker|Datum|Tageszeit). So wird beides
+// verschlüsselt synchronisiert. „steps: []“ hält ältere App-Versionen auf anderen Geräten lauffähig.
+const TRK_SLOTS = [['morning', 'Morgens', '08:00'], ['noon', 'Mittags', '12:30'], ['afternoon', 'Nachmittags', '16:00'], ['evening', 'Abends', '19:00'], ['night', 'Vor dem Schlafen', '22:00'], ['any', 'Irgendwann am Tag', '20:00']];
+const TRK_SLOT = Object.fromEntries(TRK_SLOTS.map(([k, l, t]) => [k, { l, t }]));
+const TRK_WHY = ['Vergessen', 'Keine Zeit', 'Keine Kraft', 'Unterwegs', 'Bewusst ausgelassen'];
+const TRK_OK = ['Zu spät', 'Zu früh', 'Nur teilweise'];
+const TRK_TEMPLATES = [
+  { title: 'Tablette nehmen', slots: ['morning'] },
+  { title: 'Zähne putzen', slots: ['morning', 'night'] },
+  { title: 'Rausgehen oder bewegen', slots: ['any'] },
+  { title: 'Genug Wasser trinken', slots: ['any'] },
+];
+const trackers = () => state.routines.filter(isTrk);
+const findTrk = (id) => state.routines.find((x) => x.id === id && isTrk(x));
+const trkSlots = (h) => (h.slots || []).filter((s) => TRK_SLOT[s.k]).sort((a, b) => a.t.localeCompare(b.t));
+const trkWhenText = (h) => `${trkSlots(h).map((s) => TRK_SLOT[s.k].l).join(', ')} · ${rtDaysText(h)}${h.ask === false ? ' · ohne Nachfrage' : ''}`;
+const trkEntry = (hid, k, s) => state.checks.find((c) => c.id === `${hid}|${k}|${s}`);
+const trkRemId = (s, hid) => `trk-${s}-${hid}`;
+const isTrkRem = (id) => String(id || '').startsWith('trk-');
+const dayStart = (t) => new Date(t).setHours(0, 0, 0, 0);
+const trkOn = (h, d) => rtActive(h, d) && (!h.createdAt || dayStart(h.createdAt) <= dayStart(d));
+const fmtDM = (d) => new Date(d).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+// Schon dran? „Irgendwann“ gilt den ganzen Tag, sonst ab der Uhrzeit der Nachfrage
+const trkParts = (note) => String(note || '').split(/\s*[,;\n]+\s*/).map((p) => p.trim().toLowerCase()).filter(Boolean);
+const trkDue = (k, s, now = new Date()) => k < ymd(now) || (k === ymd(now) && (s.k === 'any' || toMin(s.t) <= now.getHours() * 60 + now.getMinutes()));
+
+function trkSet(hid, k, s, patch){
+  const id = `${hid}|${k}|${s}`, old = state.checks.find((c) => c.id === id);
+  const c = old ? { ...old, ...patch } : { id, hid, date: k, slot: s, st: '', note: '', ...patch };
+  if (patch.st && (!old || old.st !== patch.st)) c.at = Date.now();
+  colPut('checks', c); save();
+}
+// Kommentare in einzelne Gründe zerlegen und zählen („vergessen, keine Zeit“ zählt beides)
+function trkReasons(h, st, days){
+  const cut = ymd(new Date(Date.now() - days * DAY)), m = new Map();
+  for (const c of state.checks) {
+    if (c.hid !== h.id || c.st !== st || c.date < cut) continue;
+    for (let p of String(c.note || '').split(/[,;\n]+/)) {
+      p = p.trim().replace(/[.!]+$/, ''); if (!p) continue;
+      const k = p.toLowerCase(), o = m.get(k);
+      if (o) o.n++; else m.set(k, { l: p.charAt(0).toUpperCase() + p.slice(1), n: 1 });
+    }
+  }
+  return [...m.values()].sort((a, b) => b.n - a.n);
+}
+function trkIdeas(h, st){
+  const seen = new Set(), out = [];
+  for (const t of [...trkReasons(h, st, 90).map((x) => x.l).filter((l) => l.length <= 30), ...(st === 'miss' ? TRK_WHY : TRK_OK)]) {
+    const k = t.toLowerCase(); if (seen.has(k) || out.length >= 6) continue;
+    seen.add(k); out.push(t);
+  }
+  return out;
+}
+function trkStats(h, days){
+  const out = { done: 0, miss: 0, open: 0, slot: {} };
+  for (let i = 0; i < days; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (!trkOn(h, d)) continue;
+    const k = ymd(d);
+    for (const s of trkSlots(h)) {
+      const e = trkEntry(h.id, k, s.k), st = e && e.st;
+      if (!st && i === 0) continue; // heute ohne Antwort zählt erst ab morgen als offen
+      const b = out.slot[s.k] = out.slot[s.k] || { done: 0, n: 0 };
+      b.n++;
+      if (st === 'done') { out.done++; b.done++; } else if (st === 'miss') out.miss++; else out.open++;
+    }
+  }
+  return out;
+}
+// Ein Tag als Kästchen: ✓ / ✗ bei einer Tageszeit, sonst „1/2“
+function trkCell(h, d){
+  if (!trkOn(h, d)) return { txt: '·', cls: 'trk-c-off', done: 0, n: 0, tip: 'nicht geplant' };
+  const k = ymd(d), sl = trkSlots(h), es = sl.map((s) => trkEntry(h.id, k, s.k));
+  const done = es.filter((e) => e && e.st === 'done').length, miss = es.filter((e) => e && e.st === 'miss').length;
+  const txt = sl.length === 1 ? (done ? '✓' : miss ? '✗' : '–') : (done || miss ? `${done}/${sl.length}` : '–');
+  const cls = sl.length && done === sl.length ? 'trk-c-ok' : miss ? 'trk-c-miss' : done ? 'trk-c-part' : '';
+  return { txt, cls, done, n: sl.length, tip: `${done} von ${sl.length} gemacht${miss ? `, ${miss} nicht` : ''}` };
+}
+
+// Eine Abfrage als Karte: unbeantwortet zwei Knöpfe, danach Kommentarfeld mit Vorschlägen
+let trkOpen = '';
+function trkCardHtml(h, k, s, when){
+  const e = trkEntry(h.id, k, s.k), key = `${h.id}|${k}|${s.k}`, d = `data-h="${h.id}" data-k="${k}" data-s="${s.k}"`, st = e && e.st;
+  const head = (btn) => `<div class="row"><div style="min-width:0"><div class="title">${esc(h.title)}</div><div class="meta" style="margin-top:2px">${when}</div></div>${btn || ''}</div>`;
+  const stHtml = st === 'done' ? '<span class="trk-st ok">✓ Gemacht</span>' : '<span class="trk-st miss">✗ Nicht gemacht</span>';
+  let body;
+  if (!st) body = head() + `<div class="btnrow"><button class="btn primary" data-trk="done" ${d}>✓ Gemacht</button><button class="btn" data-trk="miss" ${d}>✗ Nicht gemacht</button></div>`;
+  else if (trkOpen === key) body = head() + `<div class="btnrow" role="group" aria-label="Antwort">${[['done', '✓ Gemacht'], ['miss', '✗ Nicht gemacht']].map(([v, l]) => `<button class="chip${st === v ? ' sel' : ''}" data-trk="${v}" ${d} aria-pressed="${st === v}">${l}</button>`).join('')}</div>
+    <label style="margin-top:12px">${st === 'miss' ? 'Was hat dich abgehalten?' : 'Anmerkung (optional)'}<textarea data-trknote="1" ${d} rows="2" maxlength="500" placeholder="${st === 'miss' ? 'z. B. vergessen, keine Zeit, unterwegs' : 'z. B. zu spät, erst um 11 Uhr'}">${esc(e.note || '')}</textarea></label>
+    <div class="chips" style="margin-top:8px">${trkIdeas(h, st).map((t) => { const on = trkParts(e.note).includes(t.toLowerCase()); return `<button class="chip${on ? ' sel' : ''}" data-trk="idea" data-v="${esc(t)}" ${d} aria-pressed="${on}">${esc(t)}</button>`; }).join('')}</div>
+    <div class="btnrow"><button class="btn primary" data-trk="close" ${d}>Fertig</button><button class="btn ghost" data-trk="clear" ${d}>Antwort löschen</button></div>`;
+  else body = head(`<button class="btn ghost" data-trk="edit" ${d}>Ändern</button>`) + `<div class="meta">${stHtml}</div>${(e.note || '').trim() ? `<div class="note" style="margin-top:4px">${esc(e.note.trim())}</div>` : ''}`;
+  return `<div class="card trk" data-trkcard="${key}">${body}</div>`;
+}
+function renderTrkToday(){
+  const box = $('#trkToday'), ae = document.activeElement;
+  if (ae && box.contains(ae) && ae.matches('textarea, input')) return; // nicht neu zeichnen, während getippt wird
+  const now = new Date(), k = ymd(now), y = new Date(now); y.setDate(y.getDate() - 1);
+  const yk = ymd(y), cur = [], later = [], past = [];
+  for (const h of trackers()) {
+    // Was gestern offen blieb, bis mittags nachtragen
+    if (trkOn(h, y)) for (const s of trkSlots(h)) if ((now.getHours() < 12 && !trkEntry(h.id, yk, s.k)) || trkOpen === `${h.id}|${yk}|${s.k}`) past.push([h, yk, s]);
+    if (trkOn(h, now)) for (const s of trkSlots(h)) (trkDue(k, s, now) || trkEntry(h.id, k, s.k) ? cur : later).push([h, k, s]);
+  }
+  const ord = (a, b) => a[2].t.localeCompare(b[2].t) || a[0].title.localeCompare(b[0].title);
+  cur.sort(ord); later.sort(ord);
+  const when = (dk, s) => (dk === yk ? 'Gestern · ' : '') + TRK_SLOT[s.k].l + (s.k === 'any' || dk === yk ? '' : ' · ' + s.t);
+  $('#trkSec').hidden = !cur.length && !later.length && !past.length;
+  box.innerHTML = [...past, ...cur].map(([h, dk, s]) => trkCardHtml(h, dk, s, when(dk, s))).join('')
+    + (later.length ? `<details class="plain"><summary class="small">Später heute (${later.length})</summary>${later.map(([h, dk, s]) => trkCardHtml(h, dk, s, `${TRK_SLOT[s.k].l} · ab ${s.t}`)).join('')}</details>` : '');
+}
+// Fällige Nachfrage zur Antwort erledigen; ist sie noch nicht gekommen, für heute stumm schalten
+function trkResolveRem(hid, k, s){
+  const r = find(trkRemId(s, hid)); if (!r) return;
+  const now = Date.now();
+  if (r.pendingAt && ymd(new Date(r.pendingAt)) === k) Object.assign(r, { pendingAt: null, pendingStart: null, snoozeUntil: null, nagAt: null, nagN: 0, rtAt: now });
+  else if (k === ymd(new Date()) && !r.pendingAt) Object.assign(r, { mutedDate: k, rtAt: now });
+  else return;
+  save(); closeAlertIfDone();
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-trk]'); if (!b) return;
+  const a = b.dataset.trk, hid = b.dataset.h, k = b.dataset.k, s = b.dataset.s, key = `${hid}|${k}|${s}`;
+  if (!findTrk(hid)) return;
+  if (a === 'done' || a === 'miss') {
+    trkSet(hid, k, s, { st: a }); trkOpen = key;
+    trkResolveRem(hid, k, s);
+    const inHist = !!b.closest('#trkHistDlg');
+    if (b.dataset.tgo && tab !== 'today') setTab('today'); else render();
+    // Danach gleich ins Kommentarfeld; ist der Abschnitt auf „Heute“ ausgeblendet, im Verlauf
+    let card = (inHist ? $('#trkHistBody') : $('#trkToday')).querySelector(`[data-trkcard="${key}"]`);
+    if (!card || card.closest('[hidden]')) { if (!inHist && !document.querySelector('dialog[open]')) { openTrkHist(hid); card = $('#trkHistBody').querySelector(`[data-trkcard="${key}"]`); } else card = null; }
+    if (card) requestAnimationFrame(() => { if (b.dataset.tgo) card.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (a === 'miss') card.querySelector('textarea').focus({ preventScroll: !!b.dataset.tgo }); });
+  } else if (a === 'edit') { trkOpen = key; render(); }
+  else if (a === 'close') {
+    trkOpen = ''; if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    render(); flash('Gespeichert.');
+  } else if (a === 'clear') {
+    colDel('checks', key); trkOpen = '';
+    const r = find(trkRemId(s, hid)), sl = (findTrk(hid).slots || []).find((x) => x.k === s);
+    if (r && r.mutedDate === k && sl && !trkDue(k, sl)) { r.mutedDate = null; r.rtAt = Date.now(); } // noch nicht dran: wieder nachfragen
+    save(); render();
+  } else if (a === 'idea') {
+    // Vorschlag antippen fügt ihn an, nochmal antippen nimmt ihn wieder raus
+    const ta = b.closest('[data-trkcard]').querySelector('textarea'), v = b.dataset.v, on = trkParts(ta.value).includes(v.toLowerCase());
+    if (on) ta.value = ta.value.split(/\s*[,;\n]+\s*/).filter((p) => p.trim().toLowerCase() !== v.toLowerCase()).join(', ').trim();
+    else { const cur = ta.value.trim().replace(/[,;.]+$/, ''); ta.value = cur ? cur + ', ' + v : v; }
+    b.classList.toggle('sel', !on); b.setAttribute('aria-pressed', String(!on));
+    trkSet(hid, k, s, { note: ta.value.slice(0, 500) });
+  }
+});
+document.addEventListener('input', (e) => {
+  const t = e.target.closest('[data-trknote]'); if (!t) return;
+  trkSet(t.dataset.h, t.dataset.k, t.dataset.s, { note: t.value.slice(0, 500) });
+});
+// „Erledigt“ in einer Push-Benachrichtigung landet nur im Verlauf: daraus „Gemacht“ machen, falls noch keine Antwort da ist
+function trkFromLog(){
+  let seen = []; try { seen = JSON.parse(localStorage.getItem('fokus.trkLog')) || []; } catch (e) {}
+  const cut = Date.now() - 2 * DAY, done = new Set(seen);
+  let made = false, mark = false;
+  for (const e of state.log) {
+    if (e.kind !== 'done' || !isTrkRem(e.rid) || !(e.t > cut) || done.has(e.t + '|' + e.rid)) continue;
+    done.add(e.t + '|' + e.rid); mark = true;
+    const m = /^trk-([a-z]+)-(.+)$/.exec(e.rid), h = m && findTrk(m[2]);
+    if (!h) continue;
+    const d = new Date(e.t); if (d.getHours() < 4) d.setDate(d.getDate() - 1); // nach Mitternacht gehört es noch zum Vortag
+    const k = ymd(d), old = trkEntry(h.id, k, m[1]);
+    if (old && old.st) continue;
+    colPut('checks', { ...(old || { id: `${h.id}|${k}|${m[1]}`, hid: h.id, date: k, slot: m[1], note: '' }), st: 'done', at: e.t });
+    made = true;
+  }
+  if (mark) try { localStorage.setItem('fokus.trkLog', JSON.stringify([...done].filter((x) => Number(x.split('|')[0]) > cut))); } catch (e) {}
+  return made;
+}
+// Nachfrage je Tageszeit als eigener Eintrag in den Erinnerungen, damit Server-Push und Snooze wie gewohnt funktionieren
+function syncTrkReminders(h){
+  const now = Date.now(), want = h.ask === false ? [] : trkSlots(h);
+  for (const [k, l] of TRK_SLOTS) {
+    const id = trkRemId(k, h.id), ex = find(id), s = want.find((x) => x.k === k);
+    if (!s) { if (ex) { state.reminders = state.reminders.filter((x) => x.id !== id); state.tombs.push({ id, updatedAt: now }); } continue; }
+    const days = h.days && h.days.length ? [...h.days] : [0, 1, 2, 3, 4, 5, 6];
+    const r = Object.assign(ex ? { ...ex } : blank(), { id, trk: h.id, trkSlot: k, type: 'weekly', weekdays: days, times: [s.t], title: h.title, note: `${l}: gemacht oder nicht? Kurz in Fokus eintragen.`, enabled: true, updatedAt: now });
+    if (!ex) { r.createdAt = now; r.checkedUntil = now; r.rtAt = now; }
+    upsertRem(r);
+  }
+}
+
+// Liste im Reiter „Tracker“
+function renderTrkList(){
+  const list = trackers().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  $('#trkList').innerHTML = list.map((h) => {
+    const days = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push(d); }
+    const st = trkStats(h, 30), tot = st.done + st.miss + st.open, why = trkReasons(h, 'miss', 30)[0];
+    return `<div class="card task-card" data-trkh="${h.id}" role="button" tabindex="0"><div class="title">${esc(h.title)}</div><div class="meta">${esc(trkWhenText(h))}</div>
+      <div class="trk-strip">${days.map((d) => { const c = trkCell(h, d); return `<span class="${c.cls}" title="${WDL[d.getDay()]}: ${c.tip}"><small>${WDS[d.getDay()]}</small>${c.txt}</span>`; }).join('')}</div>
+      <div class="meta">${tot ? `Letzte 30 Tage: ${st.done} von ${tot} gemacht${why ? ` · Häufigster Grund: ${esc(why.l)}` : ''}` : 'Noch keine Antworten.'}</div></div>`;
+  }).join('') || '<div class="empty" style="padding:18px 10px"><p style="margin:0">Noch keine Tracker. Leg einen mit + an oder nimm eine Vorlage.</p></div>';
+  $('#trkTemplates').innerHTML = `<h2>Vorlage nutzen</h2><div class="chips">${TRK_TEMPLATES.map((t, i) => `<button class="chip" data-trktpl="${i}">${esc(t.title)}</button>`).join('')}</div>`;
+}
+
+// Verlauf eines Trackers: Zahlen, häufigste Gründe und alle Antworten zum Nachtragen oder Ändern
+let trkHistId = '', trkHistN = 14;
+function openTrkHist(id){ trkHistId = id; trkHistN = 14; renderTrkHist(); $('#trkHistDlg').showModal(); }
+function renderTrkHist(){
+  const h = findTrk(trkHistId);
+  if (!h) { if ($('#trkHistDlg').open) $('#trkHistDlg').close(); return; }
+  const box = $('#trkHistBody'), ae = document.activeElement;
+  if (ae && box.contains(ae) && ae.matches('textarea, input')) return;
+  $('#trkHistHead').textContent = h.title;
+  const st = trkStats(h, 30), tot = st.done + st.miss + st.open, sl = trkSlots(h);
+  let x = `<div class="small">${esc(trkWhenText(h))}</div><h2>Letzte 30 Tage</h2>`;
+  if (tot) {
+    x += `<div class="stat">${[[st.done, 'gemacht'], [st.miss, 'nicht gemacht'], [st.open, 'ohne Antwort'], [Math.round(st.done / tot * 100) + ' %', 'gemacht insgesamt']].map(([v, l]) => `<div><b>${v}</b><span class="small">${l}</span></div>`).join('')}</div>`;
+    if (sl.length > 1) x += `<p class="small" style="margin:8px 0 0">${sl.filter((s) => st.slot[s.k]).map((s) => `${TRK_SLOT[s.k].l}: ${st.slot[s.k].done} von ${st.slot[s.k].n}`).join(' · ')}</p>`;
+  } else x += '<p class="small">Noch keine Antworten. Sobald du antwortest, siehst du hier, wie es läuft.</p>';
+  const bars = (rs) => { const mx = rs[0].n; return rs.slice(0, 6).map((r) => `<div class="bar-row"><span style="flex:0 1 45%;min-width:0;overflow-wrap:anywhere">${esc(r.l)}</span><span class="b"><i style="width:${Math.round(r.n / mx * 100)}%"></i></span><span style="min-width:34px;text-align:right">${r.n}×</span></div>`).join(''); };
+  const why = trkReasons(h, 'miss', 90), ok = trkReasons(h, 'done', 90);
+  if (why.length) x += `<h2>Was dich abgehalten hat</h2><div class="small" style="margin-bottom:4px">Letzte 90 Tage</div>${bars(why)}`;
+  if (ok.length) x += `<h2>Anmerkungen bei „Gemacht“</h2>${bars(ok)}`;
+  x += '<h2>Verlauf</h2>';
+  const cards = [];
+  let older = false;
+  for (let i = 0; i < 400; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (h.createdAt && dayStart(d) < dayStart(h.createdAt)) break;
+    if (i >= trkHistN) { older = true; break; }
+    if (!trkOn(h, d)) continue;
+    const k = ymd(d), lbl = i === 0 ? 'Heute' : i === 1 ? 'Gestern' : `${WDS[d.getDay()]} ${fmtDM(d)}`;
+    for (const s of [...sl].reverse()) if (trkEntry(h.id, k, s.k) || trkDue(k, s)) cards.push(trkCardHtml(h, k, s, `${lbl} · ${TRK_SLOT[s.k].l}`));
+  }
+  x += cards.join('') || '<p class="small">Noch nichts fällig.</p>';
+  if (older) x += '<button class="btn" type="button" data-trkmore="1">Ältere anzeigen</button>';
+  box.innerHTML = x;
+}
+$('#trkHistBody').addEventListener('click', (e) => { if (e.target.closest('[data-trkmore]')) { trkHistN += 14; renderTrkHist(); } });
+$('#trkHistClose').onclick = () => $('#trkHistDlg').close();
+$('#trkHistEdit').onclick = () => { const h = findTrk(trkHistId); $('#trkHistDlg').close(); if (h) openTrk(h); };
+$('#trkHistDlg').addEventListener('close', () => { trkOpen = ''; render(); showAlertIfNeeded(); });
+
+// Formular
+let trkDraft = null;
+function openTrk(h, tpl){
+  trkDraft = h ? clone(h) : { id: uid(), kind: 'track', title: tpl ? tpl.title : '', days: [], slots: (tpl ? tpl.slots : ['morning']).map((k) => ({ k, t: TRK_SLOT[k].t })), ask: true, steps: [], createdAt: Date.now() };
+  if (!Array.isArray(trkDraft.days)) trkDraft.days = [];
+  if (!Array.isArray(trkDraft.slots)) trkDraft.slots = [];
+  $('#trkHead').textContent = h ? 'Tracker bearbeiten' : 'Neuer Tracker';
+  $('#trkTitle').value = trkDraft.title; $('#trkAsk').checked = trkDraft.ask !== false; $('#trkErr').textContent = '';
+  $('#trkDel').hidden = !h;
+  renderTrkForm(); $('#trkDlg').showModal();
+}
+function renderTrkForm(){
+  const has = (k) => trkDraft.slots.some((s) => s.k === k);
+  $('#trkSlots').innerHTML = TRK_SLOTS.map(([k, l]) => `<button type="button" class="chip${has(k) ? ' sel' : ''}" data-tslot="${k}" aria-pressed="${has(k)}">${l}</button>`).join('');
+  const sl = trkSlots(trkDraft);
+  $('#trkTimes').innerHTML = sl.length ? `<div class="small" style="margin-bottom:6px;font-weight:600">Nachfragen um</div>${sl.map((s) => `<div class="list-item"><span style="flex:1;font-weight:600">${TRK_SLOT[s.k].l}${s.k === 'any' ? '<br><span class="small" style="font-weight:400">fragt, ob du es heute geschafft hast</span>' : ''}</span><input type="time" data-ttime="${s.k}" value="${esc(s.t)}" aria-label="${TRK_SLOT[s.k].l}: nachfragen um" style="flex:none;width:130px"></div>`).join('')}` : '';
+  $('#trkDays').innerHTML = WD.map((w) => `<button type="button" class="chip${trkDraft.days.includes(w.v) ? ' sel' : ''}" data-tday="${w.v}" aria-pressed="${trkDraft.days.includes(w.v)}">${w.l}</button>`).join('');
+}
+$('#trkSlots').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-tslot]'); if (!b) return;
+  const k = b.dataset.tslot, i = trkDraft.slots.findIndex((s) => s.k === k);
+  if (i >= 0) trkDraft.slots.splice(i, 1); else trkDraft.slots.push({ k, t: TRK_SLOT[k].t });
+  renderTrkForm();
+});
+$('#trkTimes').addEventListener('input', (e) => { const k = e.target.dataset.ttime, s = k && trkDraft.slots.find((x) => x.k === k); if (s && e.target.value) s.t = e.target.value; });
+$('#trkDays').addEventListener('click', (e) => { const b = e.target.closest('[data-tday]'); if (!b) return; const v = Number(b.dataset.tday), i = trkDraft.days.indexOf(v); if (i >= 0) trkDraft.days.splice(i, 1); else trkDraft.days.push(v); renderTrkForm(); });
+$('#trkCancel').onclick = () => $('#trkDlg').close();
+$('#trkDlg').addEventListener('close', () => showAlertIfNeeded());
+$('#trkFrm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const d = trkDraft;
+  d.title = $('#trkTitle').value.trim().slice(0, 80); d.ask = $('#trkAsk').checked;
+  if (!d.title) { $('#trkErr').textContent = 'Bitte schreib rein, was du tracken willst.'; return; }
+  if (!d.slots.length) { $('#trkErr').textContent = 'Bitte mindestens eine Tageszeit wählen.'; return; }
+  d.days.sort((a, b) => a - b); d.slots = trkSlots(d); d.steps = [];
+  colPut('routines', d); syncTrkReminders(d);
+  save(); $('#trkDlg').close(); render();
+});
+$('#trkDel').onclick = () => {
+  const old = findTrk(trkDraft.id), oldRems = TRK_SLOTS.map(([k]) => find(trkRemId(k, trkDraft.id))).filter(Boolean);
+  colDel('routines', trkDraft.id); syncTrkReminders({ ...trkDraft, slots: [] });
+  save(); $('#trkDlg').close(); render();
+  if (old) offerUndo('Tracker gelöscht.', (now) => { colPut('routines', clone(old)); for (const r of oldRems) upsertRem({ ...r, updatedAt: now }); });
 };
 
 /* ---------- Täglicher Check-in ---------- */
@@ -2142,13 +2488,13 @@ function renderReview(){
   let rTot = 0, rDone = 0;
   for (const d of days) {
     const k = ymd(d);
-    for (const r of state.routines) {
+    for (const r of rtOnly()) {
       if (!rtActive(r, d) || (r.createdAt && new Date(r.createdAt).setHours(0, 0, 0, 0) > d.getTime())) continue;
       const c = checkFor(r.id, k), set = new Set(c ? c.done : []);
       rTot += r.steps.length; rDone += r.steps.filter((s) => set.has(s.id)).length;
     }
   }
-  const lg = state.log.filter((e) => inR(e.t) && e.rid !== TIMER_ID), cnt = (k) => lg.filter((e) => e.kind === k).length;
+  const lg = state.log.filter((e) => inR(e.t) && e.rid !== TIMER_ID && !isTrkRem(e.rid)), cnt = (k) => lg.filter((e) => e.kind === k).length;
   const tiles = [[fMin, 'Minuten Fokus'], [ses.length, ses.length === 1 ? 'Fokus-Runde' : 'Fokus-Runden'], [tDone.length, 'Aufgaben erledigt'], [sDone, 'Schritte geschafft'], [rTot ? Math.round(rDone / rTot * 100) + ' %' : '–', 'Routinen-Schritte'], [cnt('done'), 'Erinnerungen erledigt']];
   let h = `<div class="stat">${tiles.map(([v, l]) => `<div><b>${v}</b><span class="small">${l}</span></div>`).join('')}</div>`;
   if (cnt('snooze') || cnt('skip')) h += `<p class="small">Außerdem ${cnt('snooze')}× Snooze und ${cnt('skip')}× „Heute kein Fortschritt“. Beides ist okay, es zeigt nur, was gerade schwer war.</p>`;
@@ -2170,6 +2516,20 @@ function renderReview(){
     const trend = CI.filter(([q]) => q !== 'sleep').map(([q, l]) => { const pr = cis.filter((c) => c && c[q] && c.eve && c.eve[q]); return pr.length >= 3 ? `${l} ${fmt1(avgOf(pr.map((c) => c[q])))} → ${fmt1(avgOf(pr.map((c) => c.eve[q])))}` : ''; }).filter(Boolean);
     if (trend.length) h += `<p class="small" style="margin:8px 0 0">Morgens → abends (Ø): ${trend.join(' · ')}</p>`;
   } else h += '<p class="small">Noch keine Check-ins in diesem Zeitraum. Ein kurzer Check-in pro Tag reicht, dann zeigen sich hier Muster.</p>';
+  // Routine-Tracker: je Tracker eine Zeile, darunter die Kommentare der Woche
+  const trks = trackers().filter((t) => days.some((d) => trkOn(t, d)));
+  if (trks.length) {
+    h += `<h2>Routine-Tracker</h2><div class="heat"><span></span>${days.map((d) => `<span class="small" style="text-align:center">${WDS[d.getDay()]}</span>`).join('')}`;
+    const notes = [];
+    for (const t of trks) {
+      const cells = days.map((d) => trkCell(t, d)), dn = cells.reduce((x, c) => x + c.done, 0), n = cells.reduce((x, c) => x + c.n, 0);
+      h += `<span class="small" style="font-weight:600;overflow-wrap:anywhere">${esc(t.title)}<br><span style="font-weight:400">${dn} von ${n}</span></span>`
+        + cells.map((c, i) => `<span class="c ${c.cls}" title="${esc(t.title)} am ${WDL[days[i].getDay()]}: ${c.tip}" style="${c.cls ? '' : 'color:var(--muted)'}">${c.txt}</span>`).join('');
+      for (const d of days) for (const sl of trkSlots(t)) { const e = trkEntry(t.id, ymd(d), sl.k); if (e && e.st && (e.note || '').trim()) notes.push([d, t, sl, e]); }
+    }
+    h += '</div>';
+    if (notes.length) h += `<div class="small" style="font-weight:600;margin-top:10px">Kommentare</div><ul class="log">${notes.map(([d, t, sl, e]) => `<li style="white-space:pre-wrap"><b>${WDS[d.getDay()]} ${fmtD(d)}</b> ${esc(t.title)} (${TRK_SLOT[sl.k].l}) ${e.st === 'done' ? '✓' : '✗'} ${esc(e.note.trim())}</li>`).join('')}</ul>`;
+  }
   // Muster aus den letzten 4 Wochen
   const p0 = b - 28 * DAY, pats = [];
   const ci28 = state.checkins.filter((c) => { const t = new Date(c.date + 'T12:00').getTime(); return t >= p0 && t < b; });
@@ -2208,8 +2568,8 @@ $('#reviewDlg').addEventListener('close', () => showAlertIfNeeded());
 
 /* ---------- Aufräumen alter Daten ---------- */
 function prune(){
-  const now = Date.now(), cut = ymd(new Date(now - 180 * DAY));
-  state.checks.filter((c) => c.date < cut).map((c) => c.id).forEach((id) => colDel('checks', id));
+  const now = Date.now(), cut = ymd(new Date(now - 180 * DAY)), cutTrk = ymd(new Date(now - 365 * DAY));
+  state.checks.filter((c) => c.date < (c.hid ? cutTrk : cut)).map((c) => c.id).forEach((id) => colDel('checks', id));
   state.sessions.filter((s) => s.start < now - 400 * DAY).map((s) => s.id).forEach((id) => colDel('sessions', id));
   state.sleep.filter((s) => (s.bed || 0) < now - 120 * DAY).map((s) => s.id).forEach((id) => colDel('sleep', id));
   const fresh = (t) => t.updatedAt > now - 30 * DAY;
@@ -2418,11 +2778,12 @@ function renderQuietBar(){
 }
 
 /* ---------- Heute-Bildschirm anpassen ---------- */
-const HOME_SECS = [['checkin', 'Check-in'], ['one', 'Eine Sache jetzt'], ['routines', 'Routinen heute'], ['calendar', 'Heute im Kalender'], ['reminders', 'Meine Erinnerungen'], ['review', 'Rückblick'], ['log', 'Verlauf']];
+const HOME_SECS = [['checkin', 'Check-in'], ['tracker', 'Routine-Tracker'], ['one', 'Eine Sache jetzt'], ['routines', 'Routinen heute'], ['calendar', 'Heute im Kalender'], ['reminders', 'Meine Erinnerungen'], ['review', 'Rückblick'], ['log', 'Verlauf']];
 function homeCfg(){
   const p = getPref('home', { order: [], hidden: [] }), keys = HOME_SECS.map(([k]) => k);
   const order = (Array.isArray(p.order) ? p.order : []).filter((k) => keys.includes(k));
-  for (const k of keys) if (!order.includes(k)) order.push(k);
+  // Neue Abschnitte hinter ihrem Vorgänger einsortieren, nicht ans Ende
+  keys.forEach((k, i) => { if (!order.includes(k)) order.splice(i ? order.indexOf(keys[i - 1]) + 1 : 0, 0, k); });
   return { order, hidden: (Array.isArray(p.hidden) ? p.hidden : []).filter((k) => keys.includes(k)) };
 }
 function applyHome(){
@@ -2716,6 +3077,7 @@ async function syncNow(join){
       state.dead[c] = merged[c].filter((n) => n.deleted).map((n) => ({ id: n.id, updatedAt: n.updatedAt || 0 }));
     }
     if (res._plain) migratePlain(); // alte, unverschlüsselte Einträge auf dem Server ersetzen
+    if (trkFromLog()) scheduleSync();
     saveLocal();
     sync.last = Date.now(); sync.error = null; saveSync();
     render();
@@ -2891,7 +3253,7 @@ function dayCounts(k){
     steps: state.tasks.reduce((x, t) => x + (t.steps || []).filter((s) => s.done && inR(s.doneAt)).length, 0),
     tasks: state.tasks.filter((t) => t.done && inR(t.doneAt)).length,
     rt: state.checks.filter((c) => c.date === k).reduce((x, c) => x + (c.done || []).length, 0),
-    rems: state.log.filter((e) => e.kind === 'done' && inR(e.t) && e.rid !== TIMER_ID && e.rid !== EVE_ID).length,
+    rems: state.log.filter((e) => e.kind === 'done' && inR(e.t) && e.rid !== TIMER_ID && e.rid !== EVE_ID && !isTrkRem(e.rid)).length,
     fmin: state.sessions.filter((s) => inR(s.start)).reduce((x, s) => x + sessMin(s), 0),
   };
 }
@@ -2917,10 +3279,23 @@ function aiExport(days, parts){
     L.push('', '## Erledigte Aufgaben im Zeitraum');
     L.push(...(done.length ? done.map((t) => `- ${fmtDE(t.doneAt)}: ${t.title} [t:${t.id}]`) : ['Keine.']));
     L.push('', '## Routinen');
-    L.push(...(state.routines.length ? state.routines.map((r) => `- ${r.title} · ${r.days && r.days.length ? dayNames(r.days) : 'jeden Tag'}${r.time ? ' · ' + r.time : ''} · Schritte: ${r.steps.map((s) => s.text).join(', ')}`) : ['Keine.']));
+    L.push(...(rtOnly().length ? rtOnly().map((r) => `- ${r.title} · ${r.days && r.days.length ? dayNames(r.days) : 'jeden Tag'}${r.time ? ' · ' + r.time : ''} · Schritte: ${r.steps.map((s) => s.text).join(', ')}`) : ['Keine.']));
+    L.push('', '## Routine-Tracker (gemacht oder nicht, mit Kommentar)');
+    if (!trackers().length) L.push('Keine.');
+    for (const h of trackers()) {
+      L.push(`### ${h.title} · ${trkSlots(h).map((s) => `${TRK_SLOT[s.k].l} (${s.t})`).join(', ')} · ${h.days && h.days.length ? dayNames(h.days) : 'jeden Tag'}`);
+      const rows = [];
+      for (const d of dlist) for (const s of trkSlots(h)) {
+        const e = trkEntry(h.id, ymd(d), s.k);
+        if (!trkOn(h, d) || (!e && !trkDue(ymd(d), s))) continue;
+        const note = e && (e.note || '').trim().replace(/\s*\n\s*/g, ' / ');
+        rows.push(`- ${WDS[d.getDay()]} ${fmtDE(d)} ${TRK_SLOT[s.k].l}: ${!e || !e.st ? 'keine Antwort' : e.st === 'done' ? 'gemacht' : 'nicht gemacht'}${note ? ' · Kommentar: ' + note : ''}`);
+      }
+      L.push(...(rows.length ? rows : ['Noch keine Einträge im Zeitraum.']));
+    }
   }
   if (parts.reminders) {
-    const rems = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening);
+    const rems = state.reminders.filter((r) => r.type !== 'event' && r.type !== 'timer' && !r.routineId && !r.evening && !r.trk);
     L.push('', '## Erinnerungen');
     L.push(...(rems.length ? rems.map((r) => `- ${r.title} · ${summary(r)} · ${r.enabled ? 'aktiv' : 'pausiert'}${(r.note || '').trim() ? ` · Notiz: ${r.note.trim().replace(/\s*\n\s*/g, ' / ')}` : ''}`) : ['Keine.']));
     const evs = [];
